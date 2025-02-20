@@ -5,66 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
-interface Stage {
-  id: string;
-  title: string;
-  description: string;
-  icon?: "book" | "target" | "users";
-  color?: string;
-  features?: string[];
-}
+import { Stage } from "@/lib/constants";
 
 interface StageNavigationProps {
   stages?: Stage[];
 }
 
-const defaultStages: Stage[] = [
-  {
-    id: "primary",
-    title: "المرحلة الابتدائية",
-    description: "تعليم الطفولة المبكرة والصفوف العليا",
-    icon: "book",
-    color: "bg-white",
-    buttonColor: "bg-[#2563eb]",
-    features: [
-      "المهارات الحركية الأساسية",
-      "الألعاب التعليمية الممتعة",
-      "التمارين البدنية البسيطة",
-      "تنمية الثقة بالنفس",
-      "التعاون والعمل الجماعي",
-    ],
-  },
-  {
-    id: "middle",
-    title: "المرحلة الإعدادية",
-    description: "تعليم شامل للمرحلة الإعدادية",
-    icon: "users",
-    color: "bg-white",
-    buttonColor: "bg-[#738e19]",
-    features: [
-      "الرياضات الجماعية المتنوعة",
-      "تطوير المهارات المتقدمة",
-      "التدريب البدني المنظم",
-      "المشاركة في المسابقات",
-      "تعزيز روح المنافسة",
-    ],
-  },
-  {
-    id: "high",
-    title: "المرحلة الثانوية",
-    description: "الإعداد الأكاديمي المتقدم",
-    icon: "target",
-    color: "bg-white",
-    buttonColor: "bg-[#f9d400]",
-    features: [
-      "التخصص الرياضي المتقدم",
-      "القيادة والتدريب الاحترافي",
-      "المنافسات الرياضية العالية",
-      "التخطيط للمستقبل الرياضي",
-      "تطوير المهارات القيادية",
-    ],
-  },
-];
+import { STAGES } from "@/lib/constants";
+
+const defaultStages = Object.values(STAGES);
 
 const StageNavigation = ({ stages = defaultStages }: StageNavigationProps) => {
   const navigate = useNavigate();
@@ -86,7 +35,7 @@ const StageNavigation = ({ stages = defaultStages }: StageNavigationProps) => {
 
   const handleStageSelect = (stageId: string) => {
     console.log("Navigating to stage:", stageId);
-    navigate(`/stage/${stageId}`, { replace: true });
+    navigate(`/stage/${stageId}`);
   };
 
   return (
