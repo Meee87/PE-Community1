@@ -18,9 +18,9 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["IBM Plex Sans Arabic", "Almarai", "sans-serif"],
-        heading: ["Noto Kufi Arabic", "Almarai", "sans-serif"],
-        display: ["Almarai", "Noto Kufi Arabic", "sans-serif"],
+        sans: ["29LT Adir", "sans-serif"],
+        heading: ["29LT Adir", "sans-serif"],
+        display: ["29LT Adir", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
