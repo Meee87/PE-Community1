@@ -59,10 +59,17 @@ const MainHeader = () => {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <h1 className="text-2xl font-display tracking-wide hidden sm:block">
-            PE COMMUNITY
-          </h1>
-          <h1 className="text-2xl font-display tracking-wide sm:hidden">PE</h1>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-white">PE</span>
+              <img
+                src="https://i.imgur.com/fcLmxsY.png"
+                alt="صافرة"
+                className="h-16 w-16 object-contain"
+              />
+              <span className="text-2xl font-bold text-white">COMMUNITY</span>
+            </div>
+          </div>
         </div>
 
         {/* Actions */}

@@ -7,6 +7,7 @@ import { Image, FileText, Video, Users } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import ContentUploadDialog from "./ContentUploadDialog";
 import StageCard from "../navigation/StageCard";
+import ContentCard from "./ContentCard";
 
 interface ContentType {
   id: string;
@@ -21,55 +22,12 @@ interface ContentType {
 
 interface CategoryGridProps {
   categories?: ContentType[];
+  onCategoryClick?: (category: ContentType) => void;
 }
 
-const defaultCategories: ContentType[] = [
-  {
-    id: "1",
-    title: "اللعب النشط",
-    description: "الأنشطة البدنية والألعاب للتعلم النشط",
-    imageUrl:
-      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&auto=format",
-    features: [
-      "المهارات الحركية الأساسية",
-      "الألعاب التعليمية الممتعة",
-      "التمارين البدنية البسيطة",
-    ],
-    color: "bg-[#4A90E2]",
-    buttonColor: "bg-[#4A90E2]",
-  },
-  {
-    id: "2",
-    title: "إدارة الجسم",
-    description: "تمارين تركز على التحكم في الجسم والتنسيق",
-    imageUrl:
-      "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=500&auto=format",
-    features: [
-      "تطوير المهارات المتقدمة",
-      "التدريب البدني المنظم",
-      "المشاركة في المسابقات",
-    ],
-    color: "bg-[#9B51E0]",
-    buttonColor: "bg-[#9B51E0]",
-  },
-  {
-    id: "3",
-    title: "الحركة التعبيرية",
-    description: "أنشطة الحركة الإبداعية والرقص",
-    imageUrl:
-      "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=500&auto=format",
-    features: [
-      "تنمية الثقة بالنفس",
-      "التعاون والعمل الجماعي",
-      "اكتشاف المواهب",
-    ],
-    color: "bg-[#F2994A]",
-    buttonColor: "bg-[#F2994A]",
-  },
-];
-
 const CategoryGrid = ({
-  categories = defaultCategories,
+  categories = [],
+  onCategoryClick,
 }: CategoryGridProps) => {
   const navigate = useNavigate();
   const [selectedContent, setSelectedContent] = useState<any>(null);
@@ -95,10 +53,10 @@ const CategoryGrid = ({
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-transparent p-6">
-      <div className="max-w-7xl mx-auto space-y-8 flex flex-row-reverse">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category) => (
+    <div className="w-full min-h-screen bg-[#748D19]/10 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          {categories?.map((category) => (
             <StageCard
               key={category.id}
               title={category.title}
@@ -107,7 +65,7 @@ const CategoryGrid = ({
               features={category.features}
               color={category.color}
               buttonColor={category.buttonColor}
-              onClick={() => navigate(`/category/${category.id}`)}
+              onClick={() => onCategoryClick?.(category)}
             />
           ))}
         </div>

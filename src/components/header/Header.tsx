@@ -29,44 +29,17 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
         data: { session },
       } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
-      setIsAdmin(session?.user?.email === "eng.mohamed87@live.com");
 
       if (session?.user) {
-        // Check if profile exists, if not create it
-        const { data: profile, error: profileError } = await supabase
+        const { data: profile } = await supabase
           .from("profiles")
-          .select("*")
+          .select("role")
           .eq("id", session.user.id)
           .single();
-
-        if (!profile && !profileError) {
-          await supabase.from("profiles").insert([
-            {
-              id: session.user.id,
-              username: session.user.email?.split("@")[0],
-              full_name: session.user.user_metadata?.full_name || "",
-              email: session.user.email,
-              role: "user",
-              avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.email}`,
-              school: "",
-              specialization: "",
-              years_of_experience: "",
-            },
-          ]);
-        }
+        setIsAdmin(profile?.role === "admin");
       }
     };
     checkAuth();
-
-    // Subscribe to auth state changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsLoggedIn(!!session);
-      setIsAdmin(session?.user?.email === "eng.mohamed87@live.com");
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const handleLogout = async () => {
@@ -77,11 +50,15 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
   };
 
   const buttonClasses =
-    "text-xs sm:text-sm font-medium text-white hover:bg-[#FFD700] hover:text-[#748D19] px-2 py-2 sm:px-4 rounded-md transition-colors";
+    "text-sm font-medium text-white hover:bg-[#FFD700] hover:text-[#748D19] px-4 py-2 rounded-md transition-colors";
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-14 bg-[#748D19] shadow-sm z-50">
-      <div className="h-full max-w-7xl mx-auto px-4 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 h-14 md:h-16 bg-[#748D19] shadow-md z-50">
+      <div
+        className="h-full max-w-7xl mx-auto px-4 flex items-center justify-between"
+        dir="rtl"
+      >
+        {/* Logo Section */}
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -110,32 +87,36 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
             to="/"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <img src="/vite.svg" alt="Logo" className="h-6 w-6" />
-            <span className="text-base sm:text-lg font-bold hidden sm:inline tracking-wider cursor-pointer text-white">
-              PE COMMUNITY
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-lg md:text-2xl font-bold text-white">
+                PE
+              </span>
+              <img
+                src="https://api.iconify.design/fluent-emoji-flat:whistle.svg"
+                alt="صافرة"
+                className="h-8 w-8 md:h-10 md:w-10"
+              />
+              <span className="text-lg md:text-2xl font-bold text-white hidden md:inline">
+                COMMUNITY
+              </span>
+            </div>
           </Link>
         </div>
 
-        <nav className="flex items-center gap-2 sm:gap-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className={buttonClasses}>
-                اتصل بنا
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>اتصل بنا</DialogTitle>
-              </DialogHeader>
-              <Contact />
-            </DialogContent>
-          </Dialog>
+        {/* Navigation - Hidden on mobile */}
+        <nav className="hidden md:flex items-center gap-4">
+          <Button
+            variant="ghost"
+            className={buttonClasses}
+            onClick={() => navigate("/home")}
+          >
+            المحتوى
+          </Button>
 
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="ghost" className={buttonClasses}>
-                <div className="flex items-center gap-2 no-reverse">
+                <div className="flex items-center gap-2">
                   <CalendarIcon className="h-4 w-4" />
                   <span>التقويم</span>
                 </div>
@@ -149,16 +130,23 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
             </DialogContent>
           </Dialog>
 
-          <Button
-            variant="ghost"
-            className={buttonClasses}
-            onClick={() => navigate("/home")}
-          >
-            المحتوى
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" className={buttonClasses}>
+                اتصل بنا
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>اتصل بنا</DialogTitle>
+              </DialogHeader>
+              <Contact />
+            </DialogContent>
+          </Dialog>
         </nav>
 
-        <div className="flex items-center gap-2">
+        {/* Auth Section - Hidden on mobile */}
+        <div className="hidden md:flex items-center gap-2">
           {isLoggedIn ? (
             <>
               {isAdmin && (
@@ -170,7 +158,7 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
               )}
               <Link to="/profile">
                 <Button variant="ghost" className={buttonClasses}>
-                  الملف
+                  الملف الشخصي
                 </Button>
               </Link>
               <Button
@@ -178,12 +166,12 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
                 className={buttonClasses}
                 onClick={handleLogout}
               >
-                خروج
+                تسجيل خروج
               </Button>
             </>
           ) : (
             <Link to="/login">
-              <Button className="bg-white hover:bg-gray-100 text-[#748D19] text-xs sm:text-sm px-2 py-2 sm:px-4">
+              <Button className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#748D19] text-sm px-4 py-2">
                 تسجيل الدخول
               </Button>
             </Link>

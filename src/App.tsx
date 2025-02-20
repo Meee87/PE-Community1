@@ -8,12 +8,14 @@ import ContentSection from "./components/content/ContentSection";
 import Login from "./components/auth/login";
 import Profile from "./components/profile/Profile";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import MobileNav from "./components/MobileNav";
 
 function App() {
   return (
     <Suspense fallback={<p>Loading...</p>}>
       <Header />
-      <div className="pt-14 min-h-screen bg-[#7C9D32]/10">
+      <div className="pt-14 pb-16 md:pb-0 min-h-screen bg-[#7C9D32]/10">
+        <MobileNav />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/home" element={<Home />} />

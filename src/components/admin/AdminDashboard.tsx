@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { Send } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,8 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [chats, setChats] = useState<any[]>([]);
+  const [responses, setResponses] = useState<Record<string, string>>({});
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalContent: 0,
@@ -57,7 +60,65 @@ const AdminDashboard = () => {
     checkAdmin();
     fetchData();
     fetchCategories();
+    fetchChats();
   }, [selectedStage]);
+
+  const fetchChats = async () => {
+    try {
+      const { data: chatsData } = await supabase
+        .from("chats")
+        .select(
+          `
+          *,
+          profiles:user_id (email, full_name),
+          messages:chat_messages (*)
+        `,
+        )
+        .order("created_at", { ascending: false });
+
+      if (chatsData) {
+        const formattedChats = chatsData.map((chat) => ({
+          ...chat,
+          user_email: chat.profiles?.email,
+          user_name: chat.profiles?.full_name,
+          messages: chat.messages?.sort(
+            (a: any, b: any) =>
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime(),
+          ),
+        }));
+        setChats(formattedChats);
+      }
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+    }
+  };
+
+  const handleSendMessage = async (e: React.FormEvent, chatId: string) => {
+    e.preventDefault();
+    const message = responses[chatId];
+    if (!message?.trim()) return;
+
+    try {
+      const { error } = await supabase.from("chat_messages").insert([
+        {
+          chat_id: chatId,
+          sender_id: user?.id,
+          message: message.trim(),
+        },
+      ]);
+
+      if (error) throw error;
+      setResponses({ ...responses, [chatId]: "" });
+      fetchChats(); // Refresh chats
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast({
+        variant: "destructive",
+        description: "حدث خطأ أثناء إرسال الرسالة",
+      });
+    }
+  };
 
   const fetchCategories = async () => {
     console.log("Fetching categories for stage:", selectedStage);
@@ -296,6 +357,7 @@ const AdminDashboard = () => {
           <TabsList>
             <TabsTrigger value="users">المستخدمين</TabsTrigger>
             <TabsTrigger value="messages">الرسائل</TabsTrigger>
+            <TabsTrigger value="chats">المحادثات</TabsTrigger>
             <TabsTrigger value="content">إدارة المحتوى</TabsTrigger>
           </TabsList>
 
@@ -352,6 +414,88 @@ const AdminDashboard = () => {
                       </div>
                     ))}
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="chats" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>المحادثات مع المستخدمين</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {chats?.map((chat) => (
+                    <div
+                      key={chat.id}
+                      className="p-4 bg-white rounded-lg shadow border"
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${chat.user_email}`}
+                            alt="avatar"
+                            className="w-10 h-10 rounded-full"
+                          />
+                          <div>
+                            <p className="font-medium">{chat.user_name}</p>
+                            <p className="text-sm text-gray-500">
+                              {chat.user_email}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          {new Date(chat.created_at).toLocaleDateString(
+                            "ar-SA",
+                          )}
+                        </span>
+                      </div>
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                        {chat.messages?.map((message) => (
+                          <div
+                            key={message.id}
+                            className={`flex ${message.sender_id === user?.id ? "justify-end" : "justify-start"}`}
+                          >
+                            <div
+                              className={`max-w-[80%] rounded-lg p-3 ${message.sender_id === user?.id ? "bg-[#7C9D32] text-white" : "bg-gray-100"}`}
+                            >
+                              <p className="text-sm">{message.message}</p>
+                              <span className="text-xs opacity-70">
+                                {new Date(
+                                  message.created_at,
+                                ).toLocaleTimeString("ar-SA")}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-4">
+                        <form
+                          onSubmit={(e) => handleSendMessage(e, chat.id)}
+                          className="flex gap-2"
+                        >
+                          <Input
+                            value={responses[chat.id] || ""}
+                            onChange={(e) =>
+                              setResponses({
+                                ...responses,
+                                [chat.id]: e.target.value,
+                              })
+                            }
+                            placeholder="اكتب ردك هنا..."
+                            className="flex-1"
+                          />
+                          <Button
+                            type="submit"
+                            className="bg-[#7C9D32] hover:bg-[#7C9D32]/90"
+                          >
+                            <Send className="h-4 w-4" />
+                          </Button>
+                        </form>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

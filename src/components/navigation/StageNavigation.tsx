@@ -39,7 +39,7 @@ const StageNavigation = ({ stages = defaultStages }: StageNavigationProps) => {
   };
 
   return (
-    <div className="w-full min-h-screen p-4 md:p-8">
+    <div className="w-full min-h-screen bg-[#748D19]/10 p-4 md:p-8">
       <motion.div
         variants={container}
         initial="hidden"
@@ -68,11 +68,11 @@ const StageNavigation = ({ stages = defaultStages }: StageNavigationProps) => {
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </Button>
-          <h1 className="text-2xl sm:text-4xl font-display text-gray-900">
-            المراحل التعليمية
+          <h1 className="text-2xl sm:text-4xl font-display text-gray-900 text-center w-full">
+            المرحلة التعليمية
           </h1>
         </div>
-        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-[#a80303]">
+        <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 text-[#a80303]">
           {stages.map((stage) => (
             <motion.div key={stage.id} variants={item}>
               <StageCard
