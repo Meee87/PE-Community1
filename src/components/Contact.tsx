@@ -1,69 +1,151 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Mail, Phone, MessageCircle } from "lucide-react";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+
+import { supabase } from "@/lib/supabase";
 
 const Contact = () => {
-  return (
-    <div className="bg-white p-6 rounded-lg space-y-8">
-      {/* Contact Info Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-[#7C9D32]/5 p-4 rounded-lg">
-        <div className="flex items-center gap-3 text-gray-700">
-          <Mail className="h-5 w-5 text-[#7C9D32]" />
-          <a
-            href="mailto:info@pecommunity.com"
-            className="hover:text-[#7C9D32] transition-colors"
-          >
-            info@pecommunity.com
-          </a>
-        </div>
-        <div className="flex items-center gap-3 text-gray-700">
-          <Phone className="h-5 w-5 text-[#7C9D32]" />
-          <a
-            href="tel:+966500000000"
-            className="hover:text-[#7C9D32] transition-colors"
-            dir="ltr"
-          >
-            +966 50 000 0000
-          </a>
-        </div>
-        <div className="flex items-center gap-3 text-gray-700">
-          <MapPin className="h-5 w-5 text-[#7C9D32]" />
-          <span>الرياض، المملكة العربية السعودية</span>
-        </div>
-      </div>
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [isSending, setIsSending] = React.useState(false);
+  const [formData, setFormData] = React.useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [showSuccess, setShowSuccess] = React.useState(false);
 
-      {/* Contact Form */}
-      <form className="space-y-4">
-        <div>
-          <Input
-            placeholder="الاسم الكامل"
-            className="text-right bg-gray-50 border-gray-200 focus:border-[#7C9D32] focus:ring-[#7C9D32]"
-          />
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.email || !formData.message) {
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      // Get admin user
+      const { data: adminData } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("email", "eng.mohamed87@live.com")
+        .single();
+
+      if (!adminData?.id) throw new Error("Admin not found");
+
+      // Insert message
+      const { error } = await supabase.from("messages").insert({
+        content: formData.message,
+        sender_name: formData.name,
+        sender_email: formData.email,
+        admin_id: adminData.id,
+      });
+
+      if (error) throw error;
+
+      // Show success message
+      setShowSuccess(true);
+
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        setFormData({ name: "", email: "", message: "" });
+        setShowSuccess(false);
+        setIsDialogOpen(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  return (
+    <Card className="w-full max-w-[calc(100vw-2rem)] sm:max-w-2xl mx-auto bg-white shadow-sm">
+      <CardHeader>
+        <CardTitle className="text-center">اتصل بنا</CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
+            <Mail className="h-6 w-6 text-[#95B846]" />
+            <div>
+              <h3 className="font-semibold">البريد الإلكتروني</h3>
+              <p className="text-sm text-gray-600">contact@pecommunity.com</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
+            <Phone className="h-6 w-6 text-[#95B846]" />
+            <div>
+              <h3 className="font-semibold">رقم الهاتف</h3>
+              <p className="text-sm text-gray-600">+966 12 345 6789</p>
+            </div>
+          </div>
         </div>
-        <div>
-          <Input
-            type="email"
-            placeholder="البريد الإلكتروني"
-            className="text-right bg-gray-50 border-gray-200 focus:border-[#7C9D32] focus:ring-[#7C9D32]"
-            dir="ltr"
-          />
-        </div>
-        <div>
-          <Textarea
-            placeholder="الرسالة"
-            className="min-h-[100px] text-right bg-gray-50 border-gray-200 focus:border-[#7C9D32] focus:ring-[#7C9D32]"
-          />
-        </div>
-        <Button
-          type="submit"
-          className="w-full bg-[#7C9D32] hover:bg-[#7C9D32]/90 text-white"
-        >
-          إرسال
-        </Button>
-      </form>
-    </div>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="w-full bg-[#95B846] hover:bg-[#86a73d]">
+              <MessageCircle className="mr-2 h-4 w-4" />
+              تحدث مع المسؤولين
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>رسالة جديدة</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <Input
+                placeholder="الاسم"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                required
+              />
+              <Input
+                placeholder="البريد الإلكتروني"
+                type="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, email: e.target.value }))
+                }
+                required
+              />
+              <Textarea
+                placeholder="الرسالة"
+                className="min-h-[100px]"
+                value={formData.message}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, message: e.target.value }))
+                }
+                required
+              />
+              {showSuccess ? (
+                <div className="text-center py-4 text-green-600">
+                  تم إرسال رسالتك بنجاح! سيتم الرد عليك قريباً
+                </div>
+              ) : (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isSending}
+                  className="w-full"
+                >
+                  {isSending ? "جاري الإرسال..." : "إرسال"}
+                </Button>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </CardContent>
+    </Card>
   );
 };
 

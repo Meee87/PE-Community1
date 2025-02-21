@@ -48,19 +48,23 @@ const ContentSection = () => {
     }
 
     return (
-      <div className="flex flex-row-reverse justify-between items-center">
-        <Card className="p-6 bg-white flex-1">
-          <h1 className="text-3xl font-heading text-gray-900 mb-2">{title}</h1>
+      <div className="mb-6">
+        <div className="flex items-center gap-4 mb-4">
+          <Button
+            onClick={handleBack}
+            variant="outline"
+            className="bg-white hover:bg-gray-50 flex items-center gap-2"
+          >
+            <ArrowRight className="h-4 w-4" />
+            رجوع
+          </Button>
+        </div>
+        <Card className="p-6 bg-[#F8FAF5]">
+          <h1 className="text-2xl sm:text-3xl font-heading text-gray-900 mb-2">
+            {title}
+          </h1>
           <p className="text-gray-600">{description}</p>
         </Card>
-        <Button
-          onClick={handleBack}
-          variant="outline"
-          className="ml-4 bg-white hover:bg-gray-50 flex flex-row-reverse items-center gap-2"
-        >
-          رجوع
-          <ArrowRight className="h-4 w-4" />
-        </Button>
       </div>
     );
   };
@@ -118,7 +122,7 @@ const ContentSection = () => {
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="flex flex-col items-center sm:grid sm:grid-cols-2 gap-6">
         {stage?.categories?.map((category) => (
           <StageCard
             key={category.id}

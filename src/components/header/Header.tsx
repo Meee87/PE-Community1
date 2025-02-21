@@ -53,7 +53,7 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
     "text-sm font-medium text-white hover:bg-[#FFD700] hover:text-[#748D19] px-4 py-2 rounded-md transition-colors";
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-14 md:h-16 bg-[#748D19] shadow-md z-50">
+    <header className="hidden md:block fixed top-0 left-0 right-0 h-0 md:h-16 bg-[#748D19] shadow-md z-50">
       <div
         className="h-full max-w-7xl mx-auto px-4 flex items-center justify-between"
         dir="rtl"

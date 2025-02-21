@@ -6,14 +6,16 @@ import {
   MessageSquare,
   User,
   LogIn,
+  Menu,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import Calendar from "./Calendar";
 import Contact from "./Contact";
 import ChatDialog from "./chat/ChatDialog";
@@ -24,6 +26,7 @@ const MobileNav = () => {
   const [showContact, setShowContact] = React.useState(false);
   const [showChat, setShowChat] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {
     const checkAuth = async () => {
@@ -35,80 +38,74 @@ const MobileNav = () => {
     checkAuth();
   }, []);
 
+  const menuItems = [
+    { icon: Home, label: "المحتوى", path: "/home" },
+    {
+      icon: CalendarIcon,
+      label: "التقويم",
+      onClick: () => setShowCalendar(true),
+    },
+    {
+      icon: MessageSquare,
+      label: "المحادثة",
+      onClick: () => setShowChat(true),
+    },
+    ...(isLoggedIn
+      ? [{ icon: User, label: "الملف", path: "/profile" }]
+      : [{ icon: LogIn, label: "دخول", path: "/login" }]),
+  ];
+
   return (
     <>
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#748D19] text-white z-50 h-16 border-t border-white/10">
-        <div className="flex items-center justify-around h-full">
-          <Link
-            to="/home"
-            className="flex flex-col items-center justify-center"
-          >
-            <Home className="h-5 w-5" />
-            <span className="text-xs mt-1">المحتوى</span>
-          </Link>
-
-          <button
-            onClick={() => setShowCalendar(true)}
-            className="flex flex-col items-center justify-center text-white"
-          >
-            <CalendarIcon className="h-5 w-5" />
-            <span className="text-xs mt-1">التقويم</span>
-          </button>
-
-          <button
-            onClick={() => setShowChat(true)}
-            className="flex flex-col items-center justify-center text-white"
-          >
-            <MessageSquare className="h-5 w-5" />
-            <span className="text-xs mt-1">المحادثة</span>
-          </button>
-
-          {isLoggedIn ? (
-            <Link
-              to="/profile"
-              className="flex flex-col items-center justify-center"
+      {/* Bottom Navigation Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+        <div className="flex justify-around items-center h-16">
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                if (item.path) {
+                  navigate(item.path);
+                } else if (item.onClick) {
+                  item.onClick();
+                }
+              }}
+              className="flex flex-col items-center justify-center flex-1 h-full text-gray-600 hover:text-[#748D19]"
             >
-              <User className="h-5 w-5" />
-              <span className="text-xs mt-1">الملف</span>
-            </Link>
-          ) : (
-            <Link
-              to="/login"
-              className="flex flex-col items-center justify-center"
-            >
-              <LogIn className="h-5 w-5" />
-              <span className="text-xs mt-1">دخول</span>
-            </Link>
-          )}
+              <item.icon className="h-6 w-6" />
+              <span className="text-xs mt-1">{item.label}</span>
+            </button>
+          ))}
         </div>
-      </nav>
+      </div>
 
-      <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>التقويم الرياضي</DialogTitle>
-          </DialogHeader>
+      {/* Dialogs */}
+      <Sheet open={showCalendar} onOpenChange={setShowCalendar}>
+        <SheetContent className="w-[90%] sm:w-[540px]">
+          <SheetHeader>
+            <SheetTitle>التقويم الرياضي</SheetTitle>
+          </SheetHeader>
           <Calendar className="border-none shadow-none" />
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      <Dialog open={showContact} onOpenChange={setShowContact}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>اتصل بنا</DialogTitle>
-          </DialogHeader>
+      <Sheet open={showContact} onOpenChange={setShowContact}>
+        <SheetContent className="w-[90%] sm:w-[540px]">
+          <SheetHeader>
+            <SheetTitle>اتصل بنا</SheetTitle>
+          </SheetHeader>
           <Contact />
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      <Dialog open={showChat} onOpenChange={setShowChat}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>المحادثة مع المسؤولين</DialogTitle>
-          </DialogHeader>
+      <Sheet open={showChat} onOpenChange={setShowChat}>
+        <SheetContent className="w-[90%] sm:w-[540px]">
+          <SheetHeader>
+            <SheetTitle>المحادثة مع المسؤولين</SheetTitle>
+          </SheetHeader>
           <ChatDialog onClose={() => setShowChat(false)} />
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </>
   );
 };

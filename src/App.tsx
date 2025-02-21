@@ -14,7 +14,7 @@ function App() {
   return (
     <Suspense fallback={<p>Loading...</p>}>
       <Header />
-      <div className="pt-14 pb-16 md:pb-0 min-h-screen bg-[#7C9D32]/10">
+      <div className="pb-16 md:pt-14 md:pb-0 min-h-screen bg-[#7C9D32]/10">
         <MobileNav />
         <Routes>
           <Route path="/" element={<LandingPage />} />

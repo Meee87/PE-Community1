@@ -36,13 +36,13 @@ const StageCard = ({
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className={cn("w-full max-w-sm cursor-pointer", className)}
+      className={cn("w-full max-w-[350px] cursor-pointer", className)}
       onClick={onClick}
     >
       <Card
-        className={`h-full overflow-hidden shadow-lg group transition-all duration-300 hover:shadow-xl static ${buttonColor?.replace("bg-", "bg-opacity-10 bg-")}`}
+        className={`h-full overflow-hidden shadow-lg group transition-all duration-300 hover:shadow-xl static ${color || "bg-[#F8FAF5]"}`}
       >
-        <div className="relative h-36 sm:h-48 overflow-hidden">
+        <div className="relative h-32 sm:h-48 overflow-hidden">
           <img
             src={
               imageSrc ||
@@ -66,52 +66,54 @@ const StageCard = ({
                     : "https://api.iconify.design/fluent-emoji-flat:graduation-cap.svg"
               }
               alt="icon"
-              className="w-12 h-12 sm:w-16 sm:h-16"
+              className="w-8 h-8 sm:w-12 sm:h-12"
             />
           </div>
         </div>
-        <div dir="rtl">
-          <CardHeader className="items-stretch flex-col text-right">
-            <CardTitle className="text-xl sm:text-2xl mb-2 font-display">
-              {title}
-            </CardTitle>
-            <CardDescription className="text-gray-600 text-base sm:text-lg font-heading">
-              {description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {features?.map((feature, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-end gap-2 text-gray-600 font-heading"
-                >
-                  <span>{feature}</span>
-                  <div
-                    className={`flex items-center justify-center w-5 h-5 rounded-full ${buttonColor?.replace("bg-", "bg-opacity-20 bg-")}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-3 w-3 ${buttonColor?.replace("bg-", "text-")}`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              ))}
+        <div dir="rtl" className="p-4 sm:p-6">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="text-center">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                {title}
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600 line-clamp-2">
+                {description}
+              </p>
             </div>
+            {features && features.length > 0 && (
+              <div className="space-y-2">
+                {features.map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-end gap-2 text-gray-600"
+                  >
+                    <span className="text-sm">{feature}</span>
+                    <div
+                      className={`flex items-center justify-center w-5 h-5 rounded-full ${buttonColor?.replace("bg-", "bg-opacity-20 bg-")}`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className={`h-3 w-3 ${buttonColor?.replace("bg-", "text-")}`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             <button
-              className={`mt-6 w-full ${buttonColor || "bg-[#7C9D32]"} hover:opacity-90 text-white py-2 px-4 rounded-lg transition-colors font-heading`}
+              className={`mt-6 sm:mt-8 w-full ${buttonColor || "bg-[#7C9D32]"} hover:opacity-90 text-white py-2 px-4 rounded-lg transition-colors text-sm sm:text-base font-medium`}
             >
               استكشف المرحلة
             </button>
-          </CardContent>
+          </div>
         </div>
       </Card>
     </motion.div>
