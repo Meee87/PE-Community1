@@ -25,6 +25,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     getProfile();
@@ -49,6 +50,7 @@ const Profile = () => {
 
       if (error) throw error;
       setProfile(data);
+      setIsAdmin(data?.role === "admin");
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -176,6 +178,15 @@ const Profile = () => {
             </div>
 
             <div className="flex justify-end gap-4">
+              {isAdmin && (
+                <Button
+                  type="button"
+                  onClick={() => navigate("/admin")}
+                  className="bg-[#7C9D32] hover:bg-[#7C9D32]/90"
+                >
+                  لوحة التحكم
+                </Button>
+              )}
               <Button
                 type="button"
                 variant="outline"

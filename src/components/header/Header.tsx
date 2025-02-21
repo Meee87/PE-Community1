@@ -143,19 +143,21 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
               <Contact />
             </DialogContent>
           </Dialog>
+
+          {isAdmin && (
+            <Button
+              onClick={() => navigate("/admin")}
+              className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#748D19] font-bold"
+            >
+              لوحة التحكم
+            </Button>
+          )}
         </nav>
 
         {/* Auth Section - Hidden on mobile */}
         <div className="hidden md:flex items-center gap-2">
           {isLoggedIn ? (
             <>
-              {isAdmin && (
-                <Link to="/admin">
-                  <Button variant="ghost" className={buttonClasses}>
-                    لوحة التحكم
-                  </Button>
-                </Link>
-              )}
               <Link to="/profile">
                 <Button variant="ghost" className={buttonClasses}>
                   الملف الشخصي

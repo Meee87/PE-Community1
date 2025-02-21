@@ -21,26 +21,42 @@ import {
   Settings,
   HelpCircle,
   BookOpen,
+  Home,
 } from "lucide-react";
 import AuthDialog from "@/components/auth/AuthDialog";
 import { getCurrentUser, signOut } from "@/lib/auth";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/lib/supabase";
+import { checkIsAdmin } from "@/lib/admin";
 
 const MainHeader = () => {
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
-    getCurrentUser().then(setUser);
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+
+      if (user) {
+        const isAdminUser = await checkIsAdmin();
+        setIsAdmin(isAdminUser);
+      }
+    };
+    checkAuth();
   }, []);
 
   const handleSignOut = async () => {
     await signOut();
     setUser(null);
+    setIsAdmin(false);
     toast({
       description: "تم تسجيل الخروج بنجاح",
     });
@@ -76,6 +92,14 @@ const MainHeader = () => {
         <div className="flex items-center gap-2 md:gap-4">
           {user ? (
             <div className="flex items-center gap-2">
+              {isAdmin && (
+                <Button
+                  onClick={() => navigate("/admin")}
+                  className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#748D19] font-bold"
+                >
+                  لوحة التحكم
+                </Button>
+              )}
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -130,10 +154,14 @@ const MainHeader = () => {
                   <div className="space-y-3">
                     <div className="border-b pb-2">
                       <p className="font-medium">مرحباً بك</p>
-                      <p className="text-sm text-gray-500">user@example.com</p>
+                      <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
                     <div className="space-y-1">
-                      <Button variant="ghost" className="w-full justify-start">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => navigate("/profile")}
+                      >
                         <User className="ml-2 h-4 w-4" />
                         الملف الشخصي
                       </Button>

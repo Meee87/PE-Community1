@@ -46,37 +46,57 @@ const StageCard = ({
           <img
             src={
               imageSrc ||
-              (icon === "book"
-                ? "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2069&auto=format&fit=crop"
-                : icon === "users"
-                  ? "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=2070&auto=format&fit=crop"
-                  : "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop")
+              (() => {
+                if (title?.includes("اللعب النشط")) {
+                  return "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&auto=format&fit=crop";
+                } else if (title?.includes("إدارة الجسم")) {
+                  return "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&auto=format&fit=crop";
+                } else if (title?.includes("الحركة التعبيرية")) {
+                  return "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&auto=format&fit=crop";
+                } else if (title?.includes("مرحلة الطفولة")) {
+                  return "https://images.unsplash.com/photo-1503676382389-4809596d5290?w=800&auto=format&fit=crop";
+                } else if (title?.includes("الصفوف العليا")) {
+                  return "https://images.unsplash.com/photo-1576334761529-0f1d6c944e73?w=800&auto=format&fit=crop";
+                } else {
+                  return "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&auto=format&fit=crop";
+                }
+              })()
             }
             alt={title}
-            className="w-full h-full object-cover transform transition-all duration-300 group-hover:scale-105 group-hover:opacity-90"
+            className="w-full h-full object-cover transform transition-all duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-black/20" />
-          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-white/20 p-2 sm:p-3 rounded-full backdrop-blur-sm transform-gpu transition-transform duration-300 hover:scale-110">
+          <div
+            className={`absolute inset-0 transition-colors duration-300 mix-blend-multiply ${buttonColor || "bg-[#7C9D32]"} opacity-80`}
+          />
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 p-2 sm:p-3 transform-gpu transition-all duration-300 hover:scale-110 hover:rotate-6">
             <img
-              src={
-                icon === "book"
-                  ? "https://api.iconify.design/fluent-emoji-flat:school-building.svg"
-                  : icon === "users"
-                    ? "https://api.iconify.design/fluent-emoji-flat:student-medium-light.svg"
-                    : "https://api.iconify.design/fluent-emoji-flat:graduation-cap.svg"
-              }
-              alt="icon"
-              className="w-8 h-8 sm:w-12 sm:h-12"
+              src={(() => {
+                if (title?.includes("اللعب النشط")) {
+                  return "https://api.iconify.design/fluent-emoji-flat:person-bouncing-ball.svg";
+                } else if (title?.includes("إدارة الجسم")) {
+                  return "https://api.iconify.design/fluent-emoji-flat:person-in-lotus-position.svg";
+                } else if (title?.includes("الحركة التعبيرية")) {
+                  return "https://api.iconify.design/fluent-emoji-flat:person-dancing.svg";
+                } else if (title?.includes("مرحلة الطفولة")) {
+                  return "https://api.iconify.design/fluent-emoji-flat:child.svg";
+                } else if (title?.includes("الصفوف العليا")) {
+                  return "https://api.iconify.design/fluent-emoji-flat:student.svg";
+                } else {
+                  return "https://api.iconify.design/fluent-emoji-flat:person-running.svg";
+                }
+              })()}
+              alt={title}
+              className="w-8 h-8 sm:w-12 sm:h-12 transform transition-transform group-hover:scale-110 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
             />
           </div>
         </div>
-        <div dir="rtl" className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6">
           <div className="space-y-4 sm:space-y-6">
-            <div className="text-center">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+            <div className="text-center space-y-2">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 text-center">
                 {title}
               </h3>
-              <p className="text-sm sm:text-base text-gray-600 line-clamp-2">
+              <p className="text-sm sm:text-base text-gray-600 line-clamp-2 text-center">
                 {description}
               </p>
             </div>
