@@ -22,62 +22,8 @@ interface ResourceGridProps {
   onDownload?: (resource: Resource) => void;
 }
 
-const defaultResources: Resource[] = [
-  // صور
-  {
-    id: "1",
-    title: "تمارين الإحماء الأساسية",
-    type: "image",
-    thumbnail:
-      "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=300&h=200&fit=crop",
-    downloadUrl: "#",
-  },
-  {
-    id: "2",
-    title: "تدريبات كرة القدم",
-    type: "image",
-    thumbnail:
-      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=300&h=200&fit=crop",
-    downloadUrl: "#",
-  },
-  // ملفات
-  {
-    id: "3",
-    title: "خطة التدريب الأسبوعية",
-    type: "file",
-    thumbnail:
-      "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=300&h=200&fit=crop",
-    downloadUrl: "#",
-  },
-  {
-    id: "4",
-    title: "دليل المعلم للتربية البدنية",
-    type: "file",
-    thumbnail:
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=200&fit=crop",
-    downloadUrl: "#",
-  },
-  // فيديوهات
-  {
-    id: "5",
-    title: "شرح مهارات كرة السلة",
-    type: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=300&h=200&fit=crop",
-    downloadUrl: "#",
-  },
-  {
-    id: "6",
-    title: "تمارين اللياقة البدنية",
-    type: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=300&h=200&fit=crop",
-    downloadUrl: "#",
-  },
-];
-
 const ResourceGrid = ({
-  resources = defaultResources,
+  resources = [],
   onPreview = () => {},
   onDownload = () => {},
 }: ResourceGridProps) => {
@@ -90,11 +36,41 @@ const ResourceGrid = ({
             className="overflow-hidden hover:shadow-lg transition-all duration-300 bg-white/90 backdrop-blur-sm"
           >
             <div className="relative aspect-video">
-              <img
-                src={resource.thumbnail}
-                alt={resource.title}
-                className="w-full h-full object-cover"
-              />
+              {resource.type === "image" ? (
+                <img
+                  src={resource.downloadUrl}
+                  alt={resource.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error(
+                      "Image failed to load:",
+                      resource.downloadUrl,
+                    );
+                    e.currentTarget.src =
+                      "https://placehold.co/600x400?text=Error+Loading+Image";
+                  }}
+                  onLoad={() => {
+                    console.log(
+                      "Image loaded successfully:",
+                      resource.downloadUrl,
+                    );
+                  }}
+                  loading="lazy"
+                />
+              ) : resource.type === "video" ? (
+                <div className="w-full h-full bg-black flex items-center justify-center">
+                  <iframe
+                    src={resource.downloadUrl}
+                    title={resource.title}
+                    className="w-full h-full"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                  <div className="text-gray-500">Preview not available</div>
+                </div>
+              )}
               {resource.type === "video" && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center">
@@ -135,17 +111,27 @@ const ResourceGrid = ({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => onDownload(resource)}
+                      <a
+                        href={resource.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        <img
-                          src="https://api.iconify.design/fluent-emoji-flat/inbox-tray.svg"
-                          alt="تحميل"
-                          className="h-5 w-5"
-                        />
-                      </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onDownload(resource);
+                            window.open(resource.downloadUrl, "_blank");
+                          }}
+                        >
+                          <img
+                            src="https://api.iconify.design/fluent-emoji-flat/inbox-tray.svg"
+                            alt="تحميل"
+                            className="h-5 w-5"
+                          />
+                        </Button>
+                      </a>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>تحميل</p>

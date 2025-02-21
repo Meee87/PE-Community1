@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, UserPlus, MessageSquare, BarChart, Home } from "lucide-react";
+import { STAGES } from "@/lib/constants";
+import ContentUploadDialog from "../content/ContentUploadDialog";
 
 interface Stats {
   totalUsers: number;
@@ -242,9 +244,9 @@ const AdminDashboard = () => {
         <Tabs defaultValue="users" className="text-right">
           <TabsList className="justify-start">
             <TabsTrigger value="users">المستخدمين</TabsTrigger>
+            <TabsTrigger value="content">إدارة المحتوى</TabsTrigger>
             <TabsTrigger value="messages">الرسائل</TabsTrigger>
             <TabsTrigger value="chats">المحادثات</TabsTrigger>
-            <TabsTrigger value="content">إدارة المحتوى</TabsTrigger>
             <TabsTrigger value="requests">طلبات المحتوى</TabsTrigger>
           </TabsList>
 
@@ -311,6 +313,45 @@ const AdminDashboard = () => {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="content" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-right">إدارة المحتوى</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Object.values(STAGES).map((stage) => (
+                      <Card key={stage.id} className="p-6">
+                        <h3 className="text-lg font-semibold mb-4">
+                          {stage.name}
+                        </h3>
+                        <div className="space-y-4">
+                          {stage.categories?.map((category) => (
+                            <div key={category.id}>
+                              <h4 className="font-medium text-gray-700 mb-2">
+                                {category.title}
+                              </h4>
+                              {category.subcategories?.map((subcategory) => (
+                                <div key={subcategory.id} className="pl-4 mb-2">
+                                  <ContentUploadDialog
+                                    stageId={stage.id}
+                                    categoryId={subcategory.id}
+                                    isAdmin={true}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    ))}
                   </div>
                 </div>
               </CardContent>

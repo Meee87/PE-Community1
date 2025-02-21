@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,41 +37,67 @@ export default function ContentUploadDialog({
 }: ContentUploadDialogProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [formData, setFormData] = React.useState({
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
     title: "",
     description: "",
     url: "",
     type: "image" as ContentType,
   });
 
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      const isAdminUser = await checkIsAdmin();
-      if (isAdminUser !== isAdmin) {
-        // Update isAdmin prop if it doesn't match actual status
-        setIsAdmin(isAdminUser);
-      }
-    };
-    checkAdminStatus();
-  }, [isAdmin]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // For non-admin users, require external URL
+    if (!isAdmin && !formData.url) {
+      toast({
+        variant: "destructive",
+        description: "يرجى إدخال رابط خارجي",
+      });
+      return;
+    }
+
+    // For admin users, either URL or file should be present
+    if (isAdmin && !formData.url) {
+      toast({
+        variant: "destructive",
+        description: "يرجى رفع ملف أو إدخال رابط خارجي",
+      });
+      return;
+    }
     setLoading(true);
 
     try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
       if (isAdmin) {
         // Direct content upload for admin
+        console.log("Uploading content:", {
+          ...formData,
+          stage_id: stageId,
+          category_id: categoryId,
+          created_by: user.id,
+        });
         const { error } = await supabase.from("content").insert([
           {
             ...formData,
             stage_id: stageId,
             category_id: categoryId,
-            created_by: (await supabase.auth.getUser()).data.user?.id,
+            created_by: user.id,
           },
         ]);
+
+        if (error) {
+          console.error("Upload error:", error);
+          throw error;
+        }
+
+        // Refresh the content list
+        window.dispatchEvent(new CustomEvent("content-updated"));
 
         if (error) throw error;
 
@@ -86,7 +112,7 @@ export default function ContentUploadDialog({
             stage_id: stageId,
             category_id: categoryId,
             status: "pending",
-            user_id: (await supabase.auth.getUser()).data.user?.id,
+            user_id: user.id,
           },
         ]);
 
@@ -118,20 +144,36 @@ export default function ContentUploadDialog({
   const handleFileUpload = async (file: File) => {
     try {
       const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${stageId}/${categoryId}/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
+      console.log("Starting file upload:", { filePath, fileSize: file.size });
+
+      // Upload file to storage
+      const { error: uploadError, data } = await supabase.storage
         .from("content")
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: true,
+          contentType: file.type,
+        });
 
       if (uploadError) throw uploadError;
 
+      console.log("File uploaded successfully:", data);
+
+      // Get public URL
       const {
         data: { publicUrl },
       } = supabase.storage.from("content").getPublicUrl(filePath);
 
-      setFormData({ ...formData, url: publicUrl });
+      console.log("Generated public URL:", publicUrl);
+
+      // Update form data with the file URL
+      setFormData((prev) => ({
+        ...prev,
+        url: publicUrl,
+      }));
 
       toast({
         description: "تم رفع الملف بنجاح",
@@ -152,7 +194,7 @@ export default function ContentUploadDialog({
           {isAdmin ? "رفع محتوى" : "طلب إضافة محتوى"}
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-white">
         <DialogHeader>
           <DialogTitle>
             {isAdmin ? "رفع محتوى جديد" : "طلب إضافة محتوى جديد"}
@@ -166,11 +208,12 @@ export default function ContentUploadDialog({
               onValueChange={(value: ContentType) =>
                 setFormData({ ...formData, type: value })
               }
+              className="bg-white"
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white">
                 <SelectValue placeholder="نوع المحتوى" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white">
                 <SelectItem value="image">صورة</SelectItem>
                 <SelectItem value="video">فيديو</SelectItem>
                 <SelectItem value="file">ملف</SelectItem>
@@ -182,6 +225,7 @@ export default function ContentUploadDialog({
           <div className="space-y-2">
             <Input
               placeholder="عنوان المحتوى"
+              className="bg-white"
               value={formData.title}
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
@@ -193,6 +237,7 @@ export default function ContentUploadDialog({
           <div className="space-y-2">
             <Textarea
               placeholder="وصف المحتوى"
+              className="bg-white"
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
@@ -208,6 +253,7 @@ export default function ContentUploadDialog({
                   <Label>رفع ملف</Label>
                   <Input
                     type="file"
+                    className="bg-white"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
@@ -222,6 +268,7 @@ export default function ContentUploadDialog({
                   <Label>رابط خارجي</Label>
                   <Input
                     placeholder="رابط المحتوى"
+                    className="bg-white"
                     value={formData.url}
                     onChange={(e) =>
                       setFormData({ ...formData, url: e.target.value })

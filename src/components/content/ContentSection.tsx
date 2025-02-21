@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import CategoryGrid from "./CategoryGrid";
 import { ResourceGrid } from "./ResourceGrid";
 import ContentCard from "./ContentCard";
 import StageCard from "../navigation/StageCard";
@@ -10,16 +9,33 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Home } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import ContentUploadDialog from "./ContentUploadDialog";
-
+import { useToast } from "@/components/ui/use-toast";
 import { Stage, STAGES } from "@/lib/constants";
 
 const ContentSection = () => {
   const { stageId } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<any>(null);
   const [showContentTypes, setShowContentTypes] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [contentItems, setContentItems] = useState([]);
+  const [activeTab, setActiveTab] = useState("all");
+  const [favorites, setFavorites] = useState([]);
+
+  // Listen for content updates
+  useEffect(() => {
+    const handleContentUpdate = () => {
+      if (selectedSubcategory?.selectedContentType) {
+        fetchContent(selectedSubcategory.selectedContentType);
+      }
+    };
+
+    window.addEventListener("content-updated", handleContentUpdate);
+    return () =>
+      window.removeEventListener("content-updated", handleContentUpdate);
+  }, [selectedSubcategory]);
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -45,7 +61,13 @@ const ContentSection = () => {
   const stage = STAGES[selectedStage];
 
   const handleBack = () => {
-    if (showContentTypes) {
+    if (showContentTypes && selectedSubcategory?.selectedContentType) {
+      setSelectedSubcategory({
+        ...selectedSubcategory,
+        selectedContentType: null,
+      });
+      setShowContentTypes(false);
+    } else if (showContentTypes) {
       setShowContentTypes(false);
     } else if (selectedSubcategory) {
       setSelectedSubcategory(null);
@@ -56,13 +78,89 @@ const ContentSection = () => {
     }
   };
 
+  const fetchContent = async (contentType: string) => {
+    try {
+      console.log("Fetching content for:", {
+        contentType,
+        stageId: selectedStage,
+        categoryId: selectedSubcategory?.id,
+      });
+
+      const dbContentType =
+        contentType === "images"
+          ? "image"
+          : contentType === "videos"
+            ? "video"
+            : contentType === "files"
+              ? "file"
+              : "talent";
+
+      const { data, error } = await supabase
+        .from("content")
+        .select("*")
+        .eq("type", dbContentType)
+        .eq("stage_id", selectedStage)
+        .eq("category_id", selectedSubcategory?.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      console.log("Fetched content:", data);
+
+      setContentItems(data || []);
+    } catch (error) {
+      console.error("Error fetching content:", error);
+      toast({
+        variant: "destructive",
+        description: "حدث خطأ أثناء تحميل المحتوى",
+      });
+    }
+  };
+
+  const renderContentTypeGrid = (contentType: any) => {
+    const filteredContent =
+      activeTab === "recent"
+        ? contentItems.slice(0, 5)
+        : activeTab === "favorites"
+          ? contentItems.filter((item) => favorites.includes(item.id))
+          : contentItems;
+
+    const resources = filteredContent.map((item) => ({
+      id: item.id,
+      title: item.title,
+      type: item.type,
+      thumbnail: item.url,
+      downloadUrl: item.url,
+    }));
+
+    return (
+      <div className="space-y-6">
+        <h2 className="text-xl font-semibold text-right">
+          {contentType.title}
+        </h2>
+        <ResourceGrid
+          resources={resources}
+          onPreview={(resource) => {
+            window.open(resource.downloadUrl, "_blank");
+          }}
+          onDownload={(resource) => {
+            window.open(resource.downloadUrl, "_blank");
+          }}
+        />
+      </div>
+    );
+  };
+
   const renderHeader = () => {
     let title = stage.name;
     let description = `استكشف الموارد والأنشطة التعليمية لطلاب ${stage.name}`;
 
-    if (showContentTypes) {
-      title = selectedSubcategory.title;
-      description = selectedSubcategory.description;
+    if (showContentTypes && selectedSubcategory?.selectedContentType) {
+      const contentType = selectedSubcategory.contentTypes?.find(
+        (type) => type.id === selectedSubcategory.selectedContentType,
+      );
+      title = contentType?.title || selectedSubcategory.title;
+      description = contentType?.description || selectedSubcategory.description;
     } else if (selectedSubcategory) {
       title = selectedSubcategory.title;
       description = selectedSubcategory.description;
@@ -112,88 +210,20 @@ const ContentSection = () => {
     );
   };
 
-  const [contentItems, setContentItems] = useState([]);
-  const [activeTab, setActiveTab] = useState("all");
-  const [favorites, setFavorites] = useState([]);
-
-  useEffect(() => {
-    if (showContentTypes && selectedSubcategory?.selectedContentType) {
-      fetchContent(selectedSubcategory.selectedContentType);
-    }
-  }, [showContentTypes, selectedSubcategory?.selectedContentType]);
-
-  const fetchContent = async (type) => {
-    console.log("Fetching content for:", {
-      type,
-      stageId,
-      categoryId: selectedSubcategory?.id,
-    });
-    try {
-      // Create content table if it doesn't exist
-      const { error: createError } = await supabase.rpc(
-        "create_content_table_if_not_exists",
-      );
-      if (createError) {
-        console.error("Error creating content table:", createError);
-      }
-
-      let query = supabase.from("content").select("*").eq("type", type);
-
-      if (stageId) {
-        query = query.eq("stage_id", stageId);
-      }
-
-      if (selectedSubcategory?.id) {
-        query = query.eq("category_id", selectedSubcategory.id);
-      }
-
-      const { data, error } = await query.order("created_at", {
-        ascending: false,
-      });
-
-      if (error) {
-        console.error("Error fetching content:", error);
-        throw error;
-      }
-      console.log("Fetched content:", data);
-      setContentItems(data || []);
-    } catch (error) {
-      console.error("Error fetching content:", error);
-    }
-  };
-
-  const renderContentTypeGrid = (contentType) => {
-    const filteredContent =
-      activeTab === "recent"
-        ? contentItems.slice(0, 5)
-        : activeTab === "favorites"
-          ? contentItems.filter((item) => favorites.includes(item.id))
-          : contentItems;
-
-    return (
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-right">
-          {contentType.title}
-        </h2>
-        <ResourceGrid
-          resources={filteredContent.map((item) => ({
-            id: item.id,
-            title: item.title,
-            type: item.type,
-            thumbnail: item.url,
-            downloadUrl: item.url,
-          }))}
-        />
-      </div>
-    );
-  };
-
   const renderContent = () => {
-    if (showContentTypes) {
-      const selectedType = selectedSubcategory.contentTypes.find(
+    if (selectedSubcategory?.selectedContentType) {
+      const selectedType = selectedSubcategory.contentTypes?.find(
         (type) => type.id === selectedSubcategory.selectedContentType,
       );
-      return renderContentTypeGrid(selectedType);
+      if (selectedType) {
+        return (
+          <div className="w-full max-w-7xl mx-auto">
+            <div className="grid gap-6">
+              {renderContentTypeGrid(selectedType)}
+            </div>
+          </div>
+        );
+      }
     }
 
     if (selectedSubcategory) {
@@ -206,6 +236,7 @@ const ContentSection = () => {
               title={contentType.title}
               description={contentType.description}
               onClick={() => {
+                fetchContent(contentType.id);
                 setSelectedSubcategory({
                   ...selectedSubcategory,
                   selectedContentType: contentType.id,
@@ -262,7 +293,7 @@ const ContentSection = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         {renderHeader()}
 
-        {showContentTypes ? (
+        {showContentTypes && selectedSubcategory?.selectedContentType ? (
           <Tabs
             defaultValue="all"
             className="w-full"
