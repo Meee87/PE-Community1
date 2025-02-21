@@ -146,10 +146,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80')] bg-cover bg-center">
+    <div className="min-h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=2874&auto=format&fit=crop')] bg-cover bg-center">
       <div className="absolute inset-0 bg-black bg-opacity-50" />
 
-      <Card className="w-full max-w-md mx-4 relative z-10">
+      <Card className="w-full max-w-md mx-4 relative z-10 bg-white shadow-xl border-0">
         <CardHeader className="space-y-1">
           <div className="flex justify-between items-center mb-4">
             <Button
@@ -189,7 +189,7 @@ const Login = () => {
                       name="fullName"
                       type="text"
                       placeholder="محمد أحمد"
-                      className="pr-10 text-right"
+                      className="pr-10 text-right bg-white"
                       required
                     />
                   </div>
@@ -204,7 +204,7 @@ const Login = () => {
                       name="email"
                       type="email"
                       placeholder="name@example.com"
-                      className="pr-10 text-right"
+                      className="pr-10 text-right bg-white"
                       required
                       dir="ltr"
                     />
@@ -220,7 +220,7 @@ const Login = () => {
                       name="password"
                       type="password"
                       placeholder="••••••••"
-                      className="pr-10 text-right"
+                      className="pr-10 text-right bg-white"
                       required
                       minLength={6}
                     />
@@ -252,7 +252,7 @@ const Login = () => {
                       name="email"
                       type="email"
                       placeholder="name@example.com"
-                      className="pr-10 text-right"
+                      className="pr-10 text-right bg-white"
                       required
                       dir="ltr"
                     />
@@ -273,7 +273,7 @@ const Login = () => {
                           نسيت كلمة المرور؟
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent className="bg-white">
                         <DialogHeader>
                           <DialogTitle>إعادة تعيين كلمة المرور</DialogTitle>
                         </DialogHeader>
@@ -292,6 +292,7 @@ const Login = () => {
                                 value={resetEmail}
                                 onChange={(e) => setResetEmail(e.target.value)}
                                 placeholder="name@example.com"
+                                className="bg-white"
                                 required
                               />
                             </div>
@@ -321,7 +322,7 @@ const Login = () => {
                       name="password"
                       type="password"
                       placeholder="••••••••"
-                      className="pr-10 text-right"
+                      className="pr-10 text-right bg-white"
                       required
                     />
                   </div>

@@ -147,7 +147,7 @@ const Calendar = ({ className }: { className?: string }) => {
                   <Plus className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="bg-[#F8FAF5]">
                 <DialogHeader>
                   <DialogTitle>إضافة حدث جديد</DialogTitle>
                 </DialogHeader>

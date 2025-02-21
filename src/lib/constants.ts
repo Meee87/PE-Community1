@@ -169,8 +169,8 @@ export const STAGES: Record<string, Stage> = {
             imageUrl:
               "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=500&auto=format",
             features: ["تعبير حركي", "إبداع", "تناسق"],
-            color: "bg-[#50FA7B]/10",
-            buttonColor: "bg-[#50FA7B]",
+            color: "bg-[#7403ee]/10",
+            buttonColor: "bg-[#7403ee]",
             contentTypes: [
               {
                 id: "images",
@@ -221,7 +221,7 @@ export const STAGES: Record<string, Stage> = {
           "تعزيز روح الفريق",
         ],
         color: "bg-[#FF79C6]/10",
-        buttonColor: "bg-[#FF79C6]",
+        buttonColor: "bg-[#FFD000]",
         subcategories: [
           {
             id: "team-sports",

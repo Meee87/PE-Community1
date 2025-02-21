@@ -175,7 +175,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-gray-50 pb-16 md:pb-0" dir="rtl">
       {/* Admin Header */}
       <div className="bg-[#748D19] text-white py-4 px-6 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto py-8 px-4 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -242,7 +242,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="users" className="text-right">
-          <TabsList className="justify-start">
+          <TabsList className="justify-start overflow-x-auto flex-wrap gap-2">
             <TabsTrigger value="users">المستخدمين</TabsTrigger>
             <TabsTrigger value="content">إدارة المحتوى</TabsTrigger>
             <TabsTrigger value="messages">الرسائل</TabsTrigger>
@@ -259,7 +259,7 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                     <Input
                       placeholder="البريد الإلكتروني"
                       className="flex-1"
@@ -277,42 +277,44 @@ const AdminDashboard = () => {
                   </div>
 
                   <div className="border rounded-lg overflow-hidden">
-                    <table className="w-full">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-4 py-3 text-right">
-                            البريد الإلكتروني
-                          </th>
-                          <th className="px-4 py-3 text-right">الاسم</th>
-                          <th className="px-4 py-3 text-right">
-                            تاريخ الإضافة
-                          </th>
-                          <th className="px-4 py-3 text-right">الإجراءات</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {admins.map((admin) => (
-                          <tr key={admin.email} className="border-t">
-                            <td className="px-4 py-3">{admin.email}</td>
-                            <td className="px-4 py-3">{admin.full_name}</td>
-                            <td className="px-4 py-3">
-                              {new Date(admin.created_at).toLocaleDateString(
-                                "ar-SA",
-                              )}
-                            </td>
-                            <td className="px-4 py-3">
-                              <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={() => removeAdmin(admin.email)}
-                              >
-                                إزالة
-                              </Button>
-                            </td>
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[600px]">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-3 text-right">
+                              البريد الإلكتروني
+                            </th>
+                            <th className="px-4 py-3 text-right">الاسم</th>
+                            <th className="px-4 py-3 text-right">
+                              تاريخ الإضافة
+                            </th>
+                            <th className="px-4 py-3 text-right">الإجراءات</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {admins.map((admin) => (
+                            <tr key={admin.email} className="border-t">
+                              <td className="px-4 py-3">{admin.email}</td>
+                              <td className="px-4 py-3">{admin.full_name}</td>
+                              <td className="px-4 py-3">
+                                {new Date(admin.created_at).toLocaleDateString(
+                                  "ar-SA",
+                                )}
+                              </td>
+                              <td className="px-4 py-3">
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => removeAdmin(admin.email)}
+                                >
+                                  إزالة
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -326,30 +328,63 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="space-y-6">
                     {Object.values(STAGES).map((stage) => (
-                      <Card key={stage.id} className="p-6">
-                        <h3 className="text-lg font-semibold mb-4">
-                          {stage.name}
-                        </h3>
-                        <div className="space-y-4">
-                          {stage.categories?.map((category) => (
-                            <div key={category.id}>
-                              <h4 className="font-medium text-gray-700 mb-2">
-                                {category.title}
-                              </h4>
-                              {category.subcategories?.map((subcategory) => (
-                                <div key={subcategory.id} className="pl-4 mb-2">
-                                  <ContentUploadDialog
-                                    stageId={stage.id}
-                                    categoryId={subcategory.id}
-                                    isAdmin={true}
-                                  />
+                      <Card key={stage.id} className="overflow-hidden">
+                        <CardHeader className="bg-[#7C9D32]/10">
+                          <CardTitle>{stage.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6">
+                          <div className="space-y-8">
+                            {stage.categories?.map((category) => (
+                              <div key={category.id} className="space-y-4">
+                                <h3 className="text-xl font-semibold text-[#7C9D32]">
+                                  {category.title}
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                  {category.subcategories?.map(
+                                    (subcategory) => (
+                                      <Card
+                                        key={subcategory.id}
+                                        className="overflow-hidden"
+                                      >
+                                        <div className="relative h-40">
+                                          <img
+                                            src={subcategory.imageUrl}
+                                            alt={subcategory.title}
+                                            className="w-full h-full object-cover"
+                                          />
+                                          <div
+                                            className={`absolute inset-0 ${subcategory.buttonColor} opacity-60`}
+                                          />
+                                        </div>
+                                        <CardContent className="p-4">
+                                          <h4 className="font-semibold mb-2">
+                                            {subcategory.title}
+                                          </h4>
+                                          <div className="space-y-2">
+                                            {subcategory.contentTypes?.map(
+                                              (type) => (
+                                                <ContentUploadDialog
+                                                  key={type.id}
+                                                  stageId={stage.id}
+                                                  categoryId={subcategory.id}
+                                                  contentType={type.id}
+                                                  isAdmin={true}
+                                                  className="w-full justify-start text-right"
+                                                />
+                                              ),
+                                            )}
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+                                    ),
+                                  )}
                                 </div>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
                       </Card>
                     ))}
                   </div>

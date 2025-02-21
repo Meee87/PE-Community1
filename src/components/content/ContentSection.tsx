@@ -172,15 +172,7 @@ const ContentSection = () => {
     return (
       <div className="mb-6">
         <div className="flex items-center justify-between gap-4 mb-4" dir="rtl">
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={() => navigate("/")}
-              variant="outline"
-              className="bg-white hover:bg-gray-50 flex items-center gap-2"
-            >
-              <Home className="h-4 w-4" />
-              الرئيسية
-            </Button>
+          <div className="flex items-center justify-between w-full gap-2">
             <Button
               onClick={handleBack}
               variant="outline"
@@ -188,6 +180,14 @@ const ContentSection = () => {
             >
               <ArrowRight className="h-4 w-4" />
               رجوع
+            </Button>
+            <Button
+              onClick={() => navigate("/")}
+              variant="outline"
+              className="bg-white hover:bg-gray-50 flex items-center gap-2"
+            >
+              <Home className="h-4 w-4" />
+              الرئيسية
             </Button>
           </div>
           {selectedSubcategory && !showContentTypes && (
