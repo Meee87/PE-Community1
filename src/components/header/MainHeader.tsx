@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { NotificationItem } from "@/components/notifications/NotificationItem";
+import { useNotifications } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -22,6 +24,7 @@ import {
   HelpCircle,
   BookOpen,
   Home,
+  Loader2,
 } from "lucide-react";
 import AuthDialog from "@/components/auth/AuthDialog";
 import { getCurrentUser, signOut } from "@/lib/auth";
@@ -30,6 +33,8 @@ import { supabase } from "@/lib/supabase";
 import { checkIsAdmin } from "@/lib/admin";
 
 const MainHeader = () => {
+  const { notifications, unreadCount, loading, markAsRead, markAllAsRead } =
+    useNotifications();
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -45,11 +50,45 @@ const MainHeader = () => {
       } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
-        const isAdminUser = await checkIsAdmin();
-        setIsAdmin(isAdminUser);
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role, email")
+          .eq("id", user.id)
+          .single();
+        setIsAdmin(
+          profile?.email === "eng.mohamed87@live.com" &&
+            profile?.role === "admin",
+        );
       }
     };
     checkAuth();
+
+    // Set up auth state listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        if (session?.user) {
+          setUser(session.user);
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role, email")
+            .eq("id", session.user.id)
+            .single();
+          setIsAdmin(
+            profile?.email === "eng.mohamed87@live.com" &&
+              profile?.role === "admin",
+          );
+        }
+      } else if (event === "SIGNED_OUT") {
+        setUser(null);
+        setIsAdmin(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleSignOut = async () => {
@@ -107,33 +146,51 @@ const MainHeader = () => {
                     className="relative text-white hover:bg-[#8fb339] hover:text-white"
                   >
                     <Bell className="h-5 w-5" />
-                    <span className="absolute -top-1 -right-1 bg-white text-[#7C9D32] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#7C9D32]">
-                      3
-                    </span>
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-white text-[#7C9D32] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#7C9D32]">
+                        {unreadCount}
+                      </span>
+                    )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80 bg-white" align="end">
-                  <div className="space-y-2">
-                    <h3 className="font-bold">الإشعارات</h3>
-                    <div className="space-y-2">
-                      {[1, 2, 3].map((i) => (
-                        <div
-                          key={i}
-                          className="flex items-start gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer"
-                        >
-                          <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#7C9D32] font-bold shadow border-2 border-[#7C9D32]">
-                            !
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">
-                              تم إضافة محتوى جديد
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              تم إضافة درس جديد في المرحلة الابتدائية
-                            </p>
-                          </div>
+                <PopoverContent className="w-96 bg-white p-4" align="end">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-lg">الإشعارات</h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={markAllAsRead}
+                        className="text-[#7C9D32] hover:text-[#7C9D32]/90"
+                      >
+                        تحديد الكل كمقروء
+                      </Button>
+                    </div>
+                    <div className="space-y-1 max-h-[400px] overflow-y-auto">
+                      {loading ? (
+                        <div className="flex items-center justify-center py-4">
+                          <Loader2 className="h-6 w-6 animate-spin text-[#7C9D32]" />
                         </div>
-                      ))}
+                      ) : notifications.length > 0 ? (
+                        notifications.map((notification) => (
+                          <div
+                            key={notification.id}
+                            onClick={() => markAsRead(notification.id)}
+                          >
+                            <NotificationItem
+                              title={notification.title}
+                              message={notification.message}
+                              type={notification.type}
+                              createdAt={notification.created_at}
+                              isRead={notification.is_read}
+                            />
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-4 text-gray-500">
+                          لا توجد إشعارات
+                        </div>
+                      )}
                     </div>
                   </div>
                 </PopoverContent>

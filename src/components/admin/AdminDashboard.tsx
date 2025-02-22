@@ -52,21 +52,77 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    fetchAdmins();
-    fetchContentRequests();
+    const init = async () => {
+      await fetchAdmins();
+      await fetchContentRequests();
+    };
+    init();
   }, []);
 
   const fetchContentRequests = async () => {
     try {
+      console.log("Fetching content requests...");
+
+      // First verify we are admin
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        console.error("No user found");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, email")
+        .eq("id", user.id)
+        .single();
+
+      const isAdmin =
+        profile?.email === "eng.mohamed87@live.com" &&
+        profile?.role === "admin";
+      console.log("Is admin:", isAdmin, profile);
+
+      if (!isAdmin) {
+        console.error("User is not admin");
+        return;
+      }
+
+      // Fetch requests
       const { data, error } = await supabase
         .from("content_requests")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      setContentRequests(data || []);
+      if (error) {
+        console.error("Error fetching content requests:", error);
+        throw error;
+      }
+
+      console.log("Content requests raw data:", data);
+
+      if (!data || data.length === 0) {
+        console.log("No content requests found");
+      } else {
+        console.log(`Found ${data.length} content requests`);
+      }
+
+      // Get user details for each request
+      const requestsWithUserDetails = await Promise.all(
+        data.map(async (request) => {
+          const { data: userData } = await supabase
+            .from("profiles")
+            .select("full_name, email")
+            .eq("id", request.user_id)
+            .single();
+          return { ...request, user: userData };
+        }),
+      );
+
+      console.log("Requests with user details:", requestsWithUserDetails);
+      setContentRequests(requestsWithUserDetails);
     } catch (error) {
-      console.error("Error fetching content requests:", error);
+      console.error("Error in fetchContentRequests:", error);
       toast({
         variant: "destructive",
         description: "حدث خطأ أثناء جلب طلبات المحتوى",
@@ -133,12 +189,11 @@ const AdminDashboard = () => {
 
   const fetchAdmins = async () => {
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("email, full_name, created_at")
-        .eq("role", "admin");
+      console.log("Fetching admins...");
+      const { data, error } = await supabase.from("profiles").select("*");
 
       if (error) throw error;
+      console.log("Fetched profiles:", data);
       setAdmins(data || []);
     } catch (error) {
       console.error("Error fetching admins:", error);
@@ -153,46 +208,35 @@ const AdminDashboard = () => {
     const checkAdmin = async () => {
       setLoading(true);
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) {
-          navigate("/login");
-          return;
-        }
-
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role, email")
-          .eq("id", user.id)
-          .single();
-
-        if (
-          !profile ||
-          profile.email !== "eng.mohamed87@live.com" ||
-          profile.role !== "admin"
-        ) {
+        const isAdmin = await checkIsAdmin();
+        if (!isAdmin) {
           navigate("/");
           toast({
             variant: "destructive",
             description: "غير مصرح لك بالوصول إلى لوحة التحكم",
           });
-          setLoading(false);
           return;
         }
 
         // Fetch stats
-        const [usersCount, contentCount, requestsCount] = await Promise.all([
-          supabase.from("profiles").select("id", { count: "exact" }),
-          supabase.from("content").select("id", { count: "exact" }),
-          supabase.from("content_requests").select("id", { count: "exact" }),
-        ]);
+        const { count: usersCount } = await supabase
+          .from("profiles")
+          .select("*", { count: "exact", head: true });
+
+        const { count: contentCount } = await supabase
+          .from("content")
+          .select("*", { count: "exact", head: true });
+
+        const { count: requestsCount } = await supabase
+          .from("content_requests")
+          .select("*", { count: "exact", head: true });
+
+        console.log("Stats:", { usersCount, contentCount, requestsCount });
 
         setStats({
-          totalUsers: usersCount.count || 0,
-          totalContent: contentCount.count || 0,
-          totalRequests: requestsCount.count || 0,
+          totalUsers: usersCount || 0,
+          totalContent: contentCount || 0,
+          totalRequests: requestsCount || 0,
         });
 
         setLoading(false);

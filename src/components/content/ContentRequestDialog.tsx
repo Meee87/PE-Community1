@@ -167,7 +167,17 @@ export default function ContentRequestDialog({
           طلب إضافة محتوى
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-white" dir="rtl">
+      <DialogContent
+        className="bg-white"
+        dir="rtl"
+        aria-describedby="dialog-description"
+      >
+        <p
+          id="dialog-description"
+          className="text-gray-600 text-sm text-center mb-4"
+        >
+          قم بإرسال طلب إضافة محتوى جديد للمراجعة من قبل المشرفين
+        </p>
         <DialogHeader className="text-right mb-4">
           <DialogTitle>طلب إضافة محتوى جديد</DialogTitle>
         </DialogHeader>
@@ -221,91 +231,13 @@ export default function ContentRequestDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="relative">
-                <div className="relative">
-                  <label
-                    htmlFor="file-upload"
-                    className="block w-full cursor-pointer"
-                  >
-                    <div className="w-full aspect-video rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
-                      {formData.previewUrl ? (
-                        <div className="relative w-full h-full">
-                          <img
-                            src={formData.previewUrl}
-                            alt="Preview"
-                            className="w-full h-full object-contain"
-                          />
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            className="absolute top-2 left-2"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setFormData((prev) => ({
-                                ...prev,
-                                file: null,
-                                previewUrl: null,
-                              }));
-                            }}
-                          >
-                            حذف
-                          </Button>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="text-gray-500 mb-2">
-                            انقر أو اسحب الملف هنا
-                          </div>
-                          <div className="text-sm text-gray-400">
-                            {formData.type === "image"
-                              ? "صور"
-                              : formData.type === "video"
-                                ? "فيديو"
-                                : "ملفات"}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </label>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        if (file.type.startsWith("image/")) {
-                          const reader = new FileReader();
-                          reader.onload = (e) => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              file,
-                              previewUrl: e.target?.result as string,
-                            }));
-                          };
-                          reader.readAsDataURL(file);
-                        } else {
-                          setFormData({ ...formData, file });
-                        }
-                      }
-                    }}
-                    accept={
-                      formData.type === "image"
-                        ? "image/*"
-                        : formData.type === "video"
-                          ? "video/*"
-                          : "*"
-                    }
-                    className="block w-full absolute inset-0 opacity-0 cursor-pointer"
-                    capture={
-                      formData.type === "image" ? "environment" : undefined
-                    }
-                  />
-                </div>
-                {formData.type === "image" && (
-                  <div className="mt-2">
+                <label
+                  htmlFor="file-upload"
+                  className="block w-full cursor-pointer"
+                >
+                  <div className="w-full aspect-video rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
                     {formData.previewUrl ? (
-                      <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
+                      <div className="relative w-full h-full">
                         <img
                           src={formData.previewUrl}
                           alt="Preview"
@@ -316,25 +248,101 @@ export default function ContentRequestDialog({
                           variant="destructive"
                           size="sm"
                           className="absolute top-2 left-2"
-                          onClick={() =>
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
                             setFormData((prev) => ({
                               ...prev,
                               file: null,
                               previewUrl: null,
-                            }))
-                          }
+                            }));
+                          }}
                         >
                           حذف
                         </Button>
                       </div>
                     ) : (
-                      <div className="w-full aspect-video rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
-                        <p className="text-gray-500">اختر صورة للمعاينة</p>
-                      </div>
+                      <>
+                        <div className="text-gray-500 mb-2">
+                          انقر أو اسحب الملف هنا
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          {formData.type === "image"
+                            ? "صور"
+                            : formData.type === "video"
+                              ? "فيديو"
+                              : "ملفات"}
+                        </div>
+                      </>
                     )}
                   </div>
-                )}
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      if (file.type.startsWith("image/")) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            file,
+                            previewUrl: e.target?.result as string,
+                          }));
+                        };
+                        reader.readAsDataURL(file);
+                      } else {
+                        setFormData({ ...formData, file });
+                      }
+                    }
+                  }}
+                  accept={
+                    formData.type === "image"
+                      ? "image/*"
+                      : formData.type === "video"
+                        ? "video/*"
+                        : "*"
+                  }
+                  className="block w-full absolute inset-0 opacity-0 cursor-pointer"
+                  capture={
+                    formData.type === "image" ? "environment" : undefined
+                  }
+                />
               </div>
+              {formData.type === "image" && (
+                <div className="mt-2">
+                  {formData.previewUrl ? (
+                    <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
+                      <img
+                        src={formData.previewUrl}
+                        alt="Preview"
+                        className="w-full h-full object-contain"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute top-2 left-2"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            file: null,
+                            previewUrl: null,
+                          }))
+                        }
+                      >
+                        حذف
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="w-full aspect-video rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                      <p className="text-gray-500">اختر صورة للمعاينة</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <div className="text-center text-sm text-gray-500">أو</div>
             <div className="space-y-2">
