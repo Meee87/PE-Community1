@@ -38,14 +38,43 @@ const Login = () => {
       .value;
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // Try to sign in first
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
+
+      // After successful sign in, check if profile exists
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", data.user.id)
+          .single();
+
+        // If no profile exists, create one
+        if (!profile) {
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .insert([
+              {
+                id: data.user.id,
+                email: email,
+                username: email.split("@")[0],
+                role: "user",
+                avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
+              },
+            ]);
+
+          if (profileError) throw profileError;
+        }
+      }
+
       toast({
-        description: "تم تسجيل الدخول بنجاح",
+        description: "تم تسجيل الدخول بنجاح! مرحباً بك مرة أخرى",
+        variant: "success",
       });
       navigate("/");
     } catch (error: any) {
@@ -69,6 +98,18 @@ const Login = () => {
       .value;
 
     try {
+      // First check if user exists
+      const { data: existingUser } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("email", email)
+        .single();
+
+      if (existingUser) {
+        setError("هذا البريد الإلكتروني مسجل مسبقاً");
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -102,18 +143,13 @@ const Login = () => {
           throw new Error("حدث خطأ في إنشاء الملف الشخصي");
         }
 
-        // Sign in automatically after successful signup
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (signInError) throw signInError;
-
         toast({
-          description: "تم إنشاء الحساب وتسجيل الدخول بنجاح!",
+          description:
+            "تم إنشاء الحساب بنجاح! تم إرسال رابط تأكيد البريد الإلكتروني",
+          variant: "success",
         });
-        navigate("/");
+        setFormData({ email: "", password: "", fullName: "" });
+        setMode("login");
       }
     } catch (error: any) {
       console.error("Error:", error);
@@ -155,7 +191,7 @@ const Login = () => {
             <Button
               variant="ghost"
               onClick={() => navigate("/")}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:bg-[#748d19] hover:text-white"
             >
               العودة للرئيسية
             </Button>
@@ -173,9 +209,19 @@ const Login = () => {
             </Alert>
           )}
           <Tabs defaultValue="signup" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signup">إنشاء حساب</TabsTrigger>
-              <TabsTrigger value="login">تسجيل الدخول</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 [&>[data-state=active]]:bg-[#748d19] [&>[data-state=active]]:text-white">
+              <TabsTrigger
+                value="signup"
+                className="hover:bg-[#748d19] hover:text-white transition-colors"
+              >
+                إنشاء حساب
+              </TabsTrigger>
+              <TabsTrigger
+                value="login"
+                className="hover:bg-[#748d19] hover:text-white transition-colors"
+              >
+                تسجيل الدخول
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="signup">

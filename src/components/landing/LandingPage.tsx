@@ -8,41 +8,27 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[500px] py-12 flex items-center justify-center text-center bg-gradient-to-b from-white via-transparent to-transparent">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=2874&auto=format&fit=crop')`,
-          }}
-        />
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-4">
-          <div className="flex flex-col items-center gap-2 mb-4">
-            <h1 className="text-4xl sm:text-6xl font-display tracking-tight text-[#7C9D32]">
-              PE
-            </h1>
-            <img
-              src="https://api.iconify.design/fluent-emoji-flat:whistle.svg"
-              alt="whistle"
-              className="w-12 h-12 sm:w-16 sm:h-16"
-            />
-            <h1 className="text-4xl sm:text-6xl font-display tracking-tight text-[#7C9D32]">
-              COMMUNITY
-            </h1>
+      <section className="relative w-full h-screen">
+        <div className="w-full h-full flex items-center justify-center">
+          <img
+            src="https://i.imgur.com/taEJlWj.png"
+            alt="PE Community"
+            className="w-full h-full object-contain"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100vh",
+              objectFit: "contain",
+            }}
+          />
+          <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 z-10">
+            <Button
+              className="bg-[#7C9D32] hover:bg-[#7C9D32]/90 text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-6 rounded-full transition-all duration-300 hover:scale-105"
+              size="lg"
+              onClick={() => navigate("/home")}
+            >
+              ابدأ الآن
+            </Button>
           </div>
-          <h2 className="text-2xl sm:text-3xl mb-4 sm:mb-6 text-gray-800">
-            مجتمع التربية البدنية
-          </h2>
-          <p className="text-base sm:text-xl mb-6 sm:mb-8 max-w-2xl mx-auto text-gray-600 px-4">
-            منصة تعليمية متكاملة لمعلمي ومعلمات التربية البدنية، تجمع بين
-            المحتوى التعليمي والتواصل المهني
-          </p>
-          <Button
-            className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#7C9D32] font-bold text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6"
-            size="lg"
-            onClick={() => navigate("/home")}
-          >
-            ابدأ الآن
-          </Button>
         </div>
       </section>
 

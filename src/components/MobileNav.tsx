@@ -71,13 +71,8 @@ const MobileNav = () => {
       label: "التقويم",
       onClick: () => setShowCalendar(true),
     },
-    {
-      icon: MessageSquare,
-      label: "المحادثة",
-      onClick: () => setShowChat(true),
-    },
     ...(isLoggedIn
-      ? [{ icon: User, label: "الملف الشخصي", path: "/profile" }]
+      ? [{ icon: LogOut, label: "تسجيل الخروج", onClick: handleSignOut }]
       : [{ icon: LogIn, label: "تسجيل الدخول", path: "/login" }]),
   ];
 
@@ -99,11 +94,7 @@ const MobileNav = () => {
             <SheetHeader className="p-4 border-b">
               <SheetTitle className="text-right flex items-center gap-2 justify-end">
                 <span className="text-[#7C9D32]">PE COMMUNITY</span>
-                <img
-                  src="https://api.iconify.design/fluent-emoji-flat:whistle.svg"
-                  alt="صافرة"
-                  className="h-8 w-8"
-                />
+                <img src="/logo.png" alt="صافرة" className="h-8 w-8" />
               </SheetTitle>
             </SheetHeader>
 
@@ -159,22 +150,6 @@ const MobileNav = () => {
                     <span>اتصل بنا</span>
                   </div>
                 </Button>
-
-                {isLoggedIn && (
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-right text-red-600 hover:text-red-600 hover:bg-red-50"
-                    onClick={() => {
-                      handleSignOut();
-                      setShowSideMenu(false);
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <LogOut className="h-5 w-5" />
-                      <span>تسجيل الخروج</span>
-                    </div>
-                  </Button>
-                )}
               </div>
             </div>
           </div>
@@ -184,7 +159,7 @@ const MobileNav = () => {
       {/* Bottom Navigation Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
         <div className="flex justify-around items-center h-16">
-          {menuItems.slice(0, 4).map((item, index) => (
+          {menuItems.map((item, index) => (
             <button
               key={index}
               onClick={() => {
@@ -194,10 +169,12 @@ const MobileNav = () => {
                   item.onClick();
                 }
               }}
-              className="flex flex-col items-center justify-center flex-1 h-full text-gray-600 hover:text-[#748D19]"
+              className="group flex flex-col items-center justify-center flex-1 h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200 py-2 rounded-lg"
             >
-              <item.icon className="h-6 w-6" />
-              <span className="text-xs mt-1">{item.label}</span>
+              <item.icon className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
+              <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+                {item.label}
+              </span>
             </button>
           ))}
         </div>
@@ -205,11 +182,13 @@ const MobileNav = () => {
 
       {/* Dialogs */}
       <Sheet open={showCalendar} onOpenChange={setShowCalendar}>
-        <SheetContent className="w-[90%] sm:w-[540px]">
-          <SheetHeader>
-            <SheetTitle>التقويم الرياضي</SheetTitle>
-          </SheetHeader>
-          <Calendar className="border-none shadow-none" />
+        <SheetContent
+          side="bottom"
+          className="w-[90%] sm:w-[540px] p-0 bg-transparent border-none mx-auto h-auto flex items-center justify-center"
+        >
+          <div className="bg-white rounded-3xl overflow-hidden shadow-lg w-full max-w-md">
+            <Calendar className="border-none shadow-none" />
+          </div>
         </SheetContent>
       </Sheet>
 

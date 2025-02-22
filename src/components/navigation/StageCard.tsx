@@ -47,18 +47,20 @@ const StageCard = ({
             src={
               imageSrc ||
               (() => {
-                if (title?.includes("اللعب النشط")) {
+                if (title?.includes("المرحلة الابتدائية")) {
+                  return "https://i.imgur.com/sJbg6xJ.png";
+                } else if (title?.includes("اللعب النشط")) {
                   return "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&auto=format&fit=crop";
                 } else if (title?.includes("إدارة الجسم")) {
                   return "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&auto=format&fit=crop";
                 } else if (title?.includes("الحركة التعبيرية")) {
                   return "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&auto=format&fit=crop";
                 } else if (title?.includes("مرحلة الطفولة")) {
-                  return "https://images.unsplash.com/photo-1503676382389-4809596d5290?w=800&auto=format&fit=crop";
+                  return "https://i.imgur.com/ddVwLrc.png";
                 } else if (title?.includes("الصفوف العليا")) {
-                  return "https://images.unsplash.com/photo-1576334761529-0f1d6c944e73?w=800&auto=format&fit=crop";
+                  return "https://i.imgur.com/yv5Ny0t.png";
                 } else {
-                  return "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&auto=format&fit=crop";
+                  return "https://i.imgur.com/yv5Ny0t.png";
                 }
               })()
             }
@@ -131,7 +133,7 @@ const StageCard = ({
             <button
               className={`mt-6 sm:mt-8 w-full ${buttonColor || "bg-[#7C9D32]"} hover:opacity-90 text-white py-2 px-4 rounded-lg transition-colors text-sm sm:text-base font-medium`}
             >
-              استكشف المرحلة
+              {title?.includes("المرحلة") ? "استكشف المرحلة" : "عرض المحتوى"}
             </button>
           </div>
         </div>

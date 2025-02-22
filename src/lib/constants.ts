@@ -38,6 +38,7 @@ export interface Stage {
   color?: string;
   buttonColor?: string;
   features?: string[];
+  imageUrl?: string;
   categories: Category[];
 }
 
@@ -50,6 +51,7 @@ export const STAGES: Record<string, Stage> = {
     icon: "book",
     color: "bg-white",
     buttonColor: "bg-[#206549]",
+    imageUrl: "https://i.imgur.com/sJbg6xJ.png",
     features: [
       "المهارات الحركية الأساسية",
       "الألعاب التعليمية الممتعة",
@@ -62,8 +64,7 @@ export const STAGES: Record<string, Stage> = {
         id: "early-childhood",
         title: "مرحلة الطفولة المبكرة",
         description: "محتوى تعليمي مخصص للصفوف الأولية من الأول إلى الثالث",
-        imageUrl:
-          "https://images.unsplash.com/photo-1503676382389-4809596d5290?w=500&auto=format",
+        imageUrl: "https://i.imgur.com/ddVwLrc.png",
         features: [
           "تطوير المهارات الحركية الأساسية",
           "الألعاب التعليمية التفاعلية",
@@ -76,8 +77,7 @@ export const STAGES: Record<string, Stage> = {
             id: "active-play",
             title: "اللعب النشط",
             description: "مجموعة متنوعة من الأنشطة الحركية والألعاب التفاعلية",
-            imageUrl:
-              "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=500&auto=format",
+            imageUrl: "https://i.imgur.com/05hZgET.png",
             features: ["ألعاب حركية", "أنشطة تفاعلية", "تمارين نشطة"],
             color: "bg-[#27AE60]/10",
             buttonColor: "bg-[#27AE60]",
@@ -121,8 +121,7 @@ export const STAGES: Record<string, Stage> = {
             id: "body-management",
             title: "إدارة الجسم",
             description: "تمارين متنوعة لتحسين التحكم والتوازن والمرونة",
-            imageUrl:
-              "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&auto=format",
+            imageUrl: "https://i.imgur.com/YA0lyvE.png",
             features: ["توازن", "مرونة", "تحكم"],
             color: "bg-[#BD93F9]/10",
             buttonColor: "bg-[#BD93F9]",
@@ -166,8 +165,7 @@ export const STAGES: Record<string, Stage> = {
             id: "expressive-movement",
             title: "الحركة التعبيرية",
             description: "أنشطة إبداعية لتطوير المهارات الحركية التعبيرية",
-            imageUrl:
-              "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=500&auto=format",
+            imageUrl: "https://i.imgur.com/0576Wqf.png",
             features: ["تعبير حركي", "إبداع", "تناسق"],
             color: "bg-[#7403ee]/10",
             buttonColor: "bg-[#7403ee]",
@@ -213,8 +211,7 @@ export const STAGES: Record<string, Stage> = {
         id: "upper-grades",
         title: "مرحلة الصفوف العليا",
         description: "محتوى تعليمي مخصص للصفوف العليا من الرابع إلى السادس",
-        imageUrl:
-          "https://images.unsplash.com/photo-1576334761529-0f1d6c944e73?w=500&auto=format",
+        imageUrl: "https://i.imgur.com/yv5Ny0t.png",
         features: [
           "تطوير المهارات الرياضية المتقدمة",
           "المشاركة في المنافسات",
@@ -227,8 +224,7 @@ export const STAGES: Record<string, Stage> = {
             id: "team-sports",
             title: "الألعاب الجماعية",
             description: "تطوير مهارات العمل الجماعي والتنسيق",
-            imageUrl:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=500&auto=format",
+            imageUrl: "https://i.imgur.com/acwSG5W.png",
             features: ["كرة القدم", "كرة السلة", "الكرة الطائرة"],
             color: "bg-[#27AE60]/10",
             buttonColor: "bg-[#27AE60]",
@@ -272,8 +268,7 @@ export const STAGES: Record<string, Stage> = {
             id: "individual-sports",
             title: "الألعاب الفردية",
             description: "تنمية المهارات الشخصية والثقة بالنفس",
-            imageUrl:
-              "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format",
+            imageUrl: "https://i.imgur.com/acwSG5W.png",
             features: ["الجمباز", "ألعاب القوى", "السباحة"],
             color: "bg-[#BD93F9]/10",
             buttonColor: "bg-[#BD93F9]",

@@ -79,7 +79,7 @@ const MainHeader = () => {
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold text-white">PE</span>
               <img
-                src="https://i.imgur.com/fcLmxsY.png"
+                src="/logo.png"
                 alt="صافرة"
                 className="h-16 w-16 object-contain"
               />

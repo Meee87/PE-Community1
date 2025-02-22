@@ -1,25 +1,9 @@
 import React, { useEffect } from "react";
 import { Calendar as CalendarIcon, Plus } from "lucide-react";
 import { Calendar as CalendarComponent } from "./ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "./ui/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 
 interface Event {
   id: string;
@@ -133,70 +117,28 @@ const Calendar = ({ className }: { className?: string }) => {
   );
 
   return (
-    <Card className={`w-full max-w-[350px] mx-auto bg-white ${className}`}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <CalendarIcon className="h-5 w-5" />
-            التقويم الرياضي
-          </CardTitle>
-          {isAdmin && (
-            <Dialog open={showAddEvent} onOpenChange={setShowAddEvent}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-[#F8FAF5]">
-                <DialogHeader>
-                  <DialogTitle>إضافة حدث جديد</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Input
-                      placeholder="عنوان الحدث"
-                      value={newEvent.title}
-                      onChange={(e) =>
-                        setNewEvent({ ...newEvent, title: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Select
-                      value={newEvent.type}
-                      onValueChange={(
-                        value: "training" | "competition" | "meeting",
-                      ) => setNewEvent({ ...newEvent, type: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="نوع الحدث" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="training">تدريب</SelectItem>
-                        <SelectItem value="competition">منافسة</SelectItem>
-                        <SelectItem value="meeting">اجتماع</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button
-                    className="w-full bg-[#7C9D32] hover:bg-[#7C9D32]/90"
-                    onClick={handleAddEvent}
-                  >
-                    إضافة
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className="p-4">
+    <div className="flex items-center justify-center p-4">
+      <div className={`w-full max-w-md ${className}`}>
         <div className="grid gap-4">
           <CalendarComponent
             mode="single"
             selected={date}
             onSelect={setDate}
-            className="rounded-md border w-full max-w-[300px] mx-auto"
+            className="mx-auto"
+            classNames={{
+              day_selected:
+                "bg-[#7C9D32] text-white hover:bg-[#7C9D32] focus:bg-[#7C9D32]",
+              day_today: "bg-transparent text-black",
+              cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-transparent",
+              day: "h-9 w-9 p-0 font-normal hover:bg-gray-100",
+              nav_button: "hover:bg-gray-100 text-black",
+              nav_button_previous: "absolute left-1",
+              nav_button_next: "absolute right-1",
+              caption: "relative py-4 px-8 text-center text-lg font-normal",
+              table: "w-full border-collapse",
+              head_cell: "text-black font-normal",
+              root: "bg-white p-0",
+            }}
           />
 
           {selectedDateEvents.length > 0 && (
@@ -205,10 +147,10 @@ const Calendar = ({ className }: { className?: string }) => {
               {selectedDateEvents.map((event) => (
                 <div
                   key={event.id}
-                  className="p-2 bg-gray-50 rounded-md flex items-center justify-between"
+                  className="p-3 bg-gray-50 rounded-md flex items-center justify-between hover:bg-gray-100 transition-colors"
                 >
-                  <span>{event.title}</span>
-                  <span className="text-sm text-gray-500">
+                  <span className="font-medium">{event.title}</span>
+                  <span className="text-sm px-2 py-1 rounded bg-[#748d19]/10 text-[#748d19]">
                     {event.type === "training" && "تدريب"}
                     {event.type === "competition" && "منافسة"}
                     {event.type === "meeting" && "اجتماع"}
@@ -218,8 +160,8 @@ const Calendar = ({ className }: { className?: string }) => {
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

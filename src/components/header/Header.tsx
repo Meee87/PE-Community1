@@ -92,7 +92,7 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
                 PE
               </span>
               <img
-                src="https://api.iconify.design/fluent-emoji-flat:whistle.svg"
+                src="/logo.png"
                 alt="صافرة"
                 className="h-8 w-8 md:h-10 md:w-10"
               />

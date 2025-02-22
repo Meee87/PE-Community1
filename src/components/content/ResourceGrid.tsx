@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Tooltip,
   TooltipContent,
@@ -27,6 +33,61 @@ const ResourceGrid = ({
   onPreview = () => {},
   onDownload = () => {},
 }: ResourceGridProps) => {
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(
+    null,
+  );
+
+  const renderPreviewContent = (resource: Resource) => {
+    switch (resource.type) {
+      case "image":
+        return (
+          <img
+            src={resource.downloadUrl}
+            alt={resource.title}
+            className="w-full h-full object-contain rounded-lg max-h-[70vh]"
+          />
+        );
+      case "video":
+        return (
+          <div className="aspect-video w-full">
+            <iframe
+              src={resource.downloadUrl}
+              title={resource.title}
+              className="w-full h-full rounded-lg"
+              allowFullScreen
+            />
+          </div>
+        );
+      case "file":
+        return (
+          <object
+            data={resource.downloadUrl}
+            type="application/pdf"
+            className="w-full h-[70vh] rounded-lg"
+          >
+            <div className="text-center py-8">
+              <p className="mb-4">لا يمكن عرض الملف مباشرة</p>
+              <Button
+                onClick={() => {
+                  const link = document.createElement("a");
+                  link.href = resource.downloadUrl;
+                  link.download = resource.title;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+                className="bg-[#748d19] hover:bg-[#647917]"
+              >
+                تحميل الملف
+              </Button>
+            </div>
+          </object>
+        );
+      default:
+        return <div>غير متوفر</div>;
+    }
+  };
+
   return (
     <div className="bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-md">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -35,47 +96,33 @@ const ResourceGrid = ({
             key={resource.id}
             className="overflow-hidden hover:shadow-lg transition-all duration-300 bg-white/90 backdrop-blur-sm"
           >
-            <div className="relative aspect-video">
+            <div
+              className="relative aspect-video cursor-pointer"
+              onClick={() => {
+                setSelectedResource(resource);
+                onPreview(resource);
+              }}
+            >
               {resource.type === "image" ? (
                 <img
                   src={resource.downloadUrl}
                   alt={resource.title}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    console.error(
-                      "Image failed to load:",
-                      resource.downloadUrl,
-                    );
                     e.currentTarget.src =
                       "https://placehold.co/600x400?text=Error+Loading+Image";
-                  }}
-                  onLoad={() => {
-                    console.log(
-                      "Image loaded successfully:",
-                      resource.downloadUrl,
-                    );
                   }}
                   loading="lazy"
                 />
               ) : resource.type === "video" ? (
                 <div className="w-full h-full bg-black flex items-center justify-center">
-                  <iframe
-                    src={resource.downloadUrl}
-                    title={resource.title}
-                    className="w-full h-full"
-                    allowFullScreen
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                  <div className="text-gray-500">Preview not available</div>
-                </div>
-              )}
-              {resource.type === "video" && (
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center">
                     <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1"></div>
                   </div>
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                  <div className="text-gray-500">معاينة غير متوفرة</div>
                 </div>
               )}
               {resource.type === "file" && (
@@ -93,7 +140,10 @@ const ResourceGrid = ({
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => onPreview(resource)}
+                        onClick={() => {
+                          setSelectedResource(resource);
+                          onPreview(resource);
+                        }}
                       >
                         <img
                           src="https://api.iconify.design/fluent-emoji-flat/eyes.svg"
@@ -111,27 +161,25 @@ const ResourceGrid = ({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <a
-                        href={resource.downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          onDownload(resource);
+                          const link = document.createElement("a");
+                          link.href = resource.downloadUrl;
+                          link.download = resource.title;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }}
                       >
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            onDownload(resource);
-                            window.open(resource.downloadUrl, "_blank");
-                          }}
-                        >
-                          <img
-                            src="https://api.iconify.design/fluent-emoji-flat/inbox-tray.svg"
-                            alt="تحميل"
-                            className="h-5 w-5"
-                          />
-                        </Button>
-                      </a>
+                        <img
+                          src="https://api.iconify.design/fluent-emoji-flat/inbox-tray.svg"
+                          alt="تحميل"
+                          className="h-5 w-5"
+                        />
+                      </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>تحميل</p>
@@ -143,6 +191,20 @@ const ResourceGrid = ({
           </Card>
         ))}
       </div>
+
+      <Dialog
+        open={!!selectedResource}
+        onOpenChange={() => setSelectedResource(null)}
+      >
+        <DialogContent className="max-w-4xl bg-white">
+          <DialogHeader>
+            <DialogTitle>{selectedResource?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            {selectedResource && renderPreviewContent(selectedResource)}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
