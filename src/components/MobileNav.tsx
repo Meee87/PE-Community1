@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import AuthDialog from "./auth/AuthDialog";
 import {
   Home,
   Calendar as CalendarIcon,
@@ -11,6 +12,7 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  Bell,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import {
@@ -24,163 +26,271 @@ import Calendar from "./Calendar";
 import Contact from "./Contact";
 import ChatDialog from "./chat/ChatDialog";
 import { Button } from "./ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 const MobileNav = () => {
+  const [showAuthDialog, setShowAuthDialog] = React.useState(false);
   const navigate = useNavigate();
   const [showCalendar, setShowCalendar] = React.useState(false);
   const [showContact, setShowContact] = React.useState(false);
   const [showChat, setShowChat] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [userName, setUserName] = React.useState("");
   const [showSideMenu, setShowSideMenu] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const { toast } = useToast();
 
   React.useEffect(() => {
-    const checkAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+    checkAuth();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       setIsLoggedIn(!!session);
-
       if (session?.user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("role, email")
+          .select("role, email, full_name, username")
           .eq("id", session.user.id)
           .single();
         setIsAdmin(
           profile?.email === "eng.mohamed87@live.com" &&
             profile?.role === "admin",
         );
+        setUserName(profile?.full_name || profile?.username || "مستخدم");
+      } else {
+        setIsAdmin(false);
       }
+    });
+
+    return () => {
+      subscription.unsubscribe();
     };
-    checkAuth();
   }, []);
 
+  async function checkAuth() {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    setIsLoggedIn(!!session);
+
+    if (session?.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, email")
+        .eq("id", session.user.id)
+        .single();
+      setIsAdmin(
+        profile?.email === "eng.mohamed87@live.com" &&
+          profile?.role === "admin",
+      );
+    }
+  }
+
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    setIsLoggedIn(false);
-    setIsAdmin(false);
-    navigate("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+      setShowSideMenu(false);
+      setUserName("");
+      setOpen(false);
+
+      toast({
+        description: "تم تسجيل الخروج بنجاح",
+      });
+
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        variant: "destructive",
+        description: "حدث خطأ في تسجيل الخروج",
+      });
+    }
   };
 
-  const menuItems = [
-    { icon: Home, label: "الرئيسية", path: "/" },
-    { icon: BookOpen, label: "المحتوى", path: "/home" },
-    {
-      icon: CalendarIcon,
-      label: "التقويم",
-      onClick: () => setShowCalendar(true),
-    },
-    ...(isLoggedIn
-      ? [{ icon: LogOut, label: "تسجيل الخروج", onClick: handleSignOut }]
-      : [{ icon: LogIn, label: "تسجيل الدخول", path: "/login" }]),
-  ];
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setOpen(false);
+  };
 
   return (
     <>
-      {/* Side Menu */}
-      <Sheet open={showSideMenu} onOpenChange={setShowSideMenu}>
-        <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden fixed top-4 right-4 z-50 text-[#7C9D32]"
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="right" className="w-[85%] bg-white p-0">
-          <div className="flex flex-col h-full">
-            <SheetHeader className="p-4 border-b">
-              <SheetTitle className="text-right flex items-center gap-2 justify-end">
-                <span className="text-[#7C9D32]">PE COMMUNITY</span>
-                <img src="/logo.png" alt="صافرة" className="h-8 w-8" />
-              </SheetTitle>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex items-center justify-between px-4">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-gray-600">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[85vw] sm:w-[400px] bg-white">
+            <SheetHeader>
+              <SheetTitle className="text-right">القائمة</SheetTitle>
             </SheetHeader>
-
-            <div className="flex-1 overflow-auto py-4">
-              <div className="space-y-2 px-2">
-                {menuItems.map((item, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="w-full justify-start text-right"
-                    onClick={() => {
-                      setShowSideMenu(false);
-                      if (item.path) {
-                        navigate(item.path);
-                      } else if (item.onClick) {
-                        item.onClick();
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.label}</span>
+            <div className="mt-6 space-y-6">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                {isLoggedIn ? (
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`}
+                      alt="Avatar"
+                      className="w-12 h-12 rounded-full bg-white"
+                    />
+                    <div>
+                      <p className="font-semibold">{userName}</p>
+                      <p className="text-sm text-gray-600">مدرس تربية بدنية</p>
                     </div>
-                  </Button>
-                ))}
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <p className="text-gray-600 mb-2">
+                      قم بتسجيل الدخول للوصول إلى حسابك
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        setShowAuthDialog(true);
+                        setOpen(false);
+                      }}
+                    >
+                      تسجيل الدخول
+                    </Button>
+                  </div>
+                )}
+              </div>
 
+              <div className="space-y-1">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-right"
+                  onClick={() => handleNavigation("/")}
+                >
+                  <Home className="ml-2 h-5 w-5" />
+                  الرئيسية
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-right"
+                  onClick={() => handleNavigation("/home")}
+                >
+                  <BookOpen className="ml-2 h-5 w-5" />
+                  المحتوى
+                </Button>
+                {isLoggedIn && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-right"
+                      onClick={() => handleNavigation("/profile")}
+                    >
+                      <User className="ml-2 h-5 w-5" />
+                      الملف الشخصي
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-right"
+                    >
+                      <Bell className="ml-2 h-5 w-5" />
+                      الإشعارات
+                      <span className="mr-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        3
+                      </span>
+                    </Button>
+                  </>
+                )}
                 {isAdmin && (
                   <Button
                     variant="ghost"
                     className="w-full justify-start text-right"
-                    onClick={() => {
-                      setShowSideMenu(false);
-                      navigate("/admin");
-                    }}
+                    onClick={() => handleNavigation("/admin")}
                   >
-                    <div className="flex items-center gap-3">
-                      <Settings className="h-5 w-5" />
-                      <span>لوحة التحكم</span>
-                    </div>
+                    <Settings className="ml-2 h-5 w-5" />
+                    لوحة التحكم
                   </Button>
                 )}
-
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-right"
-                  onClick={() => {
-                    setShowSideMenu(false);
-                    setShowContact(true);
-                  }}
-                >
-                  <div className="flex items-center gap-3">
-                    <HelpCircle className="h-5 w-5" />
-                    <span>اتصل بنا</span>
-                  </div>
-                </Button>
+                {isLoggedIn ? (
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-right text-red-600 hover:text-red-600 hover:bg-red-50"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="ml-2 h-5 w-5" />
+                    تسجيل الخروج
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-right"
+                    onClick={() => {
+                      setShowAuthDialog(true);
+                      setOpen(false);
+                    }}
+                  >
+                    <LogIn className="ml-2 h-5 w-5" />
+                    تسجيل الدخول
+                  </Button>
+                )}
               </div>
             </div>
-          </div>
-        </SheetContent>
-      </Sheet>
+          </SheetContent>
+        </Sheet>
 
-      {/* Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div className="flex justify-around items-center h-16">
-          {menuItems.map((item, index) => (
+        <div className="grid grid-cols-4 w-full h-16 bg-white">
+          <button
+            onClick={() => handleNavigation("/")}
+            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200"
+          >
+            <Home className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
+            <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+              الرئيسية
+            </span>
+          </button>
+          <button
+            onClick={() => handleNavigation("/home")}
+            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200"
+          >
+            <BookOpen className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
+            <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+              المحتوى
+            </span>
+          </button>
+          <button
+            onClick={() => setShowCalendar(true)}
+            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200"
+          >
+            <CalendarIcon className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
+            <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+              التقويم
+            </span>
+          </button>
+          {isLoggedIn ? (
             <button
-              key={index}
-              onClick={() => {
-                if (item.path) {
-                  navigate(item.path);
-                } else if (item.onClick) {
-                  item.onClick();
-                }
-              }}
-              className="group flex flex-col items-center justify-center flex-1 h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200 py-2 rounded-lg"
+              onClick={handleSignOut}
+              className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200"
             >
-              <item.icon className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
+              <LogOut className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
               <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
-                {item.label}
+                خروج
               </span>
             </button>
-          ))}
+          ) : (
+            <button
+              onClick={() => setShowAuthDialog(true)}
+              className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200"
+            >
+              <LogIn className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
+              <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+                دخول
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Dialogs */}
       <Sheet open={showCalendar} onOpenChange={setShowCalendar}>
         <SheetContent
           side="bottom"
@@ -209,6 +319,14 @@ const MobileNav = () => {
           <ChatDialog onClose={() => setShowChat(false)} />
         </SheetContent>
       </Sheet>
+
+      <AuthDialog
+        isOpen={showAuthDialog}
+        onClose={() => {
+          setShowAuthDialog(false);
+          checkAuth();
+        }}
+      />
     </>
   );
 };

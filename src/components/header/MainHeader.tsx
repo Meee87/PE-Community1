@@ -43,9 +43,8 @@ const MainHeader = () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      setUser(user);
-
       if (user) {
+        setUser(user);
         const isAdminUser = await checkIsAdmin();
         setIsAdmin(isAdminUser);
       }
@@ -63,7 +62,7 @@ const MainHeader = () => {
   };
 
   return (
-    <header className="bg-[#7C9D32] text-white py-4 px-6 shadow-md sticky top-0 z-50">
+    <header className="bg-[#7C9D32] text-white py-2 px-4 shadow-md fixed top-0 left-0 right-0 z-50 h-16 hidden md:block">
       <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
         {/* Logo and Menu */}
         <div className="flex items-center gap-4">
@@ -77,13 +76,13 @@ const MainHeader = () => {
           </Button>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-white">PE</span>
+              <span className="text-lg font-bold text-white">PE</span>
               <img
                 src="/logo.png"
                 alt="صافرة"
-                className="h-16 w-16 object-contain"
+                className="h-10 w-10 object-contain"
               />
-              <span className="text-2xl font-bold text-white">COMMUNITY</span>
+              <span className="text-lg font-bold text-white">COMMUNITY</span>
             </div>
           </div>
         </div>
@@ -108,12 +107,12 @@ const MainHeader = () => {
                     className="relative text-white hover:bg-[#8fb339] hover:text-white"
                   >
                     <Bell className="h-5 w-5" />
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-white text-[#7C9D32] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#7C9D32]">
                       3
                     </span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80" align="end">
+                <PopoverContent className="w-80 bg-white" align="end">
                   <div className="space-y-2">
                     <h3 className="font-bold">الإشعارات</h3>
                     <div className="space-y-2">
@@ -122,7 +121,7 @@ const MainHeader = () => {
                           key={i}
                           className="flex items-start gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer"
                         >
-                          <div className="h-8 w-8 rounded-full bg-[#7C9D32] flex items-center justify-center text-white">
+                          <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#7C9D32] font-bold shadow border-2 border-[#7C9D32]">
                             !
                           </div>
                           <div>
@@ -150,7 +149,7 @@ const MainHeader = () => {
                     <User className="h-5 w-5" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-56" align="end">
+                <PopoverContent className="w-56 bg-white" align="end">
                   <div className="space-y-3">
                     <div className="border-b pb-2">
                       <p className="font-medium">مرحباً بك</p>

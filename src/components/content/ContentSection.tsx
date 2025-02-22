@@ -6,6 +6,12 @@ import StageCard from "../navigation/StageCard";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ArrowRight, Home } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import ContentUploadDialog from "./ContentUploadDialog";
@@ -18,6 +24,7 @@ const ContentSection = () => {
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<any>(null);
+  const [selectedResource, setSelectedResource] = useState<any>(null);
   const [showContentTypes, setShowContentTypes] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [contentItems, setContentItems] = useState([]);
@@ -86,14 +93,14 @@ const ContentSection = () => {
         categoryId: selectedSubcategory?.id,
       });
 
-      const dbContentType =
-        contentType === "images"
-          ? "image"
-          : contentType === "videos"
-            ? "video"
-            : contentType === "files"
-              ? "file"
-              : "talent";
+      // Map UI content types to database types
+      let dbContentType = contentType;
+      if (contentType === "images") dbContentType = "image";
+      if (contentType === "videos") dbContentType = "video";
+      if (contentType === "files") dbContentType = "file";
+      if (contentType === "talented") dbContentType = "talent";
+
+      console.log("Using DB content type:", dbContentType);
 
       const { data, error } = await supabase
         .from("content")
@@ -107,7 +114,14 @@ const ContentSection = () => {
 
       console.log("Fetched content:", data);
 
-      setContentItems(data || []);
+      // Map the data to include proper URLs
+      const mappedData = (data || []).map((item) => ({
+        ...item,
+        url: item.url.startsWith("http") ? item.url : item.url,
+      }));
+
+      console.log("Mapped data:", mappedData);
+      setContentItems(mappedData);
     } catch (error) {
       console.error("Error fetching content:", error);
       toast({
@@ -141,11 +155,17 @@ const ContentSection = () => {
         <ResourceGrid
           resources={resources}
           onPreview={(resource) => {
-            window.open(resource.downloadUrl, "_blank");
+            setSelectedResource(resource);
           }}
           onDownload={(resource) => {
-            window.open(resource.downloadUrl, "_blank");
+            const link = document.createElement("a");
+            link.href = resource.downloadUrl;
+            link.download = resource.title;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
           }}
+          isAdmin={isAdmin}
         />
       </div>
     );
@@ -319,6 +339,61 @@ const ContentSection = () => {
           renderContent()
         )}
       </div>
+
+      {/* Preview Dialog */}
+      <Dialog
+        open={!!selectedResource}
+        onOpenChange={() => setSelectedResource(null)}
+      >
+        <DialogContent className="max-w-4xl bg-white">
+          <DialogHeader>
+            <DialogTitle>{selectedResource?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            {selectedResource?.type === "image" && (
+              <img
+                src={selectedResource.downloadUrl}
+                alt={selectedResource.title}
+                className="w-full h-full object-contain rounded-lg max-h-[70vh]"
+              />
+            )}
+            {selectedResource?.type === "video" && (
+              <div className="aspect-video w-full">
+                <iframe
+                  src={selectedResource.downloadUrl}
+                  title={selectedResource.title}
+                  className="w-full h-full rounded-lg"
+                  allowFullScreen
+                />
+              </div>
+            )}
+            {selectedResource?.type === "file" && (
+              <object
+                data={selectedResource.downloadUrl}
+                type="application/pdf"
+                className="w-full h-[70vh] rounded-lg"
+              >
+                <div className="text-center py-8">
+                  <p className="mb-4">لا يمكن عرض الملف مباشرة</p>
+                  <Button
+                    onClick={() => {
+                      const link = document.createElement("a");
+                      link.href = selectedResource.downloadUrl;
+                      link.download = selectedResource.title;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                    className="bg-[#748d19] hover:bg-[#647917]"
+                  >
+                    تحميل الملف
+                  </Button>
+                </div>
+              </object>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -19,34 +20,81 @@ interface HeaderProps {
 }
 
 const Header = ({ onMenuClick, userName }: HeaderProps) => {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const checkAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setIsLoggedIn(!!session);
+    // Initial check
+    checkAuth();
 
+    // Set up auth state listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setIsLoggedIn(!!session);
       if (session?.user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("role")
+          .select("role, email")
           .eq("id", session.user.id)
           .single();
-        setIsAdmin(profile?.role === "admin");
+        setIsAdmin(
+          profile?.email === "eng.mohamed87@live.com" &&
+            profile?.role === "admin",
+        );
+      } else {
+        setIsAdmin(false);
       }
+    });
+
+    // Cleanup subscription
+    return () => {
+      subscription.unsubscribe();
     };
-    checkAuth();
   }, []);
 
+  async function checkAuth() {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    setIsLoggedIn(!!session);
+
+    if (session?.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, email")
+        .eq("id", session.user.id)
+        .single();
+      setIsAdmin(
+        profile?.email === "eng.mohamed87@live.com" &&
+          profile?.role === "admin",
+      );
+    }
+  }
+
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsLoggedIn(false);
-    setIsAdmin(false);
-    navigate("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+
+      toast({
+        description: "تم تسجيل الخروج بنجاح",
+      });
+
+      // Force a page reload to clear all state
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        variant: "destructive",
+        description: "حدث خطأ في تسجيل الخروج",
+      });
+    }
   };
 
   const buttonClasses =

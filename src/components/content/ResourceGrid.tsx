@@ -1,6 +1,19 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -26,13 +39,55 @@ interface ResourceGridProps {
   resources?: Resource[];
   onPreview?: (resource: Resource) => void;
   onDownload?: (resource: Resource) => void;
+  isAdmin?: boolean;
+  onDelete?: (resource: Resource) => void;
 }
 
 const ResourceGrid = ({
   resources = [],
   onPreview = () => {},
   onDownload = () => {},
+  isAdmin = false,
+  onDelete,
 }: ResourceGridProps) => {
+  const { toast } = useToast();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [resourceToDelete, setResourceToDelete] = useState<Resource | null>(
+    null,
+  );
+
+  const handleDelete = async (resource: Resource) => {
+    try {
+      // Delete from storage if URL is from Supabase storage
+      if (resource.downloadUrl.includes("content")) {
+        const path = resource.downloadUrl.split("/").pop();
+        if (path) {
+          await supabase.storage.from("content").remove([path]);
+        }
+      }
+
+      // Delete from database
+      const { error } = await supabase
+        .from("content")
+        .delete()
+        .eq("id", resource.id);
+
+      if (error) throw error;
+
+      toast({
+        description: "تم حذف المحتوى بنجاح",
+      });
+
+      // Call onDelete callback if provided
+      onDelete?.(resource);
+    } catch (error) {
+      console.error("Error deleting resource:", error);
+      toast({
+        variant: "destructive",
+        description: "حدث خطأ أثناء حذف المحتوى",
+      });
+    }
+  };
   const [selectedResource, setSelectedResource] = useState<Resource | null>(
     null,
   );
@@ -133,7 +188,30 @@ const ResourceGrid = ({
             </div>
             <CardContent className="p-4 text-right">
               <h3 className="font-semibold mb-4 text-lg">{resource.title}</h3>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center gap-2">
+                {isAdmin && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="text-red-600 hover:bg-red-100"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setResourceToDelete(resource);
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>حذف</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -205,6 +283,32 @@ const ResourceGrid = ({
           </div>
         </DialogContent>
       </Dialog>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              هل أنت متأكد من حذف هذا المحتوى؟
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              هذا الإجراء لا يمكن التراجع عنه. سيتم حذف المحتوى نهائياً.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => {
+                if (resourceToDelete) {
+                  handleDelete(resourceToDelete);
+                  setDeleteDialogOpen(false);
+                }
+              }}
+            >
+              حذف
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -8,17 +8,12 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="relative w-full h-screen">
+      <section className="relative w-full h-[100vh] md:h-[calc(100vh-4rem)] md:mt-20">
         <div className="w-full h-full flex items-center justify-center">
           <img
-            src="https://i.imgur.com/taEJlWj.png"
+            src="https://i.imgur.com/8Q3AzIU.png"
             alt="PE Community"
-            className="w-full h-full object-contain"
-            style={{
-              maxWidth: "100%",
-              maxHeight: "100vh",
-              objectFit: "contain",
-            }}
+            className="w-full h-full object-cover object-center"
           />
           <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 z-10">
             <Button

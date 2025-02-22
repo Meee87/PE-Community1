@@ -1,4 +1,4 @@
-@import url("https://fonts.29lt.com/css/29LT-Adir");
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,56 +8,39 @@
 html,
 body {
   direction: rtl;
+  font-family: "Tajawal", sans-serif;
 }
 
 /* Force RTL for specific components */
-.rdp {
+.rdp,
+.dialog-content,
+.tabs-content,
+.card-content,
+table,
+ul,
+ol,
+form,
+.dropdown-content {
   direction: rtl;
 }
 
-/* Dialog content should be RTL */
-.dialog-content {
-  direction: rtl;
-}
-
-/* Tabs should be RTL */
-.tabs-content {
-  direction: rtl;
-}
-
-/* Cards should be RTL */
-.card-content {
-  direction: rtl;
+/* Text alignment for specific components */
+.card-content,
+.admin-card,
+.admin-stats,
+.admin-table th,
+.admin-table td,
+.admin-form label,
+.admin-dashboard .card-header,
+.admin-dashboard .card-content {
   text-align: right;
 }
 
-/* Stage cards specific styles */
-.stage-card-content {
-  text-align: center !important;
-}
-
-.stage-card-title {
-  text-align: center !important;
-}
-
+/* Center text inside stage cards */
+.stage-card-content,
+.stage-card-title,
 .stage-card-description {
   text-align: center !important;
-}
-
-/* Tables should be RTL */
-table {
-  direction: rtl;
-}
-
-/* Lists should be RTL */
-ul,
-ol {
-  direction: rtl;
-}
-
-/* Form elements should be RTL */
-form {
-  direction: rtl;
 }
 
 /* Buttons with icons should have icons on the right */
@@ -65,97 +48,34 @@ form {
   flex-direction: row-reverse;
 }
 
-/* Dropdown menus should open from right */
-.dropdown-content {
-  direction: rtl;
-}
-
-/* Select component RTL fixes */
-[data-radix-select-trigger] {
-  text-align: right;
-  direction: rtl;
-}
-
-[data-radix-select-content] {
-  text-align: right;
-  direction: rtl;
-}
-
+/* Adjust select dropdown alignment */
+[data-radix-select-trigger],
+[data-radix-select-content],
 [data-radix-select-item] {
   text-align: right;
   direction: rtl;
 }
 
-/* Force RTL for specific elements */
-input,
-textarea,
-select {
-  text-align: right;
-}
-
-/* Reverse icons in buttons with icons */
-.flex.items-center.gap-2:not(.no-reverse) {
-  flex-direction: row-reverse;
-}
-
-/* Base styles */
-body {
-  font-family: "29LT Adir", sans-serif;
-}
-
-h1,
-h2,
-h3,
-.font-heading {
-  font-family: "29LT Adir", sans-serif;
-  font-weight: 700;
-}
-
-.font-display {
-  font-family: "29LT Adir", sans-serif;
-  font-weight: 800;
-}
-
-/* Admin Dashboard specific RTL styles */
-.admin-card {
-  text-align: right;
-}
-
-.admin-stats {
-  text-align: right;
-}
-
-.admin-table th,
-.admin-table td {
-  text-align: right;
-}
-
-.admin-form label {
-  text-align: right;
-}
-
-.admin-tabs {
-  direction: rtl;
-}
-
-/* Fix admin dashboard card alignments */
-.admin-dashboard .card-header {
-  text-align: right;
-}
-
-.admin-dashboard .card-content {
-  text-align: right;
-}
-
+/* Fix admin dashboard tab alignments */
 .admin-dashboard .tabs-list {
   justify-content: flex-start;
 }
 
-.admin-dashboard .card-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* Reverse icons in buttons */
+.flex.items-center.gap-2:not(.no-reverse) {
   flex-direction: row-reverse;
 }
 
-/* Rest of the existing styles... */
+/* Font settings */
+h1,
+h2,
+h3,
+.font-heading {
+  font-family: "Tajawal", sans-serif;
+  font-weight: 700;
+}
+
+.font-display {
+  font-family: "Tajawal", sans-serif;
+  font-weight: 800;
+}
