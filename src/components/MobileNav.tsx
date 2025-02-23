@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/hooks/useNotifications";
 import { useNavigate } from "react-router-dom";
 import AuthDialog from "./auth/AuthDialog";
 import {
@@ -11,9 +12,8 @@ import {
   Menu,
   BookOpen,
   Settings,
-  HelpCircle,
-  LogOut,
   Bell,
+  LogOut,
 } from "lucide-react";
 import {
   Sheet,
@@ -41,7 +41,8 @@ const MobileNav = () => {
   const [open, setOpen] = React.useState(false);
   const { toast } = useToast();
 
-  const { user, isAdmin: authIsAdmin } = useAuth();
+  const { user, isAdmin: authIsAdmin, signOut } = useAuth();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
 
   React.useEffect(() => {
     setIsLoggedIn(!!user);
@@ -50,13 +51,6 @@ const MobileNav = () => {
       setUserName(user.profile.full_name || user.profile.username || "مستخدم");
     }
   }, [user, authIsAdmin]);
-
-  async function checkAuth() {
-    setIsLoggedIn(!!user);
-    setIsAdmin(isAdmin);
-  }
-
-  const { signOut } = useAuth();
 
   const handleSignOut = async () => {
     try {
@@ -165,16 +159,66 @@ const MobileNav = () => {
                       <User className="ml-2 h-5 w-5" />
                       الملف الشخصي
                     </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-right"
-                    >
-                      <Bell className="ml-2 h-5 w-5" />
-                      الإشعارات
-                      <span className="mr-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                        3
-                      </span>
-                    </Button>
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-right"
+                        >
+                          <Bell className="ml-2 h-5 w-5" />
+                          الإشعارات
+                          {unreadCount > 0 && (
+                            <span className="mr-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                              {unreadCount}
+                            </span>
+                          )}
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent
+                        side="right"
+                        className="w-full sm:w-[400px] bg-white p-0"
+                      >
+                        <SheetHeader className="p-4 border-b">
+                          <SheetTitle className="text-right">
+                            الإشعارات
+                          </SheetTitle>
+                        </SheetHeader>
+                        <div className="overflow-y-auto h-[calc(100vh-80px)]">
+                          {notifications.map((notification) => (
+                            <div
+                              key={notification.id}
+                              className={`p-4 border-b ${!notification.is_read ? "bg-gray-50" : ""}`}
+                              onClick={() => markAsRead(notification.id)}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="flex-1">
+                                  <h3 className="font-semibold text-sm">
+                                    {notification.title}
+                                  </h3>
+                                  <p className="text-sm text-gray-600">
+                                    {notification.message}
+                                  </p>
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    {new Date(
+                                      notification.created_at,
+                                    ).toLocaleDateString("en-US", {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                  </p>
+                                </div>
+                                {!notification.is_read && (
+                                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-2" />
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </SheetContent>
+                    </Sheet>
                   </>
                 )}
                 {isAdmin && (
@@ -272,7 +316,7 @@ const MobileNav = () => {
           className="w-[90%] sm:w-[540px] p-0 bg-transparent border-none mx-auto h-auto flex items-center justify-center"
         >
           <div className="bg-white rounded-3xl overflow-hidden shadow-lg w-full max-w-md">
-            <Calendar className="border-none shadow-none" />
+            <Calendar className="border-none shadow-none p-2 sm:p-4" />
           </div>
         </SheetContent>
       </Sheet>
@@ -280,12 +324,12 @@ const MobileNav = () => {
       <Sheet open={showContact} onOpenChange={setShowContact}>
         <SheetContent
           side="bottom"
-          className="w-[90%] sm:w-[540px] p-0 bg-transparent border-none mx-auto h-auto flex items-center justify-center"
+          className="h-[85vh] sm:h-auto w-full sm:w-[540px] p-0 bg-white border-t border-gray-200 rounded-t-3xl flex flex-col"
         >
-          <div className="bg-white rounded-3xl overflow-hidden shadow-lg w-full max-w-md p-6">
-            <SheetHeader className="mb-6">
-              <SheetTitle>اتصل بنا</SheetTitle>
-            </SheetHeader>
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>اتصل بنا</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto p-4">
             <Contact />
           </div>
         </SheetContent>

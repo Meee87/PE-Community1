@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { checkIsAdmin } from "@/lib/admin";
 
 type AuthContextType = {
   user: any;
@@ -8,7 +9,12 @@ type AuthContextType = {
   signOut: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isAdmin: false,
+  isLoading: true,
+  signOut: async () => {},
+});
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -53,10 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setIsAdmin(false);
             } else {
               setUser({ ...session.user, profile: existingProfile });
-              setIsAdmin(
-                existingProfile?.email === "eng.mohamed87@live.com" &&
-                  existingProfile?.role === "admin",
-              );
+              setIsAdmin(existingProfile?.role === "admin");
             }
           } else if (event === "SIGNED_OUT") {
             setUser(null);
@@ -101,10 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         setUser({ ...session.user, profile });
-        setIsAdmin(
-          profile?.email === "eng.mohamed87@live.com" &&
-            profile?.role === "admin",
-        );
+        setIsAdmin(profile?.role === "admin");
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -118,46 +118,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  async function checkAdmin(userId: string | undefined) {
-    if (!userId) return;
+  const signOut = async () => {
     try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, email")
-        .eq("id", userId)
-        .single();
-
-      setIsAdmin(
-        profile?.email === "eng.mohamed87@live.com" &&
-          profile?.role === "admin",
-      );
-    } catch (error) {
-      console.error("Error checking admin status:", error);
-      setIsAdmin(false);
-    }
-  }
-
-  async function signOut() {
-    try {
-      // Sign out from supabase
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
-      // Clear all storage
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Clear state
       setUser(null);
       setIsAdmin(false);
-
-      // Force reload to clear all state
-      window.location.href = "/";
+      localStorage.clear();
+      sessionStorage.clear();
     } catch (error) {
       console.error("Error signing out:", error);
       throw error;
     }
-  }
+  };
 
   return (
     <AuthContext.Provider value={{ user, isAdmin, isLoading, signOut }}>

@@ -92,11 +92,12 @@ export default function ContentRequestDialog({
         return;
       }
 
-      // Get admin user
+      // Get admin users
       const { data: adminData } = await supabase
         .from("profiles")
         .select("id")
-        .eq("email", "eng.mohamed87@live.com")
+        .eq("role", "admin")
+        .limit(1)
         .single();
 
       if (!adminData?.id) {

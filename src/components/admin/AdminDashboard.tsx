@@ -21,7 +21,7 @@ interface Stats {
 
 interface Admin {
   email: string;
-  full_name: string;
+  username: string;
   created_at: string;
 }
 
@@ -92,16 +92,17 @@ const AdminDashboard = () => {
         return;
       }
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, email")
-        .eq("id", user.id)
-        .single();
+      const isAdmin = await checkIsAdmin();
+      console.log("Admin check result:", isAdmin);
 
-      const isAdmin =
-        profile?.email === "eng.mohamed87@live.com" &&
-        profile?.role === "admin";
-      console.log("Is admin:", isAdmin, profile);
+      if (!isAdmin) {
+        navigate("/");
+        toast({
+          variant: "destructive",
+          description: "غير مصرح لك بالوصول إلى لوحة التحكم",
+        });
+        return;
+      }
 
       if (!isAdmin) {
         console.error("User is not admin");
@@ -132,7 +133,7 @@ const AdminDashboard = () => {
         data.map(async (request) => {
           const { data: userData } = await supabase
             .from("profiles")
-            .select("full_name, email")
+            .select("username, email")
             .eq("id", request.user_id)
             .single();
           return { ...request, user: userData };
@@ -502,18 +503,23 @@ const AdminDashboard = () => {
                                             {subcategory.title}
                                           </h4>
                                           <div className="space-y-2">
-                                            {subcategory.contentTypes?.map(
-                                              (type) => (
-                                                <ContentUploadDialog
-                                                  key={type.id}
-                                                  stageId={stage.id}
-                                                  categoryId={subcategory.id}
-                                                  contentType={type.id}
-                                                  isAdmin={true}
-                                                  className="w-full justify-start text-right"
-                                                />
-                                              ),
-                                            )}
+                                            <div className="grid grid-cols-2 gap-2">
+                                              {subcategory.contentTypes?.map(
+                                                (type) => (
+                                                  <ContentUploadDialog
+                                                    key={type.id}
+                                                    stageId={stage.id}
+                                                    categoryId={subcategory.id}
+                                                    contentType={type.id}
+                                                    isAdmin={true}
+                                                    className={`w-full justify-start text-right border ${type.id === "image" ? "bg-blue-50 hover:bg-blue-100 border-blue-200" : type.id === "video" ? "bg-green-50 hover:bg-green-100 border-green-200" : type.id === "file" ? "bg-purple-50 hover:bg-purple-100 border-purple-200" : "bg-orange-50 hover:bg-orange-100 border-orange-200"}`}
+                                                    variant="outline"
+                                                    showIcon={true}
+                                                    label={`رفع ${type.id === "image" ? "الصور" : type.id === "video" ? "الفيديوهات" : type.id === "file" ? "الملفات" : "الموهوبين"} في ${subcategory.title}`}
+                                                  />
+                                                ),
+                                              )}
+                                            </div>
                                           </div>
                                         </CardContent>
                                       </Card>
@@ -643,7 +649,7 @@ const AdminDashboard = () => {
                           {admins.map((admin) => (
                             <tr key={admin.email} className="border-t">
                               <td className="px-4 py-3">{admin.email}</td>
-                              <td className="px-4 py-3">{admin.full_name}</td>
+                              <td className="px-4 py-3">{admin.username}</td>
                               <td className="px-4 py-3">
                                 {new Date(admin.created_at).toLocaleDateString(
                                   "en-US",
@@ -757,19 +763,25 @@ const AdminDashboard = () => {
                                 <Button
                                   size="sm"
                                   className="bg-[#7C9D32] hover:bg-[#7C9D32]/90 flex items-center gap-2"
-                                  onClick={() => {
+                                  onClick={async () => {
                                     // Mark as read
                                     if (!message.is_read) {
-                                      supabase
+                                      const { error } = await supabase
                                         .from("messages")
                                         .update({ is_read: true })
-                                        .eq("id", message.id)
-                                        .then(() => {
-                                          fetchMessages();
-                                        });
+                                        .eq("id", message.id);
+
+                                      if (error) {
+                                        console.error(
+                                          "Error marking message as read:",
+                                          error,
+                                        );
+                                        return;
+                                      }
+
+                                      // Refresh messages
+                                      fetchMessages();
                                     }
-                                    // Open email client
-                                    window.location.href = `mailto:${message.sender_email}?subject=رد على رسالتك&body=مرحباً ${message.sender_name}،%0D%0A%0D%0A`;
                                   }}
                                 >
                                   <Send className="h-4 w-4" />

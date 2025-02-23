@@ -8,22 +8,23 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="relative w-full h-[100vh] md:h-[calc(100vh-4rem)] md:mt-20">
-        <div className="w-full h-full flex items-center justify-center">
+      <section className="relative w-full h-screen md:h-[calc(100vh-4rem)] md:mt-16">
+        <div className="absolute inset-0">
           <img
             src="https://i.imgur.com/8Q3AzIU.png"
             alt="PE Community"
             className="w-full h-full object-cover object-center"
           />
-          <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 z-10">
-            <Button
-              className="bg-[#7C9D32] hover:bg-[#7C9D32]/90 text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-6 rounded-full transition-all duration-300 hover:scale-105"
-              size="lg"
-              onClick={() => navigate("/home")}
-            >
-              ابدأ الآن
-            </Button>
-          </div>
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
+        <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 z-10">
+          <Button
+            className="bg-[#FFB800] hover:bg-[#E6A600] text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-6 rounded-full transition-all duration-300 hover:scale-105"
+            size="lg"
+            onClick={() => navigate("/home")}
+          >
+            ابدأ الآن
+          </Button>
         </div>
       </section>
 

@@ -13,6 +13,7 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/lib/supabase";
+import { sendPushNotification } from "@/lib/notifications";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -81,7 +82,8 @@ const Contact = () => {
       const { data: adminData } = await supabase
         .from("profiles")
         .select("id")
-        .eq("email", "eng.mohamed87@live.com")
+        .eq("role", "admin")
+        .limit(1)
         .single();
 
       if (adminData?.id) {
@@ -94,6 +96,13 @@ const Contact = () => {
             type: "message",
           },
         ]);
+
+        // Send push notification
+        await sendPushNotification(
+          "رسالة جديدة",
+          `رسالة جديدة من ${formData.name}`,
+          { type: "message" },
+        );
       }
 
       if (insertError) {
@@ -140,10 +149,7 @@ const Contact = () => {
   };
 
   return (
-    <Card className="w-full bg-white shadow-sm border-none">
-      <CardHeader>
-        <CardTitle className="text-center">اتصل بنا</CardTitle>
-      </CardHeader>
+    <div className="w-full">
       <CardContent className="grid gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
@@ -224,7 +230,7 @@ const Contact = () => {
           </DialogContent>
         </Dialog>
       </CardContent>
-    </Card>
+    </div>
   );
 };
 

@@ -7,15 +7,27 @@ export const checkIsAdmin = async () => {
     } = await supabase.auth.getUser();
     if (!user) return false;
 
-    const { data: profile } = await supabase
+    const { data: profile, error } = await supabase
       .from("profiles")
       .select("role, email")
       .eq("id", user.id)
       .single();
 
-    return (
-      profile?.email === "eng.mohamed87@live.com" && profile?.role === "admin"
-    );
+    if (error) {
+      console.error("Error fetching profile:", error);
+      return false;
+    }
+
+    if (!profile) {
+      console.log("No profile found for user:", user.id);
+      return false;
+    }
+
+    console.log("Admin check - User ID:", user.id);
+    console.log("Admin check - Profile:", profile);
+    console.log("Admin check - Role:", profile.role);
+
+    return profile.role === "admin";
   } catch (error) {
     console.error("Error checking admin status:", error);
     return false;
