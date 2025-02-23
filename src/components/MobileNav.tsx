@@ -1,10 +1,11 @@
 import React from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import AuthDialog from "./auth/AuthDialog";
 import {
   Home,
   Calendar as CalendarIcon,
-  MessageSquare,
+  MessageCircle,
   User,
   LogIn,
   Menu,
@@ -14,7 +15,6 @@ import {
   LogOut,
   Bell,
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 import {
   Sheet,
   SheetContent,
@@ -41,57 +41,26 @@ const MobileNav = () => {
   const [open, setOpen] = React.useState(false);
   const { toast } = useToast();
 
-  React.useEffect(() => {
-    checkAuth();
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setIsLoggedIn(!!session);
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role, email, full_name, username")
-          .eq("id", session.user.id)
-          .single();
-        setIsAdmin(
-          profile?.email === "eng.mohamed87@live.com" &&
-            profile?.role === "admin",
-        );
-        setUserName(profile?.full_name || profile?.username || "مستخدم");
-      } else {
-        setIsAdmin(false);
-      }
-    });
+  const { user, isAdmin: authIsAdmin } = useAuth();
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+  React.useEffect(() => {
+    setIsLoggedIn(!!user);
+    setIsAdmin(authIsAdmin);
+    if (user?.profile) {
+      setUserName(user.profile.full_name || user.profile.username || "مستخدم");
+    }
+  }, [user, authIsAdmin]);
 
   async function checkAuth() {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    setIsLoggedIn(!!session);
-
-    if (session?.user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, email")
-        .eq("id", session.user.id)
-        .single();
-      setIsAdmin(
-        profile?.email === "eng.mohamed87@live.com" &&
-          profile?.role === "admin",
-      );
-    }
+    setIsLoggedIn(!!user);
+    setIsAdmin(isAdmin);
   }
+
+  const { signOut } = useAuth();
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
+      await signOut();
       setIsLoggedIn(false);
       setIsAdmin(false);
       setShowSideMenu(false);
@@ -101,8 +70,6 @@ const MobileNav = () => {
       toast({
         description: "تم تسجيل الخروج بنجاح",
       });
-
-      window.location.href = "/";
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
@@ -119,7 +86,7 @@ const MobileNav = () => {
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex items-center justify-between px-4">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-[100] flex items-center justify-between px-4">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="text-gray-600">
@@ -179,6 +146,14 @@ const MobileNav = () => {
                 >
                   <BookOpen className="ml-2 h-5 w-5" />
                   المحتوى
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-right"
+                  onClick={() => setShowContact(true)}
+                >
+                  <MessageCircle className="ml-2 h-5 w-5" />
+                  اتصل بنا
                 </Button>
                 {isLoggedIn && (
                   <>
@@ -303,20 +278,30 @@ const MobileNav = () => {
       </Sheet>
 
       <Sheet open={showContact} onOpenChange={setShowContact}>
-        <SheetContent className="w-[90%] sm:w-[540px]">
-          <SheetHeader>
-            <SheetTitle>اتصل بنا</SheetTitle>
-          </SheetHeader>
-          <Contact />
+        <SheetContent
+          side="bottom"
+          className="w-[90%] sm:w-[540px] p-0 bg-transparent border-none mx-auto h-auto flex items-center justify-center"
+        >
+          <div className="bg-white rounded-3xl overflow-hidden shadow-lg w-full max-w-md p-6">
+            <SheetHeader className="mb-6">
+              <SheetTitle>اتصل بنا</SheetTitle>
+            </SheetHeader>
+            <Contact />
+          </div>
         </SheetContent>
       </Sheet>
 
       <Sheet open={showChat} onOpenChange={setShowChat}>
-        <SheetContent className="w-[90%] sm:w-[540px]">
-          <SheetHeader>
-            <SheetTitle>المحادثة مع المسؤولين</SheetTitle>
-          </SheetHeader>
-          <ChatDialog onClose={() => setShowChat(false)} />
+        <SheetContent
+          side="bottom"
+          className="w-[90%] sm:w-[540px] p-0 bg-transparent border-none mx-auto h-auto flex items-center justify-center"
+        >
+          <div className="bg-white rounded-3xl overflow-hidden shadow-lg w-full max-w-md p-6">
+            <SheetHeader className="mb-6">
+              <SheetTitle>المحادثة مع المسؤولين</SheetTitle>
+            </SheetHeader>
+            <ChatDialog onClose={() => setShowChat(false)} />
+          </div>
         </SheetContent>
       </Sheet>
 
@@ -324,7 +309,6 @@ const MobileNav = () => {
         isOpen={showAuthDialog}
         onClose={() => {
           setShowAuthDialog(false);
-          checkAuth();
         }}
       />
     </>

@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { NotificationItem } from "@/components/notifications/NotificationItem";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   Bell,
   Menu,
@@ -23,85 +17,38 @@ import {
   Settings,
   HelpCircle,
   BookOpen,
-  Home,
   Loader2,
 } from "lucide-react";
 import AuthDialog from "@/components/auth/AuthDialog";
-import { getCurrentUser, signOut } from "@/lib/auth";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/lib/supabase";
-import { checkIsAdmin } from "@/lib/admin";
+import { useAuth } from "@/contexts/AuthContext";
 
 const MainHeader = () => {
   const { notifications, unreadCount, loading, markAsRead, markAllAsRead } =
     useNotifications();
-  const [showAuthDialog, setShowAuthDialog] = React.useState(false);
-  const [user, setUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const { user, isAdmin, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role, email")
-          .eq("id", user.id)
-          .single();
-        setIsAdmin(
-          profile?.email === "eng.mohamed87@live.com" &&
-            profile?.role === "admin",
-        );
-      }
-    };
-    checkAuth();
-
-    // Set up auth state listener
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        if (session?.user) {
-          setUser(session.user);
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("role, email")
-            .eq("id", session.user.id)
-            .single();
-          setIsAdmin(
-            profile?.email === "eng.mohamed87@live.com" &&
-              profile?.role === "admin",
-          );
-        }
-      } else if (event === "SIGNED_OUT") {
-        setUser(null);
-        setIsAdmin(false);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
   const handleSignOut = async () => {
-    await signOut();
-    setUser(null);
-    setIsAdmin(false);
-    toast({
-      description: "تم تسجيل الخروج بنجاح",
-    });
+    try {
+      await signOut();
+      toast({
+        description: "تم تسجيل الخروج بنجاح",
+      });
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        variant: "destructive",
+        description: "حدث خطأ أثناء تسجيل الخروج",
+      });
+    }
   };
 
   return (
-    <header className="bg-[#7C9D32] text-white py-2 px-4 shadow-md fixed top-0 left-0 right-0 z-50 h-16 hidden md:block">
+    <header className="bg-[#7C9D32] text-white py-2 px-4 shadow-md fixed top-0 left-0 right-0 z-[100] h-16 hidden md:block">
       <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
         {/* Logo and Menu */}
         <div className="flex items-center gap-4">
@@ -260,26 +207,10 @@ const MainHeader = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden mt-4 border-t border-[#8fb339] pt-4">
-          <div className="space-y-2">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-white hover:bg-[#8fb339]"
-            >
-              <BookOpen className="ml-2 h-4 w-4" />
-              المحتوى التعليمي
-            </Button>
-          </div>
-        </div>
-      )}
-
       <AuthDialog
         isOpen={showAuthDialog}
         onClose={() => {
           setShowAuthDialog(false);
-          getCurrentUser().then(setUser);
         }}
       />
     </header>

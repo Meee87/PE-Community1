@@ -22,10 +22,30 @@ export function useNotifications() {
 
   const fetchNotifications = async () => {
     try {
+      console.log("Fetching notifications...");
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log("No user found");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, email")
+        .eq("id", user.id)
+        .single();
+
+      const isAdmin =
+        profile?.email === "eng.mohamed87@live.com" &&
+        profile?.role === "admin";
+      console.log("Is admin:", isAdmin);
+
+      if (!isAdmin) {
+        console.log("User is not admin");
+        return;
+      }
 
       const { data, error } = await supabase
         .from("notifications")
@@ -33,8 +53,12 @@ export function useNotifications() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching notifications:", error);
+        throw error;
+      }
 
+      console.log("Fetched notifications:", data);
       setNotifications(data || []);
       setUnreadCount(data?.filter((n) => !n.is_read).length || 0);
     } catch (error) {

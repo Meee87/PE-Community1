@@ -128,6 +128,16 @@ export default function ContentRequestDialog({
         },
       ]);
 
+      // Send notification to admin
+      await supabase.from("notifications").insert([
+        {
+          user_id: adminData.id,
+          title: "طلب محتوى جديد",
+          message: `طلب إضافة ${formData.type === "image" ? "صورة" : formData.type === "video" ? "فيديو" : formData.type === "file" ? "ملف" : "موهوب"} جديد: ${formData.title}`,
+          type: "content_request",
+        },
+      ]);
+
       if (error) throw error;
 
       toast({

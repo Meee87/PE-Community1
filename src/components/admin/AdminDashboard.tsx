@@ -50,14 +50,34 @@ const AdminDashboard = () => {
     totalContent: 0,
     totalRequests: 0,
   });
+  const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
     const init = async () => {
       await fetchAdmins();
       await fetchContentRequests();
+      await fetchMessages();
     };
     init();
   }, []);
+
+  const fetchMessages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setMessages(data || []);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      toast({
+        variant: "destructive",
+        description: "حدث خطأ أثناء جلب الرسائل",
+      });
+    }
+  };
 
   const fetchContentRequests = async () => {
     try {
@@ -333,6 +353,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="requests">طلبات المحتوى</TabsTrigger>
             <TabsTrigger value="content">إدارة المحتوى</TabsTrigger>
             <TabsTrigger value="users">المستخدمين</TabsTrigger>
+            <TabsTrigger value="messages">الرسائل</TabsTrigger>
           </TabsList>
 
           <TabsContent value="requests">
@@ -381,7 +402,12 @@ const AdminDashboard = () => {
                             </td>
                             <td className="px-4 py-3">
                               {new Date(request.created_at).toLocaleDateString(
-                                "ar-SA",
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                },
                               )}
                             </td>
                             <td className="px-4 py-3">
@@ -620,7 +646,12 @@ const AdminDashboard = () => {
                               <td className="px-4 py-3">{admin.full_name}</td>
                               <td className="px-4 py-3">
                                 {new Date(admin.created_at).toLocaleDateString(
-                                  "ar-SA",
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  },
                                 )}
                               </td>
                               <td className="px-4 py-3">
@@ -661,6 +692,95 @@ const AdminDashboard = () => {
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="messages">
+            <Card>
+              <CardHeader>
+                <CardTitle>الرسائل الواردة</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[600px]">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-3 text-right">المرسل</th>
+                          <th className="px-4 py-3 text-right">
+                            البريد الإلكتروني
+                          </th>
+                          <th className="px-4 py-3 text-right">الرسالة</th>
+                          <th className="px-4 py-3 text-right">التاريخ</th>
+                          <th className="px-4 py-3 text-right">الحالة</th>
+                          <th className="px-4 py-3 text-right">الإجراءات</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {messages?.map((message) => (
+                          <tr key={message.id} className="border-t">
+                            <td className="px-4 py-3">{message.sender_name}</td>
+                            <td className="px-4 py-3">
+                              {message.sender_email}
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="max-w-xs truncate">
+                                {message.message}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              {new Date(message.created_at).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                },
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  message.is_read
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-yellow-100 text-yellow-800"
+                                }`}
+                              >
+                                {message.is_read ? "تمت القراءة" : "جديد"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  size="sm"
+                                  className="bg-[#7C9D32] hover:bg-[#7C9D32]/90 flex items-center gap-2"
+                                  onClick={() => {
+                                    // Mark as read
+                                    if (!message.is_read) {
+                                      supabase
+                                        .from("messages")
+                                        .update({ is_read: true })
+                                        .eq("id", message.id)
+                                        .then(() => {
+                                          fetchMessages();
+                                        });
+                                    }
+                                    // Open email client
+                                    window.location.href = `mailto:${message.sender_email}?subject=رد على رسالتك&body=مرحباً ${message.sender_name}،%0D%0A%0D%0A`;
+                                  }}
+                                >
+                                  <Send className="h-4 w-4" />
+                                  رد
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </CardContent>

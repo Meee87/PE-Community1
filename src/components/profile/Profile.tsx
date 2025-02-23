@@ -17,6 +17,7 @@ interface Profile {
   school?: string;
   specialization?: string;
   years_of_experience?: string;
+  role?: string;
 }
 
 const Profile = () => {
@@ -34,25 +35,44 @@ const Profile = () => {
   const getProfile = async () => {
     try {
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
-      if (!user) {
+      if (sessionError) throw sessionError;
+      if (!session?.user) {
         navigate("/login");
         return;
       }
 
-      const { data, error } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user.id)
-        .single();
+        .eq("id", session.user.id)
+        .maybeSingle();
 
-      if (error) throw error;
-      setProfile(data);
-      setIsAdmin(data?.role === "admin");
-    } catch (error) {
-      console.error("Error:", error);
+      if (profileError) {
+        console.error("Profile fetch error:", profileError);
+        throw profileError;
+      }
+
+      if (!profile) {
+        console.error("No profile found");
+        throw new Error("لم يتم العثور على الملف الشخصي");
+      }
+
+      setProfile(profile);
+      setIsAdmin(
+        profile.email === "eng.mohamed87@live.com" && profile.role === "admin",
+      );
+    } catch (error: any) {
+      console.error("Error fetching profile:", error);
+      toast({
+        variant: "destructive",
+        description:
+          error.message || "حدث خطأ أثناء جلب البيانات. حاول مرة أخرى.",
+      });
+      navigate("/login");
     } finally {
       setLoading(false);
     }
@@ -75,11 +95,9 @@ const Profile = () => {
         .eq("id", profile.id);
 
       if (error) throw error;
-      toast({
-        description: "تم تحديث الملف الشخصي بنجاح",
-      });
+      toast({ description: "تم تحديث الملف الشخصي بنجاح" });
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error updating profile:", error);
       toast({
         variant: "destructive",
         description: "حدث خطأ أثناء تحديث الملف الشخصي",
@@ -118,13 +136,11 @@ const Profile = () => {
         </CardHeader>
         <CardContent>
           <div className="flex justify-center mb-8">
-            <div className="relative">
-              <img
-                src={profile.avatar_url}
-                alt={profile.full_name}
-                className="w-32 h-32 rounded-full"
-              />
-            </div>
+            <img
+              src={profile.avatar_url}
+              alt={profile.full_name}
+              className="w-32 h-32 rounded-full"
+            />
           </div>
 
           <form onSubmit={updateProfile} className="space-y-6">

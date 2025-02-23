@@ -49,15 +49,18 @@ export const getCurrentUser = async () => {
 
 export const signOut = async () => {
   try {
+    // Sign out from supabase
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
 
-    // Clear any local state
-    localStorage.removeItem("supabase.auth.token");
+    // Clear all storage
+    localStorage.clear();
+    sessionStorage.clear();
 
     // Hard reload to clear all state
     window.location.href = "/";
   } catch (error) {
     console.error("Error signing out:", error);
+    throw error;
   }
 };
