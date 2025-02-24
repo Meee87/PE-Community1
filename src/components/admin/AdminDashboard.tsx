@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, UserPlus, MessageSquare, BarChart, Home } from "lucide-react";
 import { STAGES } from "@/lib/constants";
@@ -21,7 +20,7 @@ interface Stats {
 
 interface Admin {
   email: string;
-  full_name: string;
+  username: string;
   created_at: string;
 }
 
@@ -36,6 +35,19 @@ interface ContentRequest {
   user_id: string;
   stage_id: string;
   category_id: string;
+  user?: {
+    username: string;
+    email: string;
+  };
+}
+
+interface Message {
+  id: string;
+  sender_name: string;
+  sender_email: string;
+  message: string;
+  created_at: string;
+  is_read: boolean;
 }
 
 const AdminDashboard = () => {
@@ -50,24 +62,55 @@ const AdminDashboard = () => {
     totalContent: 0,
     totalRequests: 0,
   });
-  const [messages, setMessages] = useState<any[]>([]);
-
-  const adminEmails = [
-    "eng.mohamed87@live.com",
-    "wadhaalmeqareh@hotmail.com",
-    "thamertub@gmail.com",
-    "liyan2612@hotmail.com",
-    "anood99.mhad@hotmail.com",
-  ];
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const init = async () => {
-      await fetchAdmins();
-      await fetchContentRequests();
-      await fetchMessages();
+      try {
+        const isAdmin = await checkIsAdmin();
+        if (!isAdmin) {
+          navigate("/");
+          return;
+        }
+        await Promise.all([
+          fetchAdmins(),
+          fetchContentRequests(),
+          fetchMessages(),
+          fetchStats(),
+        ]);
+      } catch (error) {
+        console.error("Error initializing admin dashboard:", error);
+        navigate("/");
+      } finally {
+        setLoading(false);
+      }
     };
     init();
-  }, []);
+  }, [navigate]);
+
+  const fetchStats = async () => {
+    try {
+      const { count: usersCount } = await supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true });
+
+      const { count: contentCount } = await supabase
+        .from("content")
+        .select("*", { count: "exact", head: true });
+
+      const { count: requestsCount } = await supabase
+        .from("content_requests")
+        .select("*", { count: "exact", head: true });
+
+      setStats({
+        totalUsers: usersCount || 0,
+        totalContent: contentCount || 0,
+        totalRequests: requestsCount || 0,
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
 
   const fetchMessages = async () => {
     try {
@@ -89,64 +132,35 @@ const AdminDashboard = () => {
 
   const fetchContentRequests = async () => {
     try {
-      console.log("Fetching content requests...");
-
-      // First verify we are admin
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) {
-        console.error("No user found");
-        return;
-      }
+      if (!user) return;
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, email")
-        .eq("id", user.id)
-        .single();
-
-      const isAdmin =
-        profile?.role === "admin" || adminEmails.includes(profile?.email || "");
-      console.log("Is admin:", isAdmin, profile);
-
+      const isAdmin = await checkIsAdmin();
       if (!isAdmin) {
-        console.error("User is not admin");
+        navigate("/");
         return;
       }
 
-      // Fetch requests
       const { data, error } = await supabase
         .from("content_requests")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching content requests:", error);
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log("Content requests raw data:", data);
-
-      if (!data || data.length === 0) {
-        console.log("No content requests found");
-      } else {
-        console.log(`Found ${data.length} content requests`);
-      }
-
-      // Get user details for each request
       const requestsWithUserDetails = await Promise.all(
-        data.map(async (request) => {
+        (data || []).map(async (request) => {
           const { data: userData } = await supabase
             .from("profiles")
-            .select("full_name, email")
+            .select("username, email")
             .eq("id", request.user_id)
             .single();
           return { ...request, user: userData };
         }),
       );
 
-      console.log("Requests with user details:", requestsWithUserDetails);
       setContentRequests(requestsWithUserDetails);
     } catch (error) {
       console.error("Error in fetchContentRequests:", error);
@@ -162,7 +176,6 @@ const AdminDashboard = () => {
     status: string,
   ) => {
     try {
-      // First get the request details
       const { data: request, error: requestError } = await supabase
         .from("content_requests")
         .select("*")
@@ -171,7 +184,6 @@ const AdminDashboard = () => {
 
       if (requestError) throw requestError;
 
-      // Update request status
       const { error: updateError } = await supabase
         .from("content_requests")
         .update({ status })
@@ -179,7 +191,6 @@ const AdminDashboard = () => {
 
       if (updateError) throw updateError;
 
-      // If approved, create new content
       if (status === "approved" && request) {
         const { error: contentError } = await supabase.from("content").insert([
           {
@@ -211,19 +222,15 @@ const AdminDashboard = () => {
   };
 
   const handleViewRequest = (request: ContentRequest) => {
-    window.open(request.url, "_blank");
+    if (request?.url) {
+      window.open(request.url, "_blank");
+    }
   };
 
   const fetchAdmins = async () => {
     try {
-      console.log("Fetching admins...");
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .in("email", adminEmails);
-
+      const { data, error } = await supabase.from("profiles").select("*");
       if (error) throw error;
-      console.log("Fetched profiles:", data);
       setAdmins(data || []);
     } catch (error) {
       console.error("Error fetching admins:", error);
@@ -233,55 +240,6 @@ const AdminDashboard = () => {
       });
     }
   };
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      setLoading(true);
-      try {
-        const isAdmin = await checkIsAdmin();
-        if (!isAdmin) {
-          navigate("/");
-          toast({
-            variant: "destructive",
-            description: "غير مصرح لك بالوصول إلى لوحة التحكم",
-          });
-          return;
-        }
-
-        // Fetch stats
-        const { count: usersCount } = await supabase
-          .from("profiles")
-          .select("*", { count: "exact", head: true });
-
-        const { count: contentCount } = await supabase
-          .from("content")
-          .select("*", { count: "exact", head: true });
-
-        const { count: requestsCount } = await supabase
-          .from("content_requests")
-          .select("*", { count: "exact", head: true });
-
-        console.log("Stats:", { usersCount, contentCount, requestsCount });
-
-        setStats({
-          totalUsers: usersCount || 0,
-          totalContent: contentCount || 0,
-          totalRequests: requestsCount || 0,
-        });
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error checking admin:", error);
-        navigate("/");
-        toast({
-          variant: "destructive",
-          description: "حدث خطأ أثناء التحقق من الصلاحيات",
-        });
-      }
-    };
-
-    checkAdmin();
-  }, []);
 
   if (loading) {
     return (
@@ -294,262 +252,317 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16 md:pb-0" dir="rtl">
       {/* Admin Header */}
-      <div className="bg-[#748D19] text-white py-4 px-6 shadow-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold">لوحة التحكم</h1>
-          </div>
-          <div className="flex items-center gap-4">
+      <div className="bg-[#748D19] text-white py-4 px-4 md:px-6 shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl md:text-2xl font-bold">لوحة التحكم</h1>
             <Button
               variant="outline"
-              className="bg-white hover:bg-gray-50 text-[#748D19] flex items-center gap-2"
+              className="md:hidden bg-white hover:bg-gray-50 text-[#748D19] flex items-center gap-2"
               onClick={() => navigate("/")}
             >
               <Home className="h-4 w-4" />
-              الرئيسية
             </Button>
           </div>
+          <Button
+            variant="outline"
+            className="hidden md:flex bg-white hover:bg-gray-50 text-[#748D19] items-center gap-2"
+            onClick={() => navigate("/")}
+          >
+            <Home className="h-4 w-4" />
+            الرئيسية
+          </Button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-8 px-4 space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <UserPlus className="h-5 w-5 ml-2" />
+      <div className="max-w-7xl mx-auto py-6 px-4 space-y-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Card className="bg-white shadow hover:shadow-md transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <UserPlus className="h-5 w-5 text-[#748D19]" />
                 المستخدمين
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-right">
-                {stats.totalUsers}
-              </p>
+              <p className="text-3xl font-bold">{stats.totalUsers}</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart className="h-5 w-5 ml-2" />
+          <Card className="bg-white shadow hover:shadow-md transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <BarChart className="h-5 w-5 text-[#748D19]" />
                 المحتوى
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-right">
-                {stats.totalContent}
-              </p>
+              <p className="text-3xl font-bold">{stats.totalContent}</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 ml-2" />
+          <Card className="bg-white shadow hover:shadow-md transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <MessageSquare className="h-5 w-5 text-[#748D19]" />
                 الطلبات
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-right">
-                {stats.totalRequests}
-              </p>
+              <p className="text-3xl font-bold">{stats.totalRequests}</p>
             </CardContent>
           </Card>
         </div>
 
-        <Tabs defaultValue="requests" className="text-right">
-          <TabsList className="justify-start overflow-x-auto flex-wrap gap-2">
-            <TabsTrigger value="requests">طلبات المحتوى</TabsTrigger>
-            <TabsTrigger value="content">إدارة المحتوى</TabsTrigger>
-            <TabsTrigger value="users">المستخدمين</TabsTrigger>
-            <TabsTrigger value="messages">الرسائل</TabsTrigger>
+        {/* Tabs */}
+        <Tabs defaultValue="requests" className="space-y-6">
+          <TabsList className="w-full flex overflow-x-auto bg-white p-1 rounded-lg">
+            <TabsTrigger value="requests" className="flex-1">
+              طلبات المحتوى
+            </TabsTrigger>
+            <TabsTrigger value="content" className="flex-1">
+              إدارة المحتوى
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex-1">
+              المستخدمين
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="flex-1">
+              الرسائل
+            </TabsTrigger>
           </TabsList>
 
+          {/* Content Requests Tab */}
           <TabsContent value="requests">
             <Card>
               <CardHeader>
                 <CardTitle>طلبات المحتوى</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[600px]">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-4 py-3 text-right">العنوان</th>
-                          <th className="px-4 py-3 text-right">النوع</th>
-                          <th className="px-4 py-3 text-right">الحالة</th>
-                          <th className="px-4 py-3 text-right">تاريخ الطلب</th>
-                          <th className="px-4 py-3 text-right">الإجراءات</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {contentRequests?.map((request) => (
-                          <tr key={request.id} className="border-t">
-                            <td className="px-4 py-3">{request.title}</td>
-                            <td className="px-4 py-3">
-                              {request.type === "image" && "صورة"}
-                              {request.type === "video" && "فيديو"}
-                              {request.type === "file" && "ملف"}
-                              {request.type === "talent" && "موهوب"}
-                            </td>
-                            <td className="px-4 py-3">
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  request.status === "pending"
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : request.status === "approved"
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-red-100 text-red-800"
-                                }`}
-                              >
-                                {request.status === "pending" && "قيد المراجعة"}
-                                {request.status === "approved" &&
-                                  "تمت الموافقة"}
-                                {request.status === "rejected" && "مرفوض"}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3">
-                              {new Date(request.created_at).toLocaleDateString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                },
-                              )}
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleViewRequest(request)}
-                                >
-                                  عرض
-                                </Button>
-                                {request.status === "pending" && (
-                                  <>
-                                    <Button
-                                      variant="default"
-                                      size="sm"
-                                      className="bg-green-600 hover:bg-green-700"
-                                      onClick={() =>
-                                        handleUpdateRequestStatus(
-                                          request.id,
-                                          "approved",
-                                        )
-                                      }
-                                    >
-                                      قبول
-                                    </Button>
-                                    <Button
-                                      variant="destructive"
-                                      size="sm"
-                                      onClick={() =>
-                                        handleUpdateRequestStatus(
-                                          request.id,
-                                          "rejected",
-                                        )
-                                      }
-                                    >
-                                      رفض
-                                    </Button>
-                                  </>
-                                )}
-                              </div>
-                            </td>
+                <div className="overflow-x-auto">
+                  <div className="inline-block min-w-full align-middle">
+                    <div className="overflow-hidden border rounded-lg">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              العنوان
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              النوع
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              الحالة
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              تاريخ الطلب
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              الإجراءات
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {contentRequests?.map((request) => (
+                            <tr key={request.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {request.title}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {request.type === "image" && "صورة"}
+                                {request.type === "video" && "فيديو"}
+                                {request.type === "file" && "ملف"}
+                                {request.type === "talent" && "موهوب"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    request.status === "pending"
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : request.status === "approved"
+                                        ? "bg-green-100 text-green-800"
+                                        : "bg-red-100 text-red-800"
+                                  }`}
+                                >
+                                  {request.status === "pending" &&
+                                    "قيد المراجعة"}
+                                  {request.status === "approved" &&
+                                    "تمت الموافقة"}
+                                  {request.status === "rejected" && "مرفوض"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {new Date(
+                                  request.created_at,
+                                ).toLocaleDateString("ar-SA")}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleViewRequest(request)}
+                                  >
+                                    عرض
+                                  </Button>
+                                  {request.status === "pending" && (
+                                    <>
+                                      <Button
+                                        variant="default"
+                                        size="sm"
+                                        className="bg-green-600 hover:bg-green-700"
+                                        onClick={() =>
+                                          handleUpdateRequestStatus(
+                                            request.id,
+                                            "approved",
+                                          )
+                                        }
+                                      >
+                                        قبول
+                                      </Button>
+                                      <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        onClick={() =>
+                                          handleUpdateRequestStatus(
+                                            request.id,
+                                            "rejected",
+                                          )
+                                        }
+                                      >
+                                        رفض
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Content Management Tab */}
           <TabsContent value="content">
             <Card>
               <CardHeader>
                 <CardTitle>إدارة المحتوى</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="space-y-6">
-                    {Object.values(STAGES).map((stage) => (
-                      <Card key={stage.id} className="overflow-hidden">
-                        <CardHeader className="bg-[#7C9D32]/10">
-                          <CardTitle>{stage.name}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                          <div className="space-y-8">
-                            {stage.categories?.map((category) => (
-                              <div key={category.id} className="space-y-4">
-                                <h3 className="text-xl font-semibold text-[#7C9D32]">
-                                  {category.title}
-                                </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                  {category.subcategories?.map(
-                                    (subcategory) => (
-                                      <Card
-                                        key={subcategory.id}
-                                        className="overflow-hidden"
-                                      >
-                                        <div className="relative h-40">
-                                          <img
-                                            src={subcategory.imageUrl}
-                                            alt={subcategory.title}
-                                            className="w-full h-full object-cover"
-                                          />
-                                          <div
-                                            className={`absolute inset-0 ${subcategory.buttonColor} opacity-60`}
-                                          />
-                                        </div>
-                                        <CardContent className="p-4">
-                                          <h4 className="font-semibold mb-2">
-                                            {subcategory.title}
-                                          </h4>
-                                          <div className="space-y-2">
-                                            {subcategory.contentTypes?.map(
-                                              (type) => (
-                                                <ContentUploadDialog
-                                                  key={type.id}
-                                                  stageId={stage.id}
-                                                  categoryId={subcategory.id}
-                                                  contentType={type.id}
-                                                  isAdmin={true}
-                                                  className="w-full justify-start text-right"
-                                                />
-                                              ),
-                                            )}
-                                          </div>
-                                        </CardContent>
-                                      </Card>
-                                    ),
-                                  )}
-                                </div>
+                <div className="space-y-6">
+                  {Object.values(STAGES).map((stage) => (
+                    <Card
+                      key={stage.id}
+                      className="overflow-hidden border-none shadow-sm"
+                    >
+                      <CardHeader className="bg-[#7C9D32]/5">
+                        <CardTitle className="text-lg">{stage.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-4">
+                        <div className="space-y-6">
+                          {stage.categories?.map((category) => (
+                            <div key={category.id} className="space-y-4">
+                              <h3 className="text-lg font-semibold text-[#7C9D32]">
+                                {category.title}
+                              </h3>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {category.subcategories?.map((subcategory) => (
+                                  <Card
+                                    key={subcategory.id}
+                                    className="overflow-hidden"
+                                  >
+                                    <div className="relative h-32">
+                                      <img
+                                        src={subcategory.imageUrl}
+                                        alt={subcategory.title}
+                                        className="w-full h-full object-cover"
+                                      />
+                                      <div
+                                        className={`absolute inset-0 ${subcategory.buttonColor} opacity-60`}
+                                      />
+                                    </div>
+                                    <CardContent className="p-4">
+                                      <h4 className="font-semibold mb-2">
+                                        {subcategory.title}
+                                      </h4>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        {subcategory.contentTypes?.map(
+                                          (type) => (
+                                            <ContentUploadDialog
+                                              key={type.id}
+                                              stageId={stage.id}
+                                              categoryId={subcategory.id}
+                                              contentType={type.id}
+                                              isAdmin={true}
+                                              className={`w-full justify-start text-right border ${
+                                                type.id === "image"
+                                                  ? "bg-blue-50 hover:bg-blue-100 border-blue-200"
+                                                  : type.id === "video"
+                                                    ? "bg-green-50 hover:bg-green-100 border-green-200"
+                                                    : type.id === "file"
+                                                      ? "bg-purple-50 hover:bg-purple-100 border-purple-200"
+                                                      : "bg-orange-50 hover:bg-orange-100 border-orange-200"
+                                              }`}
+                                              variant="outline"
+                                              showIcon={true}
+                                              label={`رفع ${
+                                                type.id === "image"
+                                                  ? "الصور"
+                                                  : type.id === "video"
+                                                    ? "الفيديوهات"
+                                                    : type.id === "file"
+                                                      ? "الملفات"
+                                                      : "الموهوبين"
+                                              }`}
+                                            />
+                                          ),
+                                        )}
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                ))}
                               </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Users Tab */}
           <TabsContent value="users">
             <Card>
               <CardHeader>
-                <CardTitle className="text-right">إدارة المستخدمين</CardTitle>
+                <CardTitle>إدارة المستخدمين</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row gap-4">
                     <Input
                       placeholder="البريد الإلكتروني"
                       className="flex-1"
@@ -560,7 +573,6 @@ const AdminDashboard = () => {
                     <Button
                       onClick={async () => {
                         try {
-                          // First check if user exists
                           const { data: existingUser } = await supabase
                             .from("profiles")
                             .select("id")
@@ -568,7 +580,6 @@ const AdminDashboard = () => {
                             .single();
 
                           if (existingUser) {
-                            // Update existing user to admin
                             const { error: updateError } = await supabase
                               .from("profiles")
                               .update({ role: "admin" })
@@ -576,12 +587,10 @@ const AdminDashboard = () => {
 
                             if (updateError) throw updateError;
                           } else {
-                            // Generate a random password
                             const tempPassword = Math.random()
                               .toString(36)
                               .slice(-8);
 
-                            // Create auth user with signUp
                             const { data: authData, error: authError } =
                               await supabase.auth.signUp({
                                 email: newAdminEmail,
@@ -593,7 +602,6 @@ const AdminDashboard = () => {
 
                             if (authError) throw authError;
 
-                            // Then create profile
                             const { error: insertError } = await supabase
                               .from("profiles")
                               .insert([
@@ -606,7 +614,6 @@ const AdminDashboard = () => {
                                 },
                               ]);
 
-                            // Send email with temporary password
                             toast({
                               description: `تم إنشاء الحساب بنجاح. كلمة المرور المؤقتة: ${tempPassword}`,
                             });
@@ -634,73 +641,93 @@ const AdminDashboard = () => {
                     </Button>
                   </div>
 
-                  <div className="border rounded-lg overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="w-full min-w-[600px]">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-4 py-3 text-right">
-                              البريد الإلكتروني
-                            </th>
-                            <th className="px-4 py-3 text-right">الاسم</th>
-                            <th className="px-4 py-3 text-right">
-                              تاريخ التسجيل
-                            </th>
-                            <th className="px-4 py-3 text-right">الإجراءات</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {admins.map((admin) => (
-                            <tr key={admin.email} className="border-t">
-                              <td className="px-4 py-3">{admin.email}</td>
-                              <td className="px-4 py-3">{admin.full_name}</td>
-                              <td className="px-4 py-3">
-                                {new Date(admin.created_at).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  },
-                                )}
-                              </td>
-                              <td className="px-4 py-3">
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={async () => {
-                                    try {
-                                      const { error } = await supabase
-                                        .from("profiles")
-                                        .update({ role: "user" })
-                                        .eq("email", admin.email);
-
-                                      if (error) throw error;
-
-                                      toast({
-                                        description: "تم إزالة المشرف بنجاح",
-                                      });
-                                      fetchAdmins();
-                                    } catch (error) {
-                                      console.error(
-                                        "Error removing admin:",
-                                        error,
-                                      );
-                                      toast({
-                                        variant: "destructive",
-                                        description:
-                                          "حدث خطأ أثناء إزالة المشرف",
-                                      });
-                                    }
-                                  }}
-                                >
-                                  حذف
-                                </Button>
-                              </td>
+                  <div className="overflow-x-auto">
+                    <div className="inline-block min-w-full align-middle">
+                      <div className="overflow-hidden border rounded-lg">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              >
+                                البريد الإلكتروني
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              >
+                                الاسم
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              >
+                                تاريخ التسجيل
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              >
+                                الإجراءات
+                              </th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {admins.map((admin) => (
+                              <tr
+                                key={admin.email}
+                                className="hover:bg-gray-50"
+                              >
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {admin.email}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {admin.username}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {new Date(
+                                    admin.created_at,
+                                  ).toLocaleDateString("ar-SA")}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={async () => {
+                                      try {
+                                        const { error } = await supabase
+                                          .from("profiles")
+                                          .update({ role: "user" })
+                                          .eq("email", admin.email);
+
+                                        if (error) throw error;
+
+                                        toast({
+                                          description: "تم إزالة المشرف بنجاح",
+                                        });
+                                        fetchAdmins();
+                                      } catch (error) {
+                                        console.error(
+                                          "Error removing admin:",
+                                          error,
+                                        );
+                                        toast({
+                                          variant: "destructive",
+                                          description:
+                                            "حدث خطأ أثناء إزالة المشرف",
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    حذف
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -708,90 +735,119 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Messages Tab */}
           <TabsContent value="messages">
             <Card>
               <CardHeader>
                 <CardTitle>الرسائل الواردة</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[600px]">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-4 py-3 text-right">المرسل</th>
-                          <th className="px-4 py-3 text-right">
-                            البريد الإلكتروني
-                          </th>
-                          <th className="px-4 py-3 text-right">الرسالة</th>
-                          <th className="px-4 py-3 text-right">التاريخ</th>
-                          <th className="px-4 py-3 text-right">الحالة</th>
-                          <th className="px-4 py-3 text-right">الإجراءات</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {messages?.map((message) => (
-                          <tr key={message.id} className="border-t">
-                            <td className="px-4 py-3">{message.sender_name}</td>
-                            <td className="px-4 py-3">
-                              {message.sender_email}
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="max-w-xs truncate">
-                                {message.message}
-                              </div>
-                            </td>
-                            <td className="px-4 py-3">
-                              {new Date(message.created_at).toLocaleDateString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                },
-                              )}
-                            </td>
-                            <td className="px-4 py-3">
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  message.is_read
-                                    ? "bg-green-100 text-green-800"
-                                    : "bg-yellow-100 text-yellow-800"
-                                }`}
-                              >
-                                {message.is_read ? "تمت القراءة" : "جديد"}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-2">
+                <div className="overflow-x-auto">
+                  <div className="inline-block min-w-full align-middle">
+                    <div className="overflow-hidden border rounded-lg">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              المرسل
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              البريد الإلكتروني
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              الرسالة
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              التاريخ
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              الحالة
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              الإجراءات
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {messages?.map((message) => (
+                            <tr key={message.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {message.sender_name}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {message.sender_email}
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-900">
+                                <div className="max-w-xs truncate">
+                                  {message.message}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {new Date(
+                                  message.created_at,
+                                ).toLocaleDateString("ar-SA")}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    message.is_read
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-yellow-100 text-yellow-800"
+                                  }`}
+                                >
+                                  {message.is_read ? "تمت القراءة" : "جديد"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <Button
                                   size="sm"
-                                  variant="outline"
-                                  onClick={() => {
-                                    const { error } = supabase
-                                      .from("messages")
-                                      .update({ is_read: true })
-                                      .eq("id", message.id);
-                                    if (error) {
-                                      console.error(
-                                        "Error marking as read:",
-                                        error,
-                                      );
-                                      return;
+                                  className="bg-[#7C9D32] hover:bg-[#7C9D32]/90 flex items-center gap-2"
+                                  onClick={async () => {
+                                    if (!message.is_read) {
+                                      const { error } = await supabase
+                                        .from("messages")
+                                        .update({ is_read: true })
+                                        .eq("id", message.id);
+
+                                      if (error) {
+                                        console.error(
+                                          "Error marking message as read:",
+                                          error,
+                                        );
+                                        return;
+                                      }
+
+                                      fetchMessages();
                                     }
-                                    fetchMessages();
                                   }}
                                 >
-                                  {message.is_read
-                                    ? "تم القراءة"
-                                    : "تحديد كمقروء"}
+                                  <Send className="h-4 w-4" />
+                                  رد
                                 </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </CardContent>
