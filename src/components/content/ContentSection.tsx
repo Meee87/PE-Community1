@@ -133,8 +133,9 @@ const ContentSection = () => {
     } catch (error) {
       console.error("Error fetching content:", error);
       toast({
-        variant: "destructive",
+        title: "خطأ!",
         description: "حدث خطأ أثناء تحميل المحتوى",
+        variant: "destructive",
       });
     }
   };

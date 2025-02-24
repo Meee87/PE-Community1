@@ -78,7 +78,9 @@ const ResourceGrid = ({
       if (error) throw error;
 
       toast({
+        title: "تم الحذف!",
         description: "تم حذف المحتوى بنجاح",
+        variant: "success",
       });
 
       // Call onDelete callback if provided

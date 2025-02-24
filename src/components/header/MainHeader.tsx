@@ -36,7 +36,9 @@ const MainHeader = () => {
     try {
       await signOut();
       toast({
+        title: "مع السلامة!",
         description: "تم تسجيل الخروج بنجاح",
+        variant: "success",
       });
     } catch (error) {
       console.error("Error signing out:", error);

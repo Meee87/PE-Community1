@@ -45,7 +45,9 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
         });
         if (error) throw error;
         toast({
+          title: "مرحباً بك!",
           description: "تم تسجيل الدخول بنجاح",
+          variant: "success",
         });
         setFormData({ email: "", password: "", fullName: "" });
         onClose();
@@ -62,8 +64,10 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
         });
         if (error) throw error;
         toast({
+          title: "تم إنشاء الحساب!",
           description:
             "تم إنشاء الحساب بنجاح، يرجى تفعيل حسابك عبر البريد الإلكتروني",
+          variant: "success",
         });
         setFormData({ email: "", password: "", fullName: "" });
         setMode("login");

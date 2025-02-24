@@ -125,7 +125,11 @@ export default function ContentUploadDialog({
 
         console.log("Content created successfully");
         window.dispatchEvent(new CustomEvent("content-updated"));
-        toast({ description: "تم رفع المحتوى بنجاح" });
+        toast({
+          title: "تم بنجاح!",
+          description: "تم رفع المحتوى بنجاح",
+          variant: "success",
+        });
       } else {
         console.log("Creating content request...");
         // Get admin user
