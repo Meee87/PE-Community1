@@ -17,7 +17,7 @@ import {
   Settings,
   HelpCircle,
   BookOpen,
-  Loader2,
+  Home,
 } from "lucide-react";
 import AuthDialog from "@/components/auth/AuthDialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -80,7 +80,7 @@ const MainHeader = () => {
               {isAdmin && (
                 <Button
                   onClick={() => navigate("/admin")}
-                  className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#748D19] font-bold"
+                  className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#1A1A1A] font-bold"
                 >
                   لوحة التحكم
                 </Button>
@@ -94,7 +94,7 @@ const MainHeader = () => {
                   >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-white text-[#7C9D32] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#7C9D32]">
+                      <span className="absolute -top-1 -right-1 bg-[#FFD700] text-[#1A1A1A] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#7C9D32]">
                         {unreadCount}
                       </span>
                     )}
@@ -116,7 +116,7 @@ const MainHeader = () => {
                     <div className="space-y-1 max-h-[400px] overflow-y-auto">
                       {loading ? (
                         <div className="flex items-center justify-center py-4">
-                          <Loader2 className="h-6 w-6 animate-spin text-[#7C9D32]" />
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#7C9D32]"></div>
                         </div>
                       ) : notifications.length > 0 ? (
                         notifications.map((notification) => (

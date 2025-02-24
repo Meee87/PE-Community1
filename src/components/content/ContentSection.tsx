@@ -31,6 +31,35 @@ const ContentSection = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [favorites, setFavorites] = useState([]);
 
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role, email")
+          .eq("id", user.id)
+          .single();
+
+        const adminEmails = [
+          "eng.mohamed87@live.com",
+          "wadhaalmeqareh@hotmail.com",
+          "thamertub@gmail.com",
+          "liyan2612@hotmail.com",
+          "anood99.mhad@hotmail.com",
+        ];
+
+        setIsAdmin(adminEmails.includes(profile?.email || ""));
+      }
+    };
+    checkAdmin();
+  }, []);
+
+  const [selectedStage, setSelectedStage] = useState(stageId || "primary");
+  const stage = STAGES[selectedStage];
+
   // Listen for content updates
   useEffect(() => {
     const handleContentUpdate = () => {
@@ -43,29 +72,6 @@ const ContentSection = () => {
     return () =>
       window.removeEventListener("content-updated", handleContentUpdate);
   }, [selectedSubcategory]);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role, email")
-          .eq("id", user.id)
-          .single();
-        setIsAdmin(
-          profile?.email === "eng.mohamed87@live.com" &&
-            profile?.role === "admin",
-        );
-      }
-    };
-    checkAdmin();
-  }, []);
-
-  const [selectedStage, setSelectedStage] = useState(stageId || "primary");
-  const stage = STAGES[selectedStage];
 
   const handleBack = () => {
     if (showContentTypes && selectedSubcategory?.selectedContentType) {
@@ -86,6 +92,8 @@ const ContentSection = () => {
   };
 
   const fetchContent = async (contentType: string) => {
+    console.log("Fetching content for type:", contentType);
+    setContentItems([]);
     try {
       console.log("Fetching content for:", {
         contentType,

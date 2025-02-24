@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -9,6 +9,39 @@ html,
 body {
   direction: rtl;
   font-family: "Tajawal", sans-serif;
+  background-color: #f8faf5;
+  color: #1a1a1a;
+}
+
+/* Custom Components */
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-hover text-white font-medium px-6 py-2 rounded-md transition-all duration-200 shadow-sm hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary hover:bg-secondary-hover text-secondary-foreground font-medium px-6 py-2 rounded-md transition-all duration-200 shadow-sm hover:shadow-md;
+  }
+
+  .card {
+    @apply bg-card rounded-lg shadow-card hover:shadow-card-hover transition-all duration-200 p-6;
+  }
+
+  .input {
+    @apply bg-white border border-border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200;
+  }
+
+  .heading-1 {
+    @apply text-4xl font-bold text-primary mb-6;
+  }
+
+  .heading-2 {
+    @apply text-3xl font-bold text-primary mb-4;
+  }
+
+  .heading-3 {
+    @apply text-2xl font-bold text-primary mb-3;
+  }
 }
 
 /* Force RTL for specific components */
@@ -66,16 +99,31 @@ form,
   flex-direction: row-reverse;
 }
 
-/* Font settings */
-h1,
-h2,
-h3,
-.font-heading {
-  font-family: "Tajawal", sans-serif;
-  font-weight: 700;
+/* Animations */
+.fade-in {
+  @apply animate-fade-in;
 }
 
-.font-display {
-  font-family: "Tajawal", sans-serif;
-  font-weight: 800;
+.slide-up {
+  @apply animate-slide-up;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #95b846;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7c9d32;
 }

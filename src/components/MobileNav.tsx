@@ -313,7 +313,7 @@ const MobileNav = () => {
       <Sheet open={showCalendar} onOpenChange={setShowCalendar}>
         <SheetContent
           side="bottom"
-          className="w-[90%] sm:w-[540px] p-0 bg-transparent border-none mx-auto h-auto flex items-center justify-center"
+          className="w-[90%] sm:w-[540px] p-0 bg-transparent border-none mx-auto h-auto flex items-center justify-center pb-20 md:pb-0"
         >
           <div className="bg-white rounded-3xl overflow-hidden shadow-lg w-full max-w-md">
             <Calendar className="border-none shadow-none p-2 sm:p-4" />

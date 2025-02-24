@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
-import { Image, Video, FileText, Star } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,10 +24,7 @@ interface ContentUploadDialogProps {
   categoryId: string;
   isAdmin?: boolean;
   className?: string;
-  contentType: string;
-  variant?: "outline" | "default";
-  showIcon?: boolean;
-  label?: string;
+  contentType?: string;
 }
 
 type ContentType = "image" | "video" | "file" | "talent";
@@ -37,10 +33,8 @@ export default function ContentUploadDialog({
   stageId,
   categoryId,
   isAdmin = false,
-  className = "",
+  className,
   contentType,
-  variant = "default",
-  showIcon = false,
 }: ContentUploadDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -49,39 +43,9 @@ export default function ContentUploadDialog({
     title: "",
     description: "",
     url: "",
-    type: contentType as ContentType,
+    type: (contentType as ContentType) || "image",
     file: null as File | null,
   });
-
-  const getContentTypeIcon = () => {
-    switch (contentType) {
-      case "image":
-        return <Image className="h-4 w-4 ml-2" />;
-      case "video":
-        return <Video className="h-4 w-4 ml-2" />;
-      case "file":
-        return <FileText className="h-4 w-4 ml-2" />;
-      case "talent":
-        return <Star className="h-4 w-4 ml-2" />;
-      default:
-        return null;
-    }
-  };
-
-  const getContentTypeLabel = () => {
-    switch (contentType) {
-      case "image":
-        return "الصور";
-      case "video":
-        return "الفيديوهات";
-      case "file":
-        return "الملفات";
-      case "talent":
-        return "الموهوبين";
-      default:
-        return "رفع محتوى";
-    }
-  };
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -205,7 +169,7 @@ export default function ContentUploadDialog({
         title: "",
         description: "",
         url: "",
-        type: contentType as ContentType,
+        type: "image",
         file: null,
       });
       setOpen(false);
@@ -224,15 +188,13 @@ export default function ContentUploadDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          variant={variant}
-          className={className}
+          className={`bg-[#7C9D32] hover:bg-[#7C9D32]/90 ${className}`}
           onClick={(e) => {
             e.preventDefault();
             setOpen(true);
           }}
         >
-          {showIcon && getContentTypeIcon()}
-          {getContentTypeLabel()}
+          {isAdmin ? "رفع محتوى" : "طلب إضافة محتوى"}
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -245,18 +207,33 @@ export default function ContentUploadDialog({
           className="text-gray-600 text-sm text-center mb-4"
         >
           {isAdmin
-            ? `قم برفع ${getContentTypeLabel()} جديدة مباشرة إلى المنصة`
-            : `قم بإرسال طلب إضافة ${getContentTypeLabel()} جديدة للمراجعة من قبل المشرفين`}
+            ? "قم برفع محتوى جديد مباشرة إلى المنصة"
+            : "قم بإرسال طلب إضافة محتوى جديد للمراجعة من قبل المشرفين"}
         </p>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
-            {isAdmin
-              ? `رفع ${getContentTypeLabel()} جديدة`
-              : `طلب إضافة ${getContentTypeLabel()} جديدة`}
+            {isAdmin ? "رفع محتوى جديد" : "طلب إضافة محتوى جديد"}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <Select
+            value={formData.type}
+            onValueChange={(value: ContentType) =>
+              setFormData({ ...formData, type: value })
+            }
+          >
+            <SelectTrigger className="w-full h-12 border-2">
+              <SelectValue placeholder="اختر نوع المحتوى" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="image">صورة</SelectItem>
+              <SelectItem value="video">فيديو</SelectItem>
+              <SelectItem value="file">ملف</SelectItem>
+              <SelectItem value="talent">موهوب</SelectItem>
+            </SelectContent>
+          </Select>
+
           <Input
             placeholder="عنوان المحتوى"
             value={formData.title}
@@ -292,9 +269,9 @@ export default function ContentUploadDialog({
                   }
                 }}
                 accept={
-                  contentType === "image"
+                  formData.type === "image"
                     ? "image/*"
-                    : contentType === "video"
+                    : formData.type === "video"
                       ? "video/*"
                       : "*"
                 }
@@ -327,8 +304,8 @@ export default function ContentUploadDialog({
             {loading
               ? "جاري الإرسال..."
               : isAdmin
-                ? `رفع ${getContentTypeLabel()}`
-                : `إرسال الطلب`}
+                ? "رفع المحتوى"
+                : "إرسال الطلب"}
           </Button>
         </form>
       </DialogContent>

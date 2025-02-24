@@ -4,6 +4,9 @@ import { Calendar as CalendarComponent } from "./ui/calendar";
 import { Button } from "./ui/button";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "./ui/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { cn } from "@/lib/utils";
 
 interface Event {
   id: string;
@@ -116,52 +119,89 @@ const Calendar = ({ className }: { className?: string }) => {
     (event) => date && event.date.toDateString() === date.toDateString(),
   );
 
+  const getEventBadgeColor = (type: string) => {
+    switch (type) {
+      case "training":
+        return "bg-green-100 text-green-800 hover:bg-green-200";
+      case "competition":
+        return "bg-blue-100 text-blue-800 hover:bg-blue-200";
+      case "meeting":
+        return "bg-purple-100 text-purple-800 hover:bg-purple-200";
+      default:
+        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
+    }
+  };
+
+  const getEventTypeName = (type: string) => {
+    switch (type) {
+      case "training":
+        return "تدريب";
+      case "competition":
+        return "منافسة";
+      case "meeting":
+        return "اجتماع";
+      default:
+        return type;
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center p-4">
-      <div className={`w-full max-w-md ${className}`}>
-        <div className="grid gap-4">
+    <Card className={cn("bg-white shadow-sm max-w-[300px] mx-auto", className)}>
+      <CardHeader className="space-y-1 pb-2">
+        <CardTitle className="text-lg font-semibold text-center">
+          التقويم الرياضي
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-2">
+        <div className="space-y-3">
           <CalendarComponent
             mode="single"
             selected={date}
             onSelect={setDate}
-            className="mx-auto"
+            className="mx-auto rounded-md"
             classNames={{
               day_selected:
-                "bg-[#7C9D32] text-white hover:bg-[#7C9D32] focus:bg-[#7C9D32]",
-              day_today: "bg-transparent text-black",
-              cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-transparent",
-              day: "h-9 w-9 p-0 font-normal hover:bg-gray-100",
-              nav_button: "hover:bg-gray-100 text-black",
-              nav_button_previous: "absolute left-1",
-              nav_button_next: "absolute right-1",
-              caption: "relative py-4 px-8 text-center text-lg font-normal",
-              table: "w-full border-collapse",
-              head_cell: "text-black font-normal",
-              root: "bg-white p-0",
+                "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+              day_today: "bg-accent/20 text-accent-foreground",
+              day: "h-7 w-7 p-0 font-normal text-sm text-center hover:bg-accent/20 rounded-full",
+              head_cell: "text-muted-foreground font-normal text-xs",
+              cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+              nav_button:
+                "h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100",
+              nav_button_previous: "absolute left-0.5",
+              nav_button_next: "absolute right-0.5",
+              caption: "relative py-0.5 text-sm font-medium",
+              table: "w-full border-collapse space-y-0.5",
+              root: "w-[260px]",
             }}
           />
 
           {selectedDateEvents.length > 0 && (
-            <div className="mt-4 space-y-2">
-              <h3 className="font-semibold">أحداث اليوم:</h3>
-              {selectedDateEvents.map((event) => (
-                <div
-                  key={event.id}
-                  className="p-3 bg-gray-50 rounded-md flex items-center justify-between hover:bg-gray-100 transition-colors"
-                >
-                  <span className="font-medium">{event.title}</span>
-                  <span className="text-sm px-2 py-1 rounded bg-[#748d19]/10 text-[#748d19]">
-                    {event.type === "training" && "تدريب"}
-                    {event.type === "competition" && "منافسة"}
-                    {event.type === "meeting" && "اجتماع"}
-                  </span>
-                </div>
-              ))}
+            <div className="space-y-2">
+              <h3 className="font-medium text-sm text-center">أحداث اليوم</h3>
+              <div className="space-y-1.5">
+                {selectedDateEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className="flex items-center justify-between p-2 bg-white rounded-md border text-sm hover:border-primary/20 transition-colors"
+                  >
+                    <span className="font-medium truncate">{event.title}</span>
+                    <Badge
+                      className={cn(
+                        "ml-2 text-xs",
+                        getEventBadgeColor(event.type),
+                      )}
+                    >
+                      {getEventTypeName(event.type)}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

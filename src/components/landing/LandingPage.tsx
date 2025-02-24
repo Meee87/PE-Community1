@@ -8,18 +8,25 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="relative w-full h-screen md:h-[calc(100vh-4rem)] md:mt-16">
+      <section className="relative w-full h-[100vh] md:h-screen">
         <div className="absolute inset-0">
+          {/* Desktop Image */}
+          <img
+            src="https://i.imgur.com/ZPoyqpq.png"
+            alt="PE Community"
+            className="hidden md:block w-full h-full object-cover object-center"
+          />
+          {/* Mobile Image */}
           <img
             src="https://i.imgur.com/8Q3AzIU.png"
             alt="PE Community"
-            className="w-full h-full object-cover object-center"
+            className="md:hidden w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
-        <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-[10%] left-1/2 -translate-x-1/2 z-10">
           <Button
-            className="bg-[#FFB800] hover:bg-[#E6A600] text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-6 rounded-full transition-all duration-300 hover:scale-105"
+            className="bg-[#1A1A1A] hover:bg-[#1A1A1A]/90 text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-6 rounded-full transition-all duration-300 hover:scale-105"
             size="lg"
             onClick={() => navigate("/home")}
           >
