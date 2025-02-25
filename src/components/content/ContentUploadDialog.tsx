@@ -25,6 +25,9 @@ interface ContentUploadDialogProps {
   isAdmin?: boolean;
   className?: string;
   contentType?: string;
+  variant?: string;
+  showIcon?: boolean;
+  label?: string;
 }
 
 type ContentType = "image" | "video" | "file" | "talent";

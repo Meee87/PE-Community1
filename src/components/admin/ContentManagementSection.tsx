@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { STAGES } from "@/lib/constants";
 import ContentUploadDialog from "../content/ContentUploadDialog";
+import { cn } from "@/lib/utils";
 
 export function ContentManagementSection() {
   return (
@@ -53,7 +54,9 @@ export function ContentManagementSection() {
                                     categoryId={subcategory.id}
                                     contentType={type.id}
                                     isAdmin={true}
-                                    className="w-full justify-start text-right border bg-[#95B846]/10 hover:bg-[#95B846]/20 border-[#95B846]/30 text-gray-900"
+                                    className={cn(
+                                      "w-full justify-start text-right border bg-[#95B846]/10 hover:bg-[#95B846]/20 border-[#95B846]/30 text-gray-900",
+                                    )}
                                     variant="outline"
                                     showIcon={true}
                                     label={`رفع ${
