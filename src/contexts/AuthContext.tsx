@@ -56,14 +56,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               const adminEmails = [
                 "eng.mohamed87@live.com",
                 "wadhaalmeqareh@hotmail.com",
+                "Sarahalmarri1908@outlook.com",
+                "Fatmah_alahbabi@hotmail.com",
                 "thamertub@gmail.com",
                 "liyan2612@hotmail.com",
                 "anood99.mhad@hotmail.com",
               ];
-              setIsAdmin(
-                existingProfile?.role === "admin" ||
-                  adminEmails.includes(existingProfile?.email || ""),
-              );
+              setIsAdmin(adminEmails.includes(existingProfile?.email || ""));
             }
           } else if (event === "SIGNED_OUT") {
             setUser(null);
@@ -108,10 +107,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         setUser({ ...session.user, profile });
-        setIsAdmin(
-          profile?.email === "eng.mohamed87@live.com" &&
-            profile?.role === "admin",
-        );
+        const adminEmails = [
+          "eng.mohamed87@live.com",
+          "wadhaalmeqareh@hotmail.com",
+          "Sarahalmarri1908@outlook.com",
+          "Fatmah_alahbabi@hotmail.com",
+          "thamertub@gmail.com",
+          "liyan2612@hotmail.com",
+          "anood99.mhad@hotmail.com",
+        ];
+        setIsAdmin(adminEmails.includes(profile?.email || ""));
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -134,10 +139,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq("id", userId)
         .single();
 
-      setIsAdmin(
-        profile?.email === "eng.mohamed87@live.com" &&
-          profile?.role === "admin",
-      );
+      const adminEmails = [
+        "eng.mohamed87@live.com",
+        "wadhaalmeqareh@hotmail.com",
+        "Sarahalmarri1908@outlook.com",
+        "Fatmah_alahbabi@hotmail.com",
+        "thamertub@gmail.com",
+        "liyan2612@hotmail.com",
+        "anood99.mhad@hotmail.com",
+      ];
+      setIsAdmin(adminEmails.includes(profile?.email || ""));
     } catch (error) {
       console.error("Error checking admin status:", error);
       setIsAdmin(false);

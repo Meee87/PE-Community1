@@ -40,14 +40,14 @@ export function useNotifications() {
       const adminEmails = [
         "eng.mohamed87@live.com",
         "wadhaalmeqareh@hotmail.com",
+        "Sarahalmarri1908@outlook.com",
+        "Fatmah_alahbabi@hotmail.com",
         "thamertub@gmail.com",
         "liyan2612@hotmail.com",
         "anood99.mhad@hotmail.com",
-        "Fatmah_alahbabi@hotmail.com",
-        "Sarahalmarri1908@outlook.com",
       ];
-      const isAdmin =
-        profile?.role === "admin" || adminEmails.includes(profile?.email || "");
+
+      const isAdmin = adminEmails.includes(profile?.email || "");
       console.log("Is admin:", isAdmin);
 
       if (!isAdmin) {

@@ -16,6 +16,8 @@ export const checkIsAdmin = async () => {
     const adminEmails = [
       "eng.mohamed87@live.com",
       "wadhaalmeqareh@hotmail.com",
+      "Sarahalmarri1908@outlook.com",
+      "Fatmah_alahbabi@hotmail.com",
       "thamertub@gmail.com",
       "liyan2612@hotmail.com",
       "anood99.mhad@hotmail.com",
