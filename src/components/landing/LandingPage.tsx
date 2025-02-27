@@ -18,7 +18,7 @@ const LandingPage = () => {
           />
           {/* Mobile Image */}
           <img
-            src="https://i.imgur.com/8Q3AzIU.png"
+            src="https://i.imgur.com/49qiW0g.png"
             alt="PE Community"
             className="md:hidden w-full h-full object-cover object-center"
           />

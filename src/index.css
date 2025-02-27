@@ -127,3 +127,17 @@ form,
 ::-webkit-scrollbar-thumb:hover {
   background: #7c9d32;
 }
+
+/* Fix for mobile navigation */
+.radix-dialog-overlay {
+  pointer-events: none !important;
+}
+
+.radix-dialog-content {
+  pointer-events: auto !important;
+}
+
+.mobile-nav-button {
+  pointer-events: auto !important;
+  z-index: 200 !important;
+}
