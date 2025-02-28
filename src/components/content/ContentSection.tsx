@@ -201,34 +201,7 @@ const ContentSection = () => {
     }
 
     return (
-      <div className="mb-6">
-        <div className="flex items-center justify-between gap-4 mb-4" dir="rtl">
-          <div className="flex items-center justify-between w-full gap-2">
-            <Button
-              onClick={handleBack}
-              variant="outline"
-              className="bg-white hover:bg-gray-50 flex items-center gap-2"
-            >
-              <ArrowRight className="h-4 w-4" />
-              رجوع
-            </Button>
-            <Button
-              onClick={() => navigate("/")}
-              variant="outline"
-              className="bg-white hover:bg-gray-50 flex items-center gap-2"
-            >
-              <Home className="h-4 w-4" />
-              الرئيسية
-            </Button>
-          </div>
-          {selectedSubcategory && !showContentTypes && (
-            <ContentUploadDialog
-              stageId={selectedStage}
-              categoryId={selectedSubcategory.id}
-              isAdmin={isAdmin}
-            />
-          )}
-        </div>
+      <div className="mb-6 pt-16">
         <Card className="p-6 bg-[#FFD700]/10 text-center" dir="rtl">
           <div className="flex flex-col items-center justify-center gap-4">
             <h1 className="text-2xl sm:text-3xl font-heading text-[#7C9D32]">
@@ -320,7 +293,36 @@ const ContentSection = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#748D19]/10 p-6">
+    <div className="w-full min-h-screen bg-[#748D19]/10 p-6 pt-20 md:pt-24">
+      <div
+        className="fixed top-0 left-0 right-0 flex items-center justify-between p-4 bg-[#F8FAF5] shadow-sm z-50"
+        dir="rtl"
+      >
+        <Button
+          onClick={handleBack}
+          variant="outline"
+          className="bg-white hover:bg-gray-50 flex items-center gap-2"
+        >
+          <ArrowRight className="h-4 w-4" />
+          رجوع
+        </Button>
+        <Button
+          onClick={() => navigate("/")}
+          variant="outline"
+          className="bg-white hover:bg-gray-50 flex items-center gap-2"
+        >
+          <Home className="h-4 w-4" />
+          الرئيسية
+        </Button>
+        {selectedSubcategory && !showContentTypes && (
+          <ContentUploadDialog
+            stageId={selectedStage}
+            categoryId={selectedSubcategory.id}
+            isAdmin={isAdmin}
+          />
+        )}
+      </div>
+
       <div className="max-w-7xl mx-auto space-y-8">
         {renderHeader()}
 

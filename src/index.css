@@ -130,14 +130,21 @@ form,
 
 /* Fix for mobile navigation */
 .radix-dialog-overlay {
-  pointer-events: none !important;
+  pointer-events: auto !important;
 }
 
 .radix-dialog-content {
   pointer-events: auto !important;
 }
 
-.mobile-nav-button {
+/* Make sure bottom navigation stays clickable */
+.md\:hidden.fixed.bottom-0 {
+  z-index: 100;
   pointer-events: auto !important;
-  z-index: 200 !important;
+}
+
+/* Make sure sheet content doesn't block bottom navigation */
+[data-radix-popper-content-wrapper] {
+  z-index: 50 !important;
+  pointer-events: auto !important;
 }

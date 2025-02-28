@@ -11,6 +11,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { Loader2, UserPlus, MessageSquare, BarChart, Home } from "lucide-react";
 import { STAGES } from "@/lib/constants";
 import ContentUploadDialog from "../content/ContentUploadDialog";
+import { AdminHeader } from "./AdminHeader";
+import { StatsCards } from "./StatsCards";
+import { ContentManagementSection } from "./ContentManagementSection";
 
 interface Stats {
   totalUsers: number;
@@ -250,71 +253,18 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16 md:pb-0" dir="rtl">
+    <div className="min-h-screen bg-gray-50 pb-16 md:pb-0 pt-16" dir="rtl">
       {/* Admin Header */}
-      <div className="bg-[#748D19] text-white py-4 px-4 md:px-6 shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl md:text-2xl font-bold">لوحة التحكم</h1>
-            <Button
-              variant="outline"
-              className="md:hidden bg-white hover:bg-gray-50 text-[#748D19] flex items-center gap-2"
-              onClick={() => navigate("/")}
-            >
-              <Home className="h-4 w-4" />
-            </Button>
-          </div>
-          <Button
-            variant="outline"
-            className="hidden md:flex bg-white hover:bg-gray-50 text-[#748D19] items-center gap-2"
-            onClick={() => navigate("/")}
-          >
-            <Home className="h-4 w-4" />
-            الرئيسية
-          </Button>
-        </div>
-      </div>
+      <AdminHeader />
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-6 px-4 space-y-6">
+      <div className="max-w-7xl mx-auto py-6 px-4 space-y-6 mt-2">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card className="bg-white shadow hover:shadow-md transition-shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <UserPlus className="h-5 w-5 text-[#748D19]" />
-                المستخدمين
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{stats.totalUsers}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white shadow hover:shadow-md transition-shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <BarChart className="h-5 w-5 text-[#748D19]" />
-                المحتوى
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{stats.totalContent}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white shadow hover:shadow-md transition-shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <MessageSquare className="h-5 w-5 text-[#748D19]" />
-                الطلبات
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{stats.totalRequests}</p>
-            </CardContent>
-          </Card>
-        </div>
+        <StatsCards
+          totalUsers={stats.totalUsers}
+          totalContent={stats.totalContent}
+          totalRequests={stats.totalRequests}
+        />
 
         {/* Tabs */}
         <Tabs defaultValue="requests" className="space-y-6">
@@ -465,93 +415,7 @@ const AdminDashboard = () => {
 
           {/* Content Management Tab */}
           <TabsContent value="content">
-            <Card>
-              <CardHeader>
-                <CardTitle>إدارة المحتوى</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {Object.values(STAGES).map((stage) => (
-                    <Card
-                      key={stage.id}
-                      className="overflow-hidden border-none shadow-sm"
-                    >
-                      <CardHeader className="bg-[#7C9D32]/5">
-                        <CardTitle className="text-lg">{stage.name}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-4">
-                        <div className="space-y-6">
-                          {stage.categories?.map((category) => (
-                            <div key={category.id} className="space-y-4">
-                              <h3 className="text-lg font-semibold text-[#7C9D32]">
-                                {category.title}
-                              </h3>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {category.subcategories?.map((subcategory) => (
-                                  <Card
-                                    key={subcategory.id}
-                                    className="overflow-hidden"
-                                  >
-                                    <div className="relative h-32">
-                                      <img
-                                        src={subcategory.imageUrl}
-                                        alt={subcategory.title}
-                                        className="w-full h-full object-cover"
-                                      />
-                                      <div
-                                        className={`absolute inset-0 ${subcategory.buttonColor} opacity-60`}
-                                      />
-                                    </div>
-                                    <CardContent className="p-4">
-                                      <h4 className="font-semibold mb-2">
-                                        {subcategory.title}
-                                      </h4>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {subcategory.contentTypes?.map(
-                                          (type) => (
-                                            <ContentUploadDialog
-                                              key={type.id}
-                                              stageId={stage.id}
-                                              categoryId={subcategory.id}
-                                              contentType={type.id}
-                                              isAdmin={true}
-                                              className={`w-full justify-start text-right border ${
-                                                type.id === "image"
-                                                  ? "bg-blue-50 hover:bg-blue-100 border-blue-200"
-                                                  : type.id === "video"
-                                                    ? "bg-green-50 hover:bg-green-100 border-green-200"
-                                                    : type.id === "file"
-                                                      ? "bg-purple-50 hover:bg-purple-100 border-purple-200"
-                                                      : "bg-orange-50 hover:bg-orange-100 border-orange-200"
-                                              }`}
-                                              variant="outline"
-                                              showIcon={true}
-                                              label={`رفع ${
-                                                type.id === "image"
-                                                  ? "الصور"
-                                                  : type.id === "video"
-                                                    ? "الفيديوهات"
-                                                    : type.id === "file"
-                                                      ? "الملفات"
-                                                      : "الموهوبين"
-                                              }`}
-                                            />
-                                          ),
-                                        )}
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <ContentManagementSection />
           </TabsContent>
 
           {/* Users Tab */}
