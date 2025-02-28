@@ -18,16 +18,29 @@ import {
   HelpCircle,
   BookOpen,
   Home,
+  Calendar as CalendarIcon,
+  MessageCircle,
 } from "lucide-react";
 import AuthDialog from "@/components/auth/AuthDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import Calendar from "@/components/Calendar";
+import Contact from "@/components/Contact";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const MainHeader = () => {
   const { notifications, unreadCount, loading, markAsRead, markAllAsRead } =
     useNotifications();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
-  const { user, isAdmin, signOut } = useAuth();
+  const [showCalendarDialog, setShowCalendarDialog] = useState(false);
+  const [showContactDialog, setShowContactDialog] = useState(false);
+  const { user, isAdmin, isLoading, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -63,16 +76,68 @@ const MainHeader = () => {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-white">PE</span>
-              <img
-                src="/logo.png"
-                alt="صافرة"
-                className="h-10 w-10 object-contain"
-              />
-              <span className="text-lg font-bold text-white">COMMUNITY</span>
-            </div>
+            <span className="text-lg font-bold text-white">PE</span>
+            <img
+              src="/logo.png"
+              alt="صافرة"
+              className="h-10 w-10 object-contain"
+            />
+            <span className="text-lg font-bold text-white">COMMUNITY</span>
           </div>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="hidden md:flex items-center gap-6">
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-[#8fb339]"
+            onClick={() => navigate("/home")}
+          >
+            <BookOpen className="mr-2 h-4 w-4" />
+            المحتوى
+          </Button>
+
+          <Dialog
+            open={showCalendarDialog}
+            onOpenChange={setShowCalendarDialog}
+          >
+            <DialogTrigger asChild>
+              <Button variant="ghost" className="text-white hover:bg-[#8fb339]">
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                التقويم
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md bg-white">
+              <DialogHeader>
+                <DialogTitle>التقويم الرياضي</DialogTitle>
+              </DialogHeader>
+              <Calendar className="border-none shadow-none" />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" className="text-white hover:bg-[#8fb339]">
+                <MessageCircle className="mr-2 h-4 w-4" />
+                اتصل بنا
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl bg-white">
+              <DialogHeader>
+                <DialogTitle>اتصل بنا</DialogTitle>
+              </DialogHeader>
+              <Contact />
+            </DialogContent>
+          </Dialog>
+
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-[#8fb339]"
+            onClick={() => navigate("/")}
+          >
+            <Home className="mr-2 h-4 w-4" />
+            الرئيسية
+          </Button>
         </div>
 
         {/* Actions */}
