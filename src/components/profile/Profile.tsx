@@ -214,6 +214,63 @@ const Profile = () => {
                 {updating ? "جاري الحفظ..." : "حفظ التغييرات"}
               </Button>
             </div>
+
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <h3 className="text-lg font-semibold text-red-600 mb-4">
+                حذف الحساب
+              </h3>
+              <p className="text-gray-600 mb-4">
+                عند حذف حسابك، سيتم حذف جميع بياناتك بشكل نهائي ولا يمكن
+                استعادتها.
+              </p>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={async () => {
+                  if (
+                    window.confirm(
+                      "هل أنت متأكد من رغبتك في حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه.",
+                    )
+                  ) {
+                    try {
+                      setUpdating(true);
+                      // Delete profile data first
+                      const { error: profileError } = await supabase
+                        .from("profiles")
+                        .delete()
+                        .eq("id", profile.id);
+
+                      if (profileError) throw profileError;
+
+                      // Then delete the auth user
+                      const { error: authError } =
+                        await supabase.auth.admin.deleteUser(profile.id);
+                      if (authError) {
+                        // If admin delete fails, try regular signOut
+                        await supabase.auth.signOut();
+                      }
+
+                      toast({
+                        description: "تم حذف الحساب بنجاح",
+                      });
+
+                      navigate("/");
+                    } catch (error) {
+                      console.error("Error deleting account:", error);
+                      toast({
+                        variant: "destructive",
+                        description: "حدث خطأ أثناء حذف الحساب",
+                      });
+                    } finally {
+                      setUpdating(false);
+                    }
+                  }
+                }}
+                className="w-full"
+              >
+                حذف الحساب
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

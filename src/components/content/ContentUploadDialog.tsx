@@ -284,6 +284,7 @@ export default function ContentUploadDialog({
                 }
                 className="w-full h-12 border-2 rounded-md px-3 py-2"
                 disabled={loading}
+                capture={undefined}
               />
             </div>
           </div>
