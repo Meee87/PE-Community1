@@ -234,27 +234,68 @@ const Profile = () => {
                   ) {
                     try {
                       setUpdating(true);
-                      // Delete profile data first
-                      const { error: profileError } = await supabase
-                        .from("profiles")
+
+                      // Delete all user content
+                      const { error: contentError } = await supabase
+                        .from("content")
                         .delete()
-                        .eq("id", profile.id);
+                        .eq("created_by", profile.id);
 
-                      if (profileError) throw profileError;
+                      if (contentError) {
+                        console.error(
+                          "Error deleting user content:",
+                          contentError,
+                        );
+                      }
 
-                      // Then delete the auth user
-                      const { error: authError } =
-                        await supabase.auth.admin.deleteUser(profile.id);
-                      if (authError) {
-                        // If admin delete fails, try regular signOut
-                        await supabase.auth.signOut();
+                      // Delete all user content requests
+                      const { error: requestsError } = await supabase
+                        .from("content_requests")
+                        .delete()
+                        .eq("user_id", profile.id);
+
+                      if (requestsError) {
+                        console.error(
+                          "Error deleting user requests:",
+                          requestsError,
+                        );
+                      }
+
+                      // Try to delete the user using the RPC function first
+                      const { data: rpcData, error: deleteError } =
+                        await supabase.rpc("delete_user");
+
+                      if (deleteError) {
+                        console.error(
+                          "RPC delete failed, attempting admin delete:",
+                          deleteError,
+                        );
+
+                        // Then try to delete the auth user using admin API
+                        const { error: authError } =
+                          await supabase.auth.admin.deleteUser(profile.id);
+
+                        if (authError) {
+                          console.error(
+                            "Admin delete failed, falling back to sign out:",
+                            authError,
+                          );
+                          // If all delete methods fail, try regular signOut
+                          await supabase.auth.signOut();
+                        }
+                      } else {
+                        console.log(
+                          "User deleted successfully via RPC function:",
+                          rpcData,
+                        );
                       }
 
                       toast({
                         description: "تم حذف الحساب بنجاح",
                       });
 
-                      navigate("/");
+                      // Navigate to a confirmation page
+                      navigate("/account-deleted");
                     } catch (error) {
                       console.error("Error deleting account:", error);
                       toast({

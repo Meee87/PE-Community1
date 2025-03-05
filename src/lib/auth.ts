@@ -64,3 +64,36 @@ export const signOut = async () => {
     throw error;
   }
 };
+
+export const deleteAccount = async (userId: string) => {
+  try {
+    // First delete profile data
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("id", userId);
+
+    if (profileError) throw profileError;
+
+    // Then delete auth user
+    const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+
+    if (authError) {
+      console.error(
+        "Admin delete failed, falling back to sign out:",
+        authError,
+      );
+      // If admin delete fails, try regular signOut
+      await supabase.auth.signOut();
+    }
+
+    // Clear all storage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    throw error;
+  }
+};

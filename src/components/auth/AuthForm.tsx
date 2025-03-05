@@ -44,15 +44,42 @@ export default function AuthForm() {
 
     try {
       if (mode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
-        if (error) throw error;
+
+        if (error) {
+          if (error.message.includes("Invalid login credentials")) {
+            // Check if the user account exists but was deleted
+            const { data: profileData } = await supabase
+              .from("profiles")
+              .select("email")
+              .eq("email", formData.email)
+              .maybeSingle();
+
+            if (!profileData) {
+              throw new Error("لا يوجد حساب، يرجى إنشاء حساب جديد");
+            } else {
+              throw error;
+            }
+          } else {
+            throw error;
+          }
+        }
+
         toast({
           description: "تم تسجيل الدخول بنجاح",
         });
-        setFormData({ email: "", password: "", fullName: "" });
+        setFormData({
+          email: "",
+          password: "",
+          fullName: "",
+          phone: "",
+          school: "",
+          specialization: "",
+          yearsOfExperience: "",
+        });
         navigate("/");
       } else if (mode === "register") {
         const { error } = await supabase.auth.signUp({
@@ -69,7 +96,15 @@ export default function AuthForm() {
           description:
             "تم إنشاء الحساب بنجاح، يرجى تفعيل حسابك عبر البريد الإلكتروني",
         });
-        setFormData({ email: "", password: "", fullName: "" });
+        setFormData({
+          email: "",
+          password: "",
+          fullName: "",
+          phone: "",
+          school: "",
+          specialization: "",
+          yearsOfExperience: "",
+        });
         setMode("login");
       } else if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(
@@ -80,7 +115,15 @@ export default function AuthForm() {
           description:
             "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني",
         });
-        setFormData({ email: "", password: "", fullName: "" });
+        setFormData({
+          email: "",
+          password: "",
+          fullName: "",
+          phone: "",
+          school: "",
+          specialization: "",
+          yearsOfExperience: "",
+        });
         setMode("login");
       }
     } catch (error: any) {

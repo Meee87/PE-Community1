@@ -7,6 +7,7 @@ import MobileNav from "./components/MobileNav";
 import Home from "./components/home";
 import LandingPage from "./components/landing/LandingPage";
 import Profile from "./components/profile/Profile";
+import DeleteAccountConfirmation from "./components/DeleteAccountConfirmation";
 import ContentSection from "./components/content/ContentSection";
 
 function App() {
@@ -22,6 +23,10 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/stage/:stageId" element={<ContentSection />} />
+          <Route
+            path="/account-deleted"
+            element={<DeleteAccountConfirmation />}
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
