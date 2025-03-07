@@ -161,166 +161,10 @@ const ContentSection = () => {
               ? "file"
               : "talent";
 
-      // Example content for different subcategories and types
-      const exampleContent = {
-        // اللعب النشط
-        "active-play": {
-          image: {
-            id: "example-active-play-image",
-            title: "تمارين اللعب النشط للأطفال",
-            type: "image",
-            thumbnail:
-              "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&q=80",
-            downloadUrl:
-              "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&q=80",
-          },
-          video: {
-            id: "example-active-play-video",
-            title: "فيديو تعليمي للألعاب الحركية",
-            type: "video",
-            thumbnail:
-              "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&q=80",
-            downloadUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          },
-          file: {
-            id: "example-active-play-file",
-            title: "دليل المعلم للألعاب الحركية",
-            type: "file",
-            thumbnail:
-              "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&q=80",
-            downloadUrl: "https://www.africau.edu/images/default/sample.pdf",
-          },
-          talent: {
-            id: "example-active-play-talent",
-            title: "برنامج اكتشاف المواهب الرياضية",
-            type: "talent",
-            thumbnail:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-            downloadUrl:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-          },
-        },
-        // الحركة التعبيرية
-        "expressive-movement": {
-          image: {
-            id: "example-expressive-movement-image",
-            title: "صور للحركات التعبيرية",
-            type: "image",
-            thumbnail:
-              "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&q=80",
-            downloadUrl:
-              "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&q=80",
-          },
-          video: {
-            id: "example-expressive-movement-video",
-            title: "فيديو تعليمي للحركات التعبيرية",
-            type: "video",
-            thumbnail:
-              "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&q=80",
-            downloadUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          },
-          file: {
-            id: "example-expressive-movement-file",
-            title: "دليل الحركات التعبيرية",
-            type: "file",
-            thumbnail:
-              "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&q=80",
-            downloadUrl: "https://www.africau.edu/images/default/sample.pdf",
-          },
-          talent: {
-            id: "example-expressive-movement-talent",
-            title: "برنامج الموهوبين في الحركات التعبيرية",
-            type: "talent",
-            thumbnail:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-            downloadUrl:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-          },
-        },
-        // الألعاب الجماعية
-        "team-sports": {
-          image: {
-            id: "example-team-sports-image",
-            title: "صور للألعاب الجماعية",
-            type: "image",
-            thumbnail:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-            downloadUrl:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-          },
-          video: {
-            id: "example-team-sports-video",
-            title: "فيديو تعليمي للألعاب الجماعية",
-            type: "video",
-            thumbnail:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-            downloadUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          },
-          file: {
-            id: "example-team-sports-file",
-            title: "دليل المعلم للألعاب الجماعية",
-            type: "file",
-            thumbnail:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-            downloadUrl: "https://www.africau.edu/images/default/sample.pdf",
-          },
-          talent: {
-            id: "example-team-sports-talent",
-            title: "برنامج الموهوبين في الألعاب الجماعية",
-            type: "talent",
-            thumbnail:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-            downloadUrl:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-          },
-        },
-        // الألعاب الفردية
-        "individual-sports": {
-          image: {
-            id: "example-individual-sports-image",
-            title: "صور للألعاب الفردية",
-            type: "image",
-            thumbnail:
-              "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
-            downloadUrl:
-              "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
-          },
-          video: {
-            id: "example-individual-sports-video",
-            title: "فيديو تعليمي للألعاب الفردية",
-            type: "video",
-            thumbnail:
-              "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
-            downloadUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          },
-          file: {
-            id: "example-individual-sports-file",
-            title: "دليل المعلم للألعاب الفردية",
-            type: "file",
-            thumbnail:
-              "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
-            downloadUrl: "https://www.africau.edu/images/default/sample.pdf",
-          },
-          talent: {
-            id: "example-individual-sports-talent",
-            title: "برنامج الموهوبين في الألعاب الفردية",
-            type: "talent",
-            thumbnail:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-            downloadUrl:
-              "https://images.unsplash.com/photo-1577741314755-048d8525d31e?w=800&q=80",
-          },
-        },
-      };
+      // Empty example content object - all examples removed
+      const exampleContent = {};
 
-      // Add example content if available for this subcategory and content type
-      if (
-        selectedSubcategory &&
-        exampleContent[selectedSubcategory.id] &&
-        exampleContent[selectedSubcategory.id][dbContentType]
-      ) {
-        resources.push(exampleContent[selectedSubcategory.id][dbContentType]);
-      }
+      // No example content will be added
     }
 
     return (
@@ -340,6 +184,13 @@ const ContentSection = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+          }}
+          onDelete={(resource) => {
+            console.log("Deleting resource:", resource.id);
+            // Force refresh the content
+            if (selectedSubcategory?.selectedContentType) {
+              fetchContent(selectedSubcategory.selectedContentType);
+            }
           }}
           isAdmin={isAdmin}
         />

@@ -62,7 +62,8 @@ const ResourceGrid = ({
   const handleDelete = async (resource: Resource) => {
     try {
       // Check if this is an example resource (has example- prefix)
-      if (resource.id.startsWith("example-")) {
+      if (resource.id && resource.id.startsWith("example-")) {
+        console.log("Deleting example resource:", resource.id);
         // For example resources, just call the onDelete callback without database operations
         toast({
           title: "تم الحذف!",
@@ -71,7 +72,12 @@ const ResourceGrid = ({
         });
 
         // Call onDelete callback if provided
-        onDelete?.(resource);
+        if (onDelete) {
+          onDelete(resource);
+        }
+
+        // Close the dialog
+        setDeleteDialogOpen(false);
         return;
       }
 
