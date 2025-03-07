@@ -97,8 +97,8 @@ const MobileNav = () => {
                   {isLoggedIn ? (
                     <div className="flex items-center gap-4">
                       <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`}
-                        alt="Avatar"
+                        src="https://i.imgur.com/fcLmxsY.png"
+                        alt="PE Community Logo"
                         className="w-12 h-12 rounded-full bg-white"
                       />
                       <div>

@@ -14,7 +14,6 @@ import {
   Menu,
   User,
   LogOut,
-  HelpCircle,
   BookOpen,
   Home,
   Calendar as CalendarIcon,
@@ -77,11 +76,10 @@ const MainHeader = () => {
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-white">PE</span>
             <img
-              src="/logo.png"
-              alt="صافرة"
+              src="https://i.imgur.com/fcLmxsY.png"
+              alt="PE Community Logo"
               className="h-10 w-10 object-contain"
             />
-
             <span className="text-lg font-bold text-white">COMMUNITY</span>
           </div>
         </div>
@@ -253,8 +251,8 @@ const MainHeader = () => {
                             ?.setAttribute("data-state", "closed");
                         }}
                       >
-                        <HelpCircle className="ml-2 h-4 w-4" />
-                        المساعدة
+                        <MessageCircle className="ml-2 h-4 w-4" />
+                        اتصل بنا
                       </Button>
                     </div>
                     <div className="border-t pt-2">

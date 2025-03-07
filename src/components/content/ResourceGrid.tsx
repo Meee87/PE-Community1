@@ -61,6 +61,20 @@ const ResourceGrid = ({
 
   const handleDelete = async (resource: Resource) => {
     try {
+      // Check if this is an example resource (has example- prefix)
+      if (resource.id.startsWith("example-")) {
+        // For example resources, just call the onDelete callback without database operations
+        toast({
+          title: "تم الحذف!",
+          description: "تم حذف المحتوى بنجاح",
+          variant: "success",
+        });
+
+        // Call onDelete callback if provided
+        onDelete?.(resource);
+        return;
+      }
+
       // Delete from storage if URL is from Supabase storage
       if (resource.downloadUrl.includes("content")) {
         const path = resource.downloadUrl.split("/").pop();
