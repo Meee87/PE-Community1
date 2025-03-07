@@ -195,7 +195,7 @@ export default function ContentUploadDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className={`bg-[#7C9D32] hover:bg-[#7C9D32]/90 ${className} block md:inline-block`}
+          className={`bg-[#7C9D32] hover:bg-[#7C9D32]/90 ${className} block`}
           onClick={(e) => {
             e.preventDefault();
             setOpen(true);

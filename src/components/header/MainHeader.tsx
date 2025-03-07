@@ -14,7 +14,6 @@ import {
   Menu,
   User,
   LogOut,
-  Settings,
   HelpCircle,
   BookOpen,
   Home,
@@ -240,15 +239,24 @@ const MainHeader = () => {
                         <User className="ml-2 h-4 w-4" />
                         الملف الشخصي
                       </Button>
-                      <Button variant="ghost" className="w-full justify-start">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => navigate("/home")}
+                      >
                         <BookOpen className="ml-2 h-4 w-4" />
                         دروسي
                       </Button>
-                      <Button variant="ghost" className="w-full justify-start">
-                        <Settings className="ml-2 h-4 w-4" />
-                        الإعدادات
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => {
+                          setShowContactDialog(true);
+                          document
+                            .querySelector('[role="dialog"]')
+                            ?.setAttribute("data-state", "closed");
+                        }}
+                      >
                         <HelpCircle className="ml-2 h-4 w-4" />
                         المساعدة
                       </Button>

@@ -375,7 +375,7 @@ const ContentSection = () => {
     }
 
     return (
-      <div className="mb-6 pt-16">
+      <div className="mb-6 pt-32">
         <Card className="p-6 bg-[#FFD700]/10 text-center" dir="rtl">
           <div className="flex flex-col items-center justify-center gap-4">
             <h1 className="text-2xl sm:text-3xl font-heading text-[#7C9D32]">
@@ -467,9 +467,9 @@ const ContentSection = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#748D19]/10 p-6 pt-20 md:pt-24">
+    <div className="w-full min-h-screen bg-[#748D19]/10 p-6 pt-32 md:pt-36">
       <div
-        className="fixed top-0 left-0 right-0 flex items-center justify-between p-4 bg-[#F8FAF5] shadow-sm z-50"
+        className="fixed top-16 left-0 right-0 flex items-center justify-between p-4 bg-[#F8FAF5] shadow-sm z-40"
         dir="rtl"
       >
         <Button
