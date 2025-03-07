@@ -82,6 +82,11 @@ const MainHeader = () => {
               alt="صافرة"
               className="h-10 w-10 object-contain"
             />
+            <img
+              src="https://i.imgur.com/fcLmxsY.png"
+              alt="صفارة"
+              className="h-8 w-8 mx-1"
+            />
             <span className="text-lg font-bold text-white">COMMUNITY</span>
           </div>
         </div>

@@ -144,6 +144,11 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
                 alt="صافرة"
                 className="h-8 w-8 md:h-10 md:w-10"
               />
+              <img
+                src="https://i.imgur.com/fcLmxsY.png"
+                alt="صفارة"
+                className="h-6 w-6 md:h-8 md:w-8 mx-1"
+              />
               <span className="text-lg md:text-2xl font-bold text-white hidden md:inline">
                 COMMUNITY
               </span>
