@@ -155,14 +155,14 @@ const ResourceGrid = ({
 
   return (
     <div className="bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-md">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
         {resources.map((resource) => (
           <Card
             key={resource.id}
             className="overflow-hidden hover:shadow-lg transition-all duration-300 bg-white backdrop-blur-sm"
           >
             <div
-              className="relative aspect-video cursor-pointer bg-white"
+              className="relative aspect-video cursor-pointer bg-white h-24 sm:h-auto"
               onClick={() => {
                 setSelectedResource(resource);
                 onPreview(resource);
@@ -198,8 +198,10 @@ const ResourceGrid = ({
                 </div>
               )}
             </div>
-            <CardContent className="p-4 text-right bg-white">
-              <h3 className="font-semibold mb-4 text-lg">{resource.title}</h3>
+            <CardContent className="p-2 sm:p-3 text-right bg-white">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base line-clamp-1">
+                {resource.title}
+              </h3>
               <div className="flex justify-between items-center gap-2">
                 {isAdmin && (
                   <TooltipProvider>

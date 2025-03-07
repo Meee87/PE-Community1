@@ -31,27 +31,29 @@ export function useNotifications() {
         return;
       }
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, email")
-        .eq("id", user.id)
-        .single();
+      // استخدام RPC للتحقق من صلاحيات المشرف
+      const { data: isAdmin, error: rpcError } = await supabase.rpc("is_admin");
 
-      const adminEmails = [
-        "eng.mohamed87@live.com",
-        "wadhaalmeqareh@hotmail.com",
-        "Sarahalmarri1908@outlook.com",
-        "Fatmah_alahbabi@hotmail.com",
-        "thamertub@gmail.com",
-        "liyan2612@hotmail.com",
-        "anood99.mhad@hotmail.com",
-      ];
+      if (rpcError) {
+        console.error("RPC error:", rpcError);
+        // استخدام الطريقة التقليدية كخطة بديلة
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
 
-      const isAdmin = adminEmails.includes(profile?.email || "");
-      console.log("Is admin:", isAdmin);
+        if (profileError) {
+          console.error("Profile fetch error:", profileError);
+          return;
+        }
 
-      if (!isAdmin) {
-        console.log("User is not admin");
+        if (profile?.role !== "admin") {
+          console.log("User is not admin");
+          return;
+        }
+      } else if (!isAdmin) {
+        console.log("User is not admin (via RPC)");
         return;
       }
 

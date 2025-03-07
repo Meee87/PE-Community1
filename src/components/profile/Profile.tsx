@@ -62,9 +62,8 @@ const Profile = () => {
       }
 
       setProfile(profile);
-      setIsAdmin(
-        profile.email === "eng.mohamed87@live.com" && profile.role === "admin",
-      );
+      // التحقق مباشرة من دور المستخدم
+      setIsAdmin(profile.role === "admin");
     } catch (error: any) {
       console.error("Error fetching profile:", error);
       toast({
@@ -281,7 +280,15 @@ const Profile = () => {
                             authError,
                           );
                           // If all delete methods fail, try regular signOut
-                          await supabase.auth.signOut();
+                          try {
+                            await supabase.auth.signOut();
+                          } catch (signOutError) {
+                            console.error(
+                              "Error during signOut fallback:",
+                              signOutError,
+                            );
+                            // Continue with cleanup even if signOut fails
+                          }
                         }
                       } else {
                         console.log(

@@ -42,7 +42,7 @@ const StageCard = ({
       <Card
         className={`h-full overflow-hidden shadow-lg group transition-all duration-300 hover:shadow-xl static ${color || "bg-[#F8FAF5]"}`}
       >
-        <div className="relative h-32 sm:h-48 overflow-hidden">
+        <div className="relative h-24 sm:h-32 md:h-48 overflow-hidden">
           <img
             src={
               imageSrc ||
@@ -74,17 +74,17 @@ const StageCard = ({
             <img
               src={(() => {
                 if (title?.includes("اللعب النشط")) {
-                  return "https://api.iconify.design/fluent-emoji-flat:person-bouncing-ball.svg";
+                  return "https://api.iconify.design/fluent-emoji-flat/person-bouncing-ball.svg";
                 } else if (title?.includes("إدارة الجسم")) {
-                  return "https://api.iconify.design/fluent-emoji-flat:person-in-lotus-position.svg";
+                  return "https://api.iconify.design/fluent-emoji-flat/person-in-lotus-position.svg";
                 } else if (title?.includes("الحركة التعبيرية")) {
-                  return "https://api.iconify.design/fluent-emoji-flat:person-dancing.svg";
+                  return "https://api.iconify.design/fluent-emoji-flat/person-dancing.svg";
                 } else if (title?.includes("مرحلة الطفولة")) {
-                  return "https://api.iconify.design/fluent-emoji-flat:child.svg";
+                  return "https://api.iconify.design/fluent-emoji-flat/child.svg";
                 } else if (title?.includes("الصفوف العليا")) {
-                  return "https://api.iconify.design/fluent-emoji-flat:student.svg";
+                  return "https://api.iconify.design/fluent-emoji-flat/student.svg";
                 } else {
-                  return "https://api.iconify.design/fluent-emoji-flat:person-running.svg";
+                  return "https://api.iconify.design/fluent-emoji-flat/person-running.svg";
                 }
               })()}
               alt={title}
@@ -92,13 +92,13 @@ const StageCard = ({
             />
           </div>
         </div>
-        <div className="p-4 sm:p-6">
+        <div className="p-3 sm:p-4 md:p-6">
           <div className="space-y-4 sm:space-y-6">
             <div className="text-center space-y-2">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 text-center">
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2 text-center">
                 {title}
               </h3>
-              <p className="text-sm sm:text-base text-gray-600 line-clamp-2 text-center">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600 line-clamp-2 text-center">
                 {description}
               </p>
             </div>
@@ -131,7 +131,7 @@ const StageCard = ({
               </div>
             )}
             <button
-              className={`mt-6 sm:mt-8 w-full ${buttonColor || "bg-[#7C9D32]"} hover:opacity-90 text-white py-2 px-4 rounded-lg transition-colors text-sm sm:text-base font-medium`}
+              className={`mt-3 sm:mt-4 md:mt-6 w-full ${buttonColor || "bg-[#7C9D32]"} hover:opacity-90 text-white py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg transition-colors text-xs sm:text-sm md:text-base font-medium`}
             >
               {title?.includes("المرحلة") ? "استكشف المرحلة" : "عرض المحتوى"}
             </button>

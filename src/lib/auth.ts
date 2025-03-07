@@ -49,9 +49,17 @@ export const getCurrentUser = async () => {
 
 export const signOut = async () => {
   try {
-    // Sign out from supabase
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    // Check if there's an active session first
+    const { data: sessionData } = await supabase.auth.getSession();
+
+    if (sessionData?.session) {
+      // Sign out from supabase
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error in signOut:", error);
+        // Continue with cleanup even if there's an error
+      }
+    }
 
     // Clear all storage
     localStorage.clear();
@@ -61,7 +69,10 @@ export const signOut = async () => {
     window.location.href = "/";
   } catch (error) {
     console.error("Error signing out:", error);
-    throw error;
+    // Continue with cleanup even if there's an error
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "/";
   }
 };
 

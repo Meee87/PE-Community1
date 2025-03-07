@@ -43,17 +43,8 @@ const ContentSection = () => {
           .eq("id", user.id)
           .single();
 
-        const adminEmails = [
-          "eng.mohamed87@live.com",
-          "wadhaalmeqareh@hotmail.com",
-          "Sarahalmarri1908@outlook.com",
-          "Fatmah_alahbabi@hotmail.com",
-          "thamertub@gmail.com",
-          "liyan2612@hotmail.com",
-          "anood99.mhad@hotmail.com",
-        ];
-
-        setIsAdmin(adminEmails.includes(profile?.email || ""));
+        // التحقق مباشرة من دور المستخدم
+        setIsAdmin(profile?.role === "admin");
       }
     };
     checkAdmin();
@@ -375,13 +366,15 @@ const ContentSection = () => {
     }
 
     return (
-      <div className="mb-6 pt-32">
-        <Card className="p-6 bg-[#FFD700]/10 text-center" dir="rtl">
+      <div className="mb-4 pt-2">
+        <Card className="p-3 sm:p-4 bg-[#FFD700]/10 text-center" dir="rtl">
           <div className="flex flex-col items-center justify-center gap-4">
-            <h1 className="text-2xl sm:text-3xl font-heading text-[#7C9D32]">
+            <h1 className="text-xl sm:text-2xl font-heading text-[#7C9D32]">
               {title}
             </h1>
-            <p className="text-gray-600 max-w-2xl">{description}</p>
+            <p className="text-sm sm:text-base text-gray-600 max-w-2xl line-clamp-2">
+              {description}
+            </p>
           </div>
         </Card>
       </div>
@@ -406,7 +399,7 @@ const ContentSection = () => {
 
     if (selectedSubcategory) {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {selectedSubcategory.contentTypes?.map((contentType) => (
             <ContentCard
               key={contentType.id}
@@ -429,7 +422,7 @@ const ContentSection = () => {
 
     if (selectedCategory) {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {selectedCategory.subcategories?.map((subcategory) => (
             <StageCard
               key={subcategory.id}
@@ -448,7 +441,7 @@ const ContentSection = () => {
 
     return (
       <div className="space-y-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center max-w-[800px] mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 justify-items-center max-w-[800px] mx-auto">
           {stage?.categories?.map((category) => (
             <StageCard
               key={category.id}
@@ -467,9 +460,9 @@ const ContentSection = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#748D19]/10 p-6 pt-32 md:pt-36">
+    <div className="w-full min-h-screen bg-[#748D19]/10 p-4 pt-24 md:pt-28">
       <div
-        className="fixed top-16 left-0 right-0 flex items-center justify-between p-4 bg-[#F8FAF5] shadow-sm z-40"
+        className="fixed top-0 left-0 right-0 flex items-center justify-between p-2 bg-[#F8FAF5] shadow-sm z-40"
         dir="rtl"
       >
         <Button

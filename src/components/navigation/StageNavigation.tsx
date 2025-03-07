@@ -39,14 +39,14 @@ const StageNavigation = ({ stages = defaultStages }: StageNavigationProps) => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#748D19]/10 p-4 md:p-8 pt-32 md:pt-36">
+    <div className="w-full min-h-screen bg-[#748D19]/10 p-4 md:p-6 pt-24 md:pt-28">
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
         className="max-w-7xl mx-auto"
       >
-        <div className="fixed top-16 left-0 right-0 flex items-center justify-between p-4 bg-[#F8FAF5] shadow-sm z-40">
+        <div className="fixed top-0 left-0 right-0 flex items-center justify-between p-2 bg-[#F8FAF5] shadow-sm z-40">
           <Button
             onClick={() => navigate("/")}
             variant="outline"

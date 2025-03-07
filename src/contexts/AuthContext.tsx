@@ -53,16 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setIsAdmin(false);
             } else {
               setUser({ ...session.user, profile: existingProfile });
-              const adminEmails = [
-                "eng.mohamed87@live.com",
-                "wadhaalmeqareh@hotmail.com",
-                "Sarahalmarri1908@outlook.com",
-                "Fatmah_alahbabi@hotmail.com",
-                "thamertub@gmail.com",
-                "liyan2612@hotmail.com",
-                "anood99.mhad@hotmail.com",
-              ];
-              setIsAdmin(adminEmails.includes(existingProfile?.email || ""));
+              // التحقق مباشرة من دور المستخدم
+              setIsAdmin(existingProfile?.role === "admin");
             }
           } else if (event === "SIGNED_OUT") {
             setUser(null);
@@ -107,16 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         setUser({ ...session.user, profile });
-        const adminEmails = [
-          "eng.mohamed87@live.com",
-          "wadhaalmeqareh@hotmail.com",
-          "Sarahalmarri1908@outlook.com",
-          "Fatmah_alahbabi@hotmail.com",
-          "thamertub@gmail.com",
-          "liyan2612@hotmail.com",
-          "anood99.mhad@hotmail.com",
-        ];
-        setIsAdmin(adminEmails.includes(profile?.email || ""));
+        // التحقق مباشرة من دور المستخدم
+        setIsAdmin(profile?.role === "admin");
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -157,9 +141,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function signOut() {
     try {
-      // Sign out from supabase
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      // Check if there's an active session first
+      const { data: sessionData } = await supabase.auth.getSession();
+
+      if (sessionData?.session) {
+        // Sign out from supabase
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error("Error in signOut:", error);
+          // Continue with cleanup even if there's an error
+        }
+      }
 
       // Clear all storage
       localStorage.clear();
@@ -173,7 +165,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.location.href = "/";
     } catch (error) {
       console.error("Error signing out:", error);
-      throw error;
+      // Continue with cleanup even if there's an error
+      localStorage.clear();
+      sessionStorage.clear();
+      setUser(null);
+      setIsAdmin(false);
+      window.location.href = "/";
     }
   }
 

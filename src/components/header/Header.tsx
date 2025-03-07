@@ -40,10 +40,8 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
           .select("role, email")
           .eq("id", session.user.id)
           .single();
-        setIsAdmin(
-          profile?.email === "eng.mohamed87@live.com" &&
-            profile?.role === "admin",
-        );
+        // التحقق مباشرة من دور المستخدم
+        setIsAdmin(profile?.role === "admin");
       } else {
         setIsAdmin(false);
       }
@@ -76,11 +74,23 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      // Check if there's an active session first
+      const { data: sessionData } = await supabase.auth.getSession();
 
+      if (sessionData?.session) {
+        // Sign out from supabase
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error("Error in signOut:", error);
+          // Continue with cleanup even if there's an error
+        }
+      }
+
+      // Clear state and storage regardless of errors
       setIsLoggedIn(false);
       setIsAdmin(false);
+      localStorage.clear();
+      sessionStorage.clear();
 
       toast({
         description: "تم تسجيل الخروج بنجاح",
@@ -90,10 +100,19 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
       window.location.href = "/";
     } catch (error) {
       console.error("Error signing out:", error);
+
+      // Clear state and storage even if there's an error
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+      localStorage.clear();
+      sessionStorage.clear();
+
       toast({
-        variant: "destructive",
-        description: "حدث خطأ في تسجيل الخروج",
+        description: "تم تسجيل الخروج بنجاح",
       });
+
+      // Force a page reload to clear all state
+      window.location.href = "/";
     }
   };
 
@@ -144,11 +163,7 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
                 alt="صافرة"
                 className="h-8 w-8 md:h-10 md:w-10"
               />
-              <img
-                src="https://i.imgur.com/fcLmxsY.png"
-                alt="صفارة"
-                className="h-6 w-6 md:h-8 md:w-8 mx-1"
-              />
+
               <span className="text-lg md:text-2xl font-bold text-white hidden md:inline">
                 COMMUNITY
               </span>

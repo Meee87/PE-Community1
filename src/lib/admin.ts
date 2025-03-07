@@ -7,24 +7,29 @@ export const checkIsAdmin = async () => {
     } = await supabase.auth.getUser();
     if (!user) return false;
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role, email")
-      .eq("id", user.id)
-      .single();
+    console.log("Checking admin status for user:", user.id);
 
-    const adminEmails = [
-      "eng.mohamed87@live.com",
-      "wadhaalmeqareh@hotmail.com",
-      "Sarahalmarri1908@outlook.com",
-      "Fatmah_alahbabi@hotmail.com",
-      "thamertub@gmail.com",
-      "liyan2612@hotmail.com",
-      "anood99.mhad@hotmail.com",
-    ];
-    return (
-      profile?.role === "admin" || adminEmails.includes(profile?.email || "")
-    );
+    // استخدام RPC بدلاً من الاستعلام المباشر
+    const { data, error } = await supabase.rpc("is_admin");
+
+    if (error) {
+      console.error("RPC error:", error);
+      // استخدام الطريقة التقليدية كخطة بديلة
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Profile fetch error:", profileError);
+        return false;
+      }
+
+      return profile?.role === "admin";
+    }
+
+    return !!data;
   } catch (error) {
     console.error("Error checking admin status:", error);
     return false;

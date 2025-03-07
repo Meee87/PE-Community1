@@ -39,25 +39,17 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
     try {
       if (mode === "login") {
+        console.log("Attempting to sign in with:", { email: formData.email });
         const { data, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
 
         if (error) {
+          console.error("Login error:", error);
+          // تبسيط التعامل مع الأخطاء
           if (error.message.includes("Invalid login credentials")) {
-            // Check if the user account exists but was deleted
-            const { data: profileData } = await supabase
-              .from("profiles")
-              .select("email")
-              .eq("email", formData.email)
-              .maybeSingle();
-
-            if (!profileData) {
-              throw new Error("لا يوجد حساب، يرجى إنشاء حساب جديد");
-            } else {
-              throw error;
-            }
+            throw new Error("بيانات تسجيل الدخول غير صحيحة");
           } else {
             throw error;
           }
