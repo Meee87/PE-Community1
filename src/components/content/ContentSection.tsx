@@ -313,24 +313,24 @@ const ContentSection = () => {
   return (
     <div className="w-full min-h-screen bg-[#748D19]/10 p-4 pt-24 md:pt-28">
       <div
-        className="fixed top-0 left-0 right-0 flex items-center justify-between p-2 bg-[#F8FAF5] shadow-sm z-40"
+        className="fixed md:top-16 top-8 left-0 right-0 flex items-center justify-between p-2 bg-[#F8FAF5] shadow-md z-40 backdrop-blur-sm"
         dir="rtl"
       >
         <Button
           onClick={handleBack}
           variant="outline"
-          className="bg-white hover:bg-gray-50 flex items-center gap-2"
+          className="bg-white hover:bg-[#7C9D32]/20 flex items-center gap-2 font-bold text-black hover:text-black"
         >
-          <ArrowRight className="h-4 w-4" />
-          رجوع
+          <ArrowRight className="h-4 w-4 text-black" />
+          <span className="inline-block">رجوع</span>
         </Button>
         <Button
           onClick={() => navigate("/")}
           variant="outline"
-          className="bg-white hover:bg-gray-50 flex items-center gap-2"
+          className="bg-white hover:bg-[#7C9D32]/20 flex items-center gap-2 font-bold text-black hover:text-black"
         >
-          <Home className="h-4 w-4" />
-          الرئيسية
+          <Home className="h-4 w-4 text-black" />
+          <span className="inline-block">الرئيسية</span>
         </Button>
         {selectedSubcategory && !showContentTypes && (
           <div className="flex-1 flex justify-center">

@@ -46,13 +46,14 @@ const StageNavigation = ({ stages = defaultStages }: StageNavigationProps) => {
         animate="show"
         className="max-w-7xl mx-auto"
       >
-        <div className="fixed top-0 left-0 right-0 flex items-center justify-between p-2 bg-[#F8FAF5] shadow-sm z-40">
+        <div className="fixed md:top-16 top-8 left-0 right-0 flex items-center justify-between p-2 bg-[#F8FAF5] shadow-md z-40 backdrop-blur-sm">
           <Button
             onClick={() => navigate("/")}
             variant="outline"
-            className="bg-white hover:bg-gray-50"
+            className="bg-white hover:bg-[#7C9D32]/20 font-bold text-black hover:text-black flex items-center gap-2"
           >
-            <Home className="h-5 w-5" />
+            <Home className="h-5 w-5 text-black" />
+            <span className="inline-block">الرئيسية</span>
           </Button>
           <h1 className="text-2xl sm:text-3xl font-display text-gray-900 text-center">
             المرحلة التعليمية
