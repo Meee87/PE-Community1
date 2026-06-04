@@ -1,0 +1,27 @@
+name: Supabase Keep-Alive
+
+# يمنع إيقاف مشروع Supabase المجاني: يرسل طلبًا للقاعدة كل 3 أيام
+on:
+  schedule:
+    - cron: "0 6 */3 * *" # كل 3 أيام الساعة 6 صباحًا UTC
+  workflow_dispatch: {} # تشغيل يدوي من تبويب Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST
+        run: |
+          echo "Pinging Supabase to keep project active..."
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/content?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+          echo "HTTP status: $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Unexpected status $code"; exit 1
+          fi
+          echo "✅ Supabase is alive"
+        env:
+          SUPABASE_URL: https://wncehpjbxngwlxzhgaom.supabase.co
+          SUPABASE_ANON_KEY: sb_publishable_tAu3CnX8SXcLZSYRwfQZbg_U_f7_EEY
