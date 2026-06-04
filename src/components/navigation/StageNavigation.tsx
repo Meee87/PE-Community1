@@ -13,7 +13,11 @@ interface StageNavigationProps {
 
 import { STAGES } from "@/lib/constants";
 
-const defaultStages = Object.values(STAGES);
+// المراحل المفعّلة للعرض (الابتدائي فقط حاليًا — أضف "middle"/"high" عند توفّر محتواهما)
+const ENABLED_STAGES = ["primary"];
+const defaultStages = Object.values(STAGES).filter((s) =>
+  ENABLED_STAGES.includes(s.id),
+);
 
 const StageNavigation = ({ stages = defaultStages }: StageNavigationProps) => {
   const navigate = useNavigate();
