@@ -33,3 +33,5 @@ core
 _backups/
 _db-setup/
 .env
+
+council/
