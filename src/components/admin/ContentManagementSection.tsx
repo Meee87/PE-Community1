@@ -16,14 +16,14 @@ export function ContentManagementSection() {
               key={stage.id}
               className="overflow-hidden border-none shadow-sm"
             >
-              <CardHeader className="bg-[#7C9D32]/5">
+              <CardHeader className="bg-[#8A1538]/5">
                 <CardTitle className="text-lg">{stage.name}</CardTitle>
               </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-6">
                   {stage.categories?.map((category) => (
                     <div key={category.id} className="space-y-4">
-                      <h3 className="text-lg font-semibold text-[#7C9D32]">
+                      <h3 className="text-lg font-semibold text-[#8A1538]">
                         {category.title}
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -55,7 +55,7 @@ export function ContentManagementSection() {
                                     contentType={type.id}
                                     isAdmin={true}
                                     className={cn(
-                                      "w-full justify-start text-right border bg-[#95B846]/10 hover:bg-[#95B846]/20 border-[#95B846]/30 text-gray-900",
+                                      "w-full justify-start text-right border bg-[#A91D45]/10 hover:bg-[#A91D45]/20 border-[#A91D45]/30 text-gray-900",
                                     )}
                                     variant="outline"
                                     showIcon={true}

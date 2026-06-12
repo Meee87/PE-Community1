@@ -18,19 +18,19 @@ export function NotificationItem({
   const getIcon = () => {
     switch (type) {
       case "content":
-        return <BookOpen className="h-4 w-4 text-[#7C9D32]" />;
+        return <BookOpen className="h-4 w-4 text-[#8A1538]" />;
       case "achievement":
-        return <Star className="h-4 w-4 text-[#FFD700]" />;
+        return <Star className="h-4 w-4 text-[#C9A227]" />;
       case "request":
         return <FileText className="h-4 w-4 text-blue-500" />;
       default:
-        return <Bell className="h-4 w-4 text-[#7C9D32]" />;
+        return <Bell className="h-4 w-4 text-[#8A1538]" />;
     }
   };
 
   return (
     <div
-      className={`flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors ${!isRead ? "bg-[#7C9D32]/5" : ""}`}
+      className={`flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors ${!isRead ? "bg-[#8A1538]/5" : ""}`}
     >
       <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-200">
         {getIcon()}
@@ -45,7 +45,7 @@ export function NotificationItem({
           })}
         </p>
       </div>
-      {!isRead && <div className="h-2 w-2 rounded-full bg-[#7C9D32] mt-2" />}
+      {!isRead && <div className="h-2 w-2 rounded-full bg-[#8A1538] mt-2" />}
     </div>
   );
 }

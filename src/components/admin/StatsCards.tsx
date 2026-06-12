@@ -17,7 +17,7 @@ export function StatsCards({
       <Card className="bg-white shadow hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <UserPlus className="h-5 w-5 text-[#748D19]" />
+            <UserPlus className="h-5 w-5 text-[#8A1538]" />
             المستخدمين
           </CardTitle>
         </CardHeader>
@@ -29,7 +29,7 @@ export function StatsCards({
       <Card className="bg-white shadow hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <BarChart className="h-5 w-5 text-[#748D19]" />
+            <BarChart className="h-5 w-5 text-[#8A1538]" />
             المحتوى
           </CardTitle>
         </CardHeader>
@@ -41,7 +41,7 @@ export function StatsCards({
       <Card className="bg-white shadow hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <MessageSquare className="h-5 w-5 text-[#748D19]" />
+            <MessageSquare className="h-5 w-5 text-[#8A1538]" />
             الطلبات
           </CardTitle>
         </CardHeader>

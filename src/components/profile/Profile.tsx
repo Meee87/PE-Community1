@@ -197,7 +197,7 @@ const Profile = () => {
                 <Button
                   type="button"
                   onClick={() => navigate("/admin")}
-                  className="bg-[#7C9D32] hover:bg-[#7C9D32]/90"
+                  className="bg-[#8A1538] hover:bg-[#8A1538]/90"
                 >
                   لوحة التحكم
                 </Button>

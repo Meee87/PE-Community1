@@ -34,7 +34,7 @@ const DeleteAccountConfirmation = () => {
         </p>
         <Button
           onClick={() => navigate("/")}
-          className="bg-[#7C9D32] hover:bg-[#7C9D32]/90 text-white font-bold py-2 px-6"
+          className="bg-[#8A1538] hover:bg-[#8A1538]/90 text-white font-bold py-2 px-6"
         >
           العودة للصفحة الرئيسية
         </Button>

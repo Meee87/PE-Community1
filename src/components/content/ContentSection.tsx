@@ -218,9 +218,9 @@ const ContentSection = () => {
 
     return (
       <div className="mb-4 pt-2">
-        <Card className="p-3 sm:p-4 bg-[#FFD700]/10 text-center" dir="rtl">
+        <Card className="p-3 sm:p-4 bg-[#C9A227]/10 text-center" dir="rtl">
           <div className="flex flex-col items-center justify-center gap-4">
-            <h1 className="text-xl sm:text-2xl font-heading text-[#7C9D32]">
+            <h1 className="text-xl sm:text-2xl font-heading text-[#8A1538]">
               {title}
             </h1>
             <p className="text-sm sm:text-base text-gray-600 max-w-2xl line-clamp-2">
@@ -311,16 +311,16 @@ const ContentSection = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#748D19]/10">
+    <div className="w-full min-h-screen bg-[#8A1538]/10">
       <div
-        className="sticky top-0 md:top-16 left-0 right-0 flex items-center justify-between gap-2 no-reverse p-3 bg-[#F8FAF5]/95 shadow-md z-40 backdrop-blur-sm"
+        className="sticky top-0 md:top-16 left-0 right-0 flex items-center justify-between gap-2 no-reverse p-3 bg-[#FAF7F2]/95 shadow-md z-40 backdrop-blur-sm"
         dir="rtl"
       >
         {/* الرئيسية — يمين */}
         <Button
           onClick={() => navigate("/")}
           variant="outline"
-          className="bg-white hover:bg-[#7C9D32]/20 flex items-center gap-2 no-reverse font-bold text-black hover:text-black"
+          className="bg-white hover:bg-[#8A1538]/20 flex items-center gap-2 no-reverse font-bold text-black hover:text-black"
         >
           <Home className="h-4 w-4 text-black" />
           <span className="inline-block">الرئيسية</span>
@@ -341,7 +341,7 @@ const ContentSection = () => {
         <Button
           onClick={handleBack}
           variant="outline"
-          className="bg-white hover:bg-[#7C9D32]/20 flex items-center gap-2 no-reverse font-bold text-black hover:text-black"
+          className="bg-white hover:bg-[#8A1538]/20 flex items-center gap-2 no-reverse font-bold text-black hover:text-black"
         >
           <span className="inline-block">رجوع</span>
           <ArrowRight className="h-4 w-4 text-black" />
@@ -422,7 +422,7 @@ const ContentSection = () => {
                       link.click();
                       document.body.removeChild(link);
                     }}
-                    className="bg-[#748d19] hover:bg-[#647917]"
+                    className="bg-[#8A1538] hover:bg-[#6E1029]"
                   >
                     تحميل الملف
                   </Button>

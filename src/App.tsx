@@ -12,7 +12,7 @@ import ContentSection from "./components/content/ContentSection";
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#F8FAF5] pt-0 md:pt-16 pb-16 md:pb-0">
+    <div className="min-h-screen bg-[#FAF7F2] pt-0 md:pt-16 pb-16 md:pb-0">
       <MainHeader />
       <MobileNav />
       <main>

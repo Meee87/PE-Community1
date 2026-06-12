@@ -93,7 +93,7 @@ function Login() {
 
           <Button
             type="submit"
-            className="w-full bg-[#95B846] hover:bg-[#95B846]/90"
+            className="w-full bg-[#A91D45] hover:bg-[#A91D45]/90"
             disabled={loading}
           >
             تسجيل الدخول

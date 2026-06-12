@@ -69,7 +69,7 @@ const StageCard = ({
             className="w-full h-full object-cover transform transition-all duration-300 group-hover:scale-105"
           />
           <div
-            className={`absolute inset-0 transition-opacity duration-300 ${buttonColor || "bg-[#7C9D32]"} opacity-45 group-hover:opacity-30`}
+            className={`absolute inset-0 transition-opacity duration-300 ${buttonColor || "bg-[#8A1538]"} opacity-45 group-hover:opacity-30`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 p-2 sm:p-3 transform-gpu transition-all duration-300 hover:scale-110 hover:rotate-6">
@@ -133,7 +133,7 @@ const StageCard = ({
               </div>
             )}
             <button
-              className={`mt-3 sm:mt-4 md:mt-6 w-full ${buttonColor || "bg-[#7C9D32]"} text-white py-2 sm:py-2.5 px-2 sm:px-4 rounded-xl shadow-md transition-all duration-200 hover:shadow-lg hover:brightness-110 active:scale-[0.98] text-xs sm:text-sm md:text-base font-semibold`}
+              className={`mt-3 sm:mt-4 md:mt-6 w-full ${buttonColor || "bg-[#8A1538]"} text-white py-2 sm:py-2.5 px-2 sm:px-4 rounded-xl shadow-md transition-all duration-200 hover:shadow-lg hover:brightness-110 active:scale-[0.98] text-xs sm:text-sm md:text-base font-semibold`}
             >
               {title?.includes("المرحلة") ? "استكشف المرحلة" : "عرض المحتوى"}
             </button>

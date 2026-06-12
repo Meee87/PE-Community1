@@ -132,7 +132,7 @@ export default function AuthForm() {
           type="button"
           variant="outline"
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#7C9D32]"
+          className="flex items-center gap-2 bg-[#C9A227] hover:bg-[#C9A227]/90 text-[#8A1538]"
         >
           <ArrowRight className="h-4 w-4" />
           العودة للرئيسية
@@ -280,7 +280,7 @@ export default function AuthForm() {
             <div>
               <Button
                 type="submit"
-                className="w-full bg-[#7C9D32] hover:bg-[#7C9D32]/90"
+                className="w-full bg-[#8A1538] hover:bg-[#8A1538]/90"
                 disabled={loading}
               >
                 {loading

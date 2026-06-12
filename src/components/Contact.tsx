@@ -152,7 +152,7 @@ const Contact = () => {
       <CardContent className="grid gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
-            <Mail className="h-6 w-6 text-[#95B846]" />
+            <Mail className="h-6 w-6 text-[#A91D45]" />
             <div>
               <h3 className="font-semibold">البريد الإلكتروني</h3>
               <p className="text-sm text-gray-600">contact@pecommunity.com</p>
@@ -160,7 +160,7 @@ const Contact = () => {
           </div>
 
           <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
-            <Phone className="h-6 w-6 text-[#95B846]" />
+            <Phone className="h-6 w-6 text-[#A91D45]" />
             <div>
               <h3 className="font-semibold">رقم الهاتف</h3>
               <p className="text-sm text-gray-600">+966 12 345 6789</p>
@@ -170,7 +170,7 @@ const Contact = () => {
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="w-full bg-[#95B846] hover:bg-[#86a73d]">
+            <Button className="w-full bg-[#A91D45] hover:bg-[#A91D45]">
               <MessageCircle className="mr-2 h-4 w-4" />
               تحدث مع المسؤولين
             </Button>
@@ -188,7 +188,7 @@ const Contact = () => {
                     setFormData((prev) => ({ ...prev, name: e.target.value }))
                   }
                   required
-                  className="focus:border-[#95B846]"
+                  className="focus:border-[#A91D45]"
                 />
               </div>
               <div className="space-y-2">
@@ -200,14 +200,14 @@ const Contact = () => {
                     setFormData((prev) => ({ ...prev, email: e.target.value }))
                   }
                   required
-                  className="focus:border-[#95B846]"
+                  className="focus:border-[#A91D45]"
                   dir="ltr"
                 />
               </div>
               <div className="space-y-2">
                 <Textarea
                   placeholder="نص الرسالة (10 أحرف على الأقل)"
-                  className="min-h-[100px] focus:border-[#95B846]"
+                  className="min-h-[100px] focus:border-[#A91D45]"
                   value={formData.message}
                   onChange={(e) =>
                     setFormData((prev) => ({
@@ -221,7 +221,7 @@ const Contact = () => {
               <Button
                 type="submit"
                 disabled={isSending}
-                className="w-full bg-[#95B846] hover:bg-[#86a73d] transition-all duration-200"
+                className="w-full bg-[#A91D45] hover:bg-[#A91D45] transition-all duration-200"
               >
                 {isSending ? "جاري الإرسال..." : "إرسال الرسالة"}
               </Button>

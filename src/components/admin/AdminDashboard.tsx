@@ -499,7 +499,7 @@ const AdminDashboard = () => {
                         }
                       }}
                       disabled={!newAdminEmail}
-                      className="bg-[#7C9D32] hover:bg-[#7C9D32]/90"
+                      className="bg-[#8A1538] hover:bg-[#8A1538]/90"
                     >
                       إضافة مستخدم جديد
                     </Button>
@@ -683,7 +683,7 @@ const AdminDashboard = () => {
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <Button
                                   size="sm"
-                                  className="bg-[#7C9D32] hover:bg-[#7C9D32]/90 flex items-center gap-2"
+                                  className="bg-[#8A1538] hover:bg-[#8A1538]/90 flex items-center gap-2"
                                   onClick={async () => {
                                     if (!message.is_read) {
                                       const { error } = await supabase

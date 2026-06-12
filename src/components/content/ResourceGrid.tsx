@@ -160,7 +160,7 @@ const ResourceGrid = ({
                     link.click();
                     document.body.removeChild(link);
                   }}
-                  className="bg-[#748d19] hover:bg-[#647917]"
+                  className="bg-[#8A1538] hover:bg-[#6E1029]"
                 >
                   تحميل الملف
                 </Button>

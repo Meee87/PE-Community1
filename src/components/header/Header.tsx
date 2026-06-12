@@ -117,10 +117,10 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
   };
 
   const buttonClasses =
-    "text-sm font-medium text-white hover:bg-[#FFD700] hover:text-[#748D19] px-4 py-2 rounded-md transition-colors";
+    "text-sm font-medium text-white hover:bg-[#C9A227] hover:text-[#8A1538] px-4 py-2 rounded-md transition-colors";
 
   return (
-    <header className="hidden md:block fixed top-0 left-0 right-0 h-0 md:h-16 bg-[#748D19] shadow-md z-50">
+    <header className="hidden md:block fixed top-0 left-0 right-0 h-0 md:h-16 bg-[#8A1538] shadow-md z-50">
       <div
         className="h-full max-w-7xl mx-auto px-4 flex items-center justify-between"
         dir="rtl"
@@ -130,7 +130,7 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden text-white hover:bg-[#FFD700] hover:text-[#748D19]"
+            className="md:hidden text-white hover:bg-[#C9A227] hover:text-[#8A1538]"
             onClick={onMenuClick}
           >
             <svg
@@ -215,7 +215,7 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
           {isAdmin && (
             <Button
               onClick={() => navigate("/admin")}
-              className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#748D19] font-bold"
+              className="bg-[#C9A227] hover:bg-[#C9A227]/90 text-[#8A1538] font-bold"
             >
               لوحة التحكم
             </Button>
@@ -241,7 +241,7 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
             </>
           ) : (
             <Link to="/login">
-              <Button className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#748D19] text-sm px-4 py-2">
+              <Button className="bg-[#C9A227] hover:bg-[#C9A227]/90 text-[#8A1538] text-sm px-4 py-2">
                 تسجيل الدخول
               </Button>
             </Link>

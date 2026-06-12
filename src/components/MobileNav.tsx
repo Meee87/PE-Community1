@@ -270,10 +270,10 @@ const MobileNav = () => {
         <div className="grid grid-cols-5 w-full h-16 bg-white">
           <button
             onClick={() => setOpen(true)}
-            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200 pointer-events-auto"
+            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#8A1538] hover:bg-[#8A1538]/10 transition-all duration-200 pointer-events-auto"
           >
             <Menu className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+            <span className="text-xs mt-1 group-hover:text-[#8A1538] transition-colors duration-200">
               القائمة
             </span>
           </button>
@@ -282,10 +282,10 @@ const MobileNav = () => {
               setOpen(false);
               handleNavigation("/");
             }}
-            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200 pointer-events-auto"
+            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#8A1538] hover:bg-[#8A1538]/10 transition-all duration-200 pointer-events-auto"
           >
             <Home className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+            <span className="text-xs mt-1 group-hover:text-[#8A1538] transition-colors duration-200">
               الرئيسية
             </span>
           </button>
@@ -294,10 +294,10 @@ const MobileNav = () => {
               setOpen(false);
               handleNavigation("/home");
             }}
-            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200 pointer-events-auto"
+            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#8A1538] hover:bg-[#8A1538]/10 transition-all duration-200 pointer-events-auto"
           >
             <BookOpen className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+            <span className="text-xs mt-1 group-hover:text-[#8A1538] transition-colors duration-200">
               المحتوى
             </span>
           </button>
@@ -306,10 +306,10 @@ const MobileNav = () => {
               setOpen(false);
               setShowCalendar(true);
             }}
-            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200 pointer-events-auto"
+            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#8A1538] hover:bg-[#8A1538]/10 transition-all duration-200 pointer-events-auto"
           >
             <CalendarIcon className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+            <span className="text-xs mt-1 group-hover:text-[#8A1538] transition-colors duration-200">
               التقويم
             </span>
           </button>
@@ -319,10 +319,10 @@ const MobileNav = () => {
                 setOpen(false);
                 handleSignOut();
               }}
-              className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200 pointer-events-auto"
+              className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#8A1538] hover:bg-[#8A1538]/10 transition-all duration-200 pointer-events-auto"
             >
               <LogOut className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
-              <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+              <span className="text-xs mt-1 group-hover:text-[#8A1538] transition-colors duration-200">
                 خروج
               </span>
             </button>
@@ -332,10 +332,10 @@ const MobileNav = () => {
                 setOpen(false);
                 setShowAuthDialog(true);
               }}
-              className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#748D19] hover:bg-[#748D19]/10 transition-all duration-200 pointer-events-auto"
+              className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#8A1538] hover:bg-[#8A1538]/10 transition-all duration-200 pointer-events-auto"
             >
               <LogIn className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
-              <span className="text-xs mt-1 group-hover:text-[#748D19] transition-colors duration-200">
+              <span className="text-xs mt-1 group-hover:text-[#8A1538] transition-colors duration-200">
                 دخول
               </span>
             </button>

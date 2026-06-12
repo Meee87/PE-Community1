@@ -53,7 +53,7 @@ const CategoryGrid = ({
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-[#748D19]/10 p-6">
+    <div className="w-full min-h-screen bg-[#8A1538]/10 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {categories?.map((category) => (

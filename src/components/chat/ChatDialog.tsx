@@ -153,7 +153,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
                 className={`max-w-[80%] rounded-lg p-3 ${
                   message.sender_id ===
                   (supabase.auth.getUser() as any).data?.user?.id
-                    ? "bg-[#7C9D32] text-white"
+                    ? "bg-[#8A1538] text-white"
                     : "bg-gray-100"
                 }`}
               >
@@ -179,7 +179,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
           <Button
             type="submit"
             disabled={sending || !newMessage.trim()}
-            className="bg-[#7C9D32] hover:bg-[#7C9D32]/90"
+            className="bg-[#8A1538] hover:bg-[#8A1538]/90"
           >
             {sending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

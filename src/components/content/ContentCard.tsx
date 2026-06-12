@@ -18,13 +18,13 @@ const ContentCard = ({
   const getIcon = () => {
     switch (type) {
       case "images":
-        return <Image className="w-8 h-8 text-[#7C9D32]" />;
+        return <Image className="w-8 h-8 text-[#8A1538]" />;
       case "videos":
-        return <Video className="w-8 h-8 text-[#7C9D32]" />;
+        return <Video className="w-8 h-8 text-[#8A1538]" />;
       case "files":
-        return <FileText className="w-8 h-8 text-[#7C9D32]" />;
+        return <FileText className="w-8 h-8 text-[#8A1538]" />;
       case "talented":
-        return <Star className="w-8 h-8 text-[#7C9D32]" />;
+        return <Star className="w-8 h-8 text-[#8A1538]" />;
       default:
         return null;
     }
@@ -43,7 +43,7 @@ const ContentCard = ({
         }
       }}
     >
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#7C9D32]/15 to-[#7C9D32]/5 ring-1 ring-[#7C9D32]/10 flex items-center justify-center mb-3 sm:mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#8A1538]/15 to-[#8A1538]/5 ring-1 ring-[#8A1538]/10 flex items-center justify-center mb-3 sm:mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
         {getIcon()}
       </div>
       <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2 text-gray-900">
@@ -53,7 +53,7 @@ const ContentCard = ({
         {description}
       </p>
       <Button
-        className="w-full bg-[#7C9D32] hover:bg-[#7C9D32] hover:brightness-110 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 font-semibold"
+        className="w-full bg-[#8A1538] hover:bg-[#8A1538] hover:brightness-110 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 font-semibold"
         onClick={(e) => {
           e.stopPropagation();
           onClick?.();

@@ -61,14 +61,14 @@ const MainHeader = () => {
   };
 
   return (
-    <header className="bg-[#7C9D32] text-white py-2 px-4 shadow-md fixed top-0 left-0 right-0 z-[100] h-16 hidden md:block">
+    <header className="bg-[#8A1538] text-white py-2 px-4 shadow-md fixed top-0 left-0 right-0 z-[100] h-16 hidden md:block">
       <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
         {/* Logo and Menu */}
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden text-white hover:bg-[#8fb339] hover:text-white"
+            className="lg:hidden text-white hover:bg-[#A91D45] hover:text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             <Menu className="h-5 w-5" />
@@ -88,7 +88,7 @@ const MainHeader = () => {
         <div className="hidden md:flex items-center gap-6">
           <Button
             variant="ghost"
-            className="text-white hover:bg-[#8fb339]"
+            className="text-white hover:bg-[#A91D45]"
             onClick={() => navigate("/")}
           >
             <Home className="mr-2 h-4 w-4" />
@@ -97,7 +97,7 @@ const MainHeader = () => {
 
           <Button
             variant="ghost"
-            className="text-white hover:bg-[#8fb339]"
+            className="text-white hover:bg-[#A91D45]"
             onClick={() => navigate("/home")}
           >
             <BookOpen className="mr-2 h-4 w-4" />
@@ -109,7 +109,7 @@ const MainHeader = () => {
             onOpenChange={setShowCalendarDialog}
           >
             <DialogTrigger asChild>
-              <Button variant="ghost" className="text-white hover:bg-[#8fb339]">
+              <Button variant="ghost" className="text-white hover:bg-[#A91D45]">
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 التقويم
               </Button>
@@ -124,7 +124,7 @@ const MainHeader = () => {
 
           <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
             <DialogTrigger asChild>
-              <Button variant="ghost" className="text-white hover:bg-[#8fb339]">
+              <Button variant="ghost" className="text-white hover:bg-[#A91D45]">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 اتصل بنا
               </Button>
@@ -145,7 +145,7 @@ const MainHeader = () => {
               {isAdmin && (
                 <Button
                   onClick={() => navigate("/admin")}
-                  className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#1A1A1A] font-bold"
+                  className="bg-[#C9A227] hover:bg-[#C9A227]/90 text-[#1A1A1A] font-bold"
                 >
                   لوحة التحكم
                 </Button>
@@ -155,11 +155,11 @@ const MainHeader = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="relative text-white hover:bg-[#8fb339] hover:text-white"
+                    className="relative text-white hover:bg-[#A91D45] hover:text-white"
                   >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-[#FFD700] text-[#1A1A1A] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#7C9D32]">
+                      <span className="absolute -top-1 -right-1 bg-[#C9A227] text-[#1A1A1A] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#8A1538]">
                         {unreadCount}
                       </span>
                     )}
@@ -173,7 +173,7 @@ const MainHeader = () => {
                         variant="ghost"
                         size="sm"
                         onClick={markAllAsRead}
-                        className="text-[#7C9D32] hover:text-[#7C9D32]/90"
+                        className="text-[#8A1538] hover:text-[#8A1538]/90"
                       >
                         تحديد الكل كمقروء
                       </Button>
@@ -181,7 +181,7 @@ const MainHeader = () => {
                     <div className="space-y-1 max-h-[400px] overflow-y-auto">
                       {loading ? (
                         <div className="flex items-center justify-center py-4">
-                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#7C9D32]"></div>
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#8A1538]"></div>
                         </div>
                       ) : notifications.length > 0 ? (
                         notifications.map((notification) => (
@@ -213,7 +213,7 @@ const MainHeader = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-[#8fb339] hover:text-white"
+                    className="text-white hover:bg-[#A91D45] hover:text-white"
                   >
                     <User className="h-5 w-5" />
                   </Button>
@@ -272,7 +272,7 @@ const MainHeader = () => {
           ) : (
             <Button
               variant="ghost"
-              className="text-white hover:bg-[#8fb339]"
+              className="text-white hover:bg-[#A91D45]"
               onClick={() => setShowAuthDialog(true)}
             >
               تسجيل الدخول

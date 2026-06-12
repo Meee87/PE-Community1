@@ -43,18 +43,18 @@ const StageNavigation = ({ stages = defaultStages }: StageNavigationProps) => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#748D19]/10 p-4 md:p-6 pt-24 md:pt-28">
+    <div className="w-full min-h-screen bg-[#8A1538]/10 p-4 md:p-6 pt-24 md:pt-28">
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
         className="max-w-7xl mx-auto"
       >
-        <div className="fixed md:top-16 top-8 left-0 right-0 flex items-center justify-between p-2 bg-[#F8FAF5] shadow-md z-40 backdrop-blur-sm">
+        <div className="fixed md:top-16 top-8 left-0 right-0 flex items-center justify-between p-2 bg-[#FAF7F2] shadow-md z-40 backdrop-blur-sm">
           <Button
             onClick={() => navigate("/")}
             variant="outline"
-            className="bg-white hover:bg-[#7C9D32]/20 font-bold text-black hover:text-black flex items-center gap-2"
+            className="bg-white hover:bg-[#8A1538]/20 font-bold text-black hover:text-black flex items-center gap-2"
           >
             <Home className="h-5 w-5 text-black" />
             <span className="inline-block">الرئيسية</span>

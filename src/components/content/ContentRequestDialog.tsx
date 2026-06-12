@@ -168,7 +168,7 @@ export default function ContentRequestDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="bg-[#7C9D32] hover:bg-[#7C9D32]/90"
+          className="bg-[#8A1538] hover:bg-[#8A1538]/90"
           onClick={(e) => {
             e.preventDefault();
             setOpen(true);
@@ -369,7 +369,7 @@ export default function ContentRequestDialog({
 
           <Button
             type="submit"
-            className="w-full bg-[#7C9D32] hover:bg-[#7C9D32]/90"
+            className="w-full bg-[#8A1538] hover:bg-[#8A1538]/90"
             disabled={loading}
           >
             {loading ? "جاري الإرسال..." : "إرسال الطلب"}
