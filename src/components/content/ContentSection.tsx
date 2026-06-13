@@ -319,7 +319,7 @@ const ContentSection = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#8A1538]/10">
+    <div className="w-full min-h-screen bg-[#FAF7F2]">
       <div
         className="sticky top-0 md:top-16 left-0 right-0 flex items-center justify-between gap-2 no-reverse p-3 bg-[#FAF7F2]/95 shadow-md z-40 backdrop-blur-sm"
         dir="rtl"

@@ -4,6 +4,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* متغيّرات الهوية القطرية (shadcn tokens) — كل المكوّنات تتبع العنّابي/الذهبي */
+:root {
+  --background: 40 33% 97%;
+  --foreground: 340 20% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 340 20% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 340 20% 12%;
+  --primary: 342 74% 31%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 46 67% 47%;
+  --secondary-foreground: 36 45% 12%;
+  --muted: 40 20% 94%;
+  --muted-foreground: 340 8% 42%;
+  --accent: 342 60% 95%;
+  --accent-foreground: 342 74% 31%;
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 340 15% 90%;
+  --input: 340 15% 90%;
+  --ring: 342 74% 31%;
+  --radius: 0.75rem;
+}
+
 /* RTL Setup — هوية قطرية */
 html,
 body {

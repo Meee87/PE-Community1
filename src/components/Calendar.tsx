@@ -1,11 +1,6 @@
 import React, { useEffect } from "react";
-import { Calendar as CalendarIcon, Plus } from "lucide-react";
-import { Calendar as CalendarComponent } from "./ui/calendar";
-import { Button } from "./ui/button";
+import { ChevronRight, ChevronLeft, CalendarDays, Dot } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { useToast } from "./ui/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
 
 interface Event {
@@ -15,197 +10,197 @@ interface Event {
   type: "training" | "competition" | "meeting";
 }
 
+const BRAND = "#8A1538";
+const GOLD = "#C9A227";
+const DAY_LETTERS = ["أحد", "إثن", "ثلا", "أرب", "خمي", "جمع", "سبت"];
+
 const Calendar = ({ className }: { className?: string }) => {
-  const { toast } = useToast();
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const today = new Date();
+  const [view, setView] = React.useState(
+    () => new Date(today.getFullYear(), today.getMonth(), 1),
+  );
+  const [selected, setSelected] = React.useState<Date>(today);
   const [events, setEvents] = React.useState<Event[]>([]);
-  const [isAdmin, setIsAdmin] = React.useState(false);
-  const [showAddEvent, setShowAddEvent] = React.useState(false);
-  const [newEvent, setNewEvent] = React.useState({
-    title: "",
-    type: "training" as "training" | "competition" | "meeting",
-  });
 
   useEffect(() => {
-    checkAdmin();
-    fetchEvents();
-    setupRealtimeSubscription();
-  }, []);
-
-  const checkAdmin = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-      setIsAdmin(profile?.role === "admin");
-    }
-  };
-
-  const fetchEvents = async () => {
-    const { data, error } = await supabase
+    supabase
       .from("events")
       .select("*")
-      .order("date", { ascending: true });
+      .order("date", { ascending: true })
+      .then(({ data }) =>
+        setEvents((data || []).map((e: any) => ({ ...e, date: new Date(e.date) }))),
+      );
+  }, []);
 
-    if (error) {
-      console.error("Error fetching events:", error);
-      return;
-    }
+  const year = view.getFullYear();
+  const month = view.getMonth();
+  const firstWeekday = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const monthLabel = view.toLocaleDateString("ar-EG", {
+    month: "long",
+    year: "numeric",
+  });
 
-    setEvents(
-      data.map((event) => ({
-        ...event,
-        date: new Date(event.date),
-      })),
-    );
-  };
-
-  const setupRealtimeSubscription = () => {
-    let channel: ReturnType<typeof supabase.channel> | null = null;
-    try {
-      channel = supabase
-        .channel(`events-${Math.random().toString(36).slice(2)}`)
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "events" },
-          (payload) => {
-            const newEvent = {
-              ...payload.new,
-              date: new Date(payload.new.date),
-            };
-            setEvents((current) => [...current, newEvent]);
-          },
-        )
-        .subscribe();
-    } catch (e) {
-      console.warn("Realtime unavailable:", e);
-    }
-    return () => {
-      if (channel) supabase.removeChannel(channel);
-    };
-  };
-
-  const handleAddEvent = async () => {
-    if (!date || !newEvent.title || !newEvent.type) return;
-
-    try {
-      const { error } = await supabase.from("events").insert([
-        {
-          title: newEvent.title,
-          type: newEvent.type,
-          date: date.toISOString(),
-        },
-      ]);
-
-      if (error) throw error;
-
-      toast({
-        description: "تم إضافة الحدث بنجاح",
-      });
-
-      setNewEvent({ title: "", type: "training" });
-      setShowAddEvent(false);
-    } catch (error) {
-      console.error("Error adding event:", error);
-      toast({
-        variant: "destructive",
-        description: "حدث خطأ أثناء إضافة الحدث",
-      });
-    }
-  };
-
-  const selectedDateEvents = events.filter(
-    (event) => date && event.date.toDateString() === date.toDateString(),
+  const eventDays = new Set(
+    events
+      .filter((e) => e.date.getFullYear() === year && e.date.getMonth() === month)
+      .map((e) => e.date.getDate()),
   );
 
-  const getEventBadgeColor = (type: string) => {
-    switch (type) {
-      case "training":
-        return "bg-green-100 text-green-800 hover:bg-green-200";
-      case "competition":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-200";
-      case "meeting":
-        return "bg-purple-100 text-purple-800 hover:bg-purple-200";
-      default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
-    }
-  };
+  const isToday = (d: number) =>
+    today.getDate() === d &&
+    today.getMonth() === month &&
+    today.getFullYear() === year;
+  const isSelected = (d: number) =>
+    selected.getDate() === d &&
+    selected.getMonth() === month &&
+    selected.getFullYear() === year;
 
-  const getEventTypeName = (type: string) => {
-    switch (type) {
-      case "training":
-        return "تدريب";
-      case "competition":
-        return "منافسة";
-      case "meeting":
-        return "اجتماع";
-      default:
-        return type;
-    }
-  };
+  const selectedEvents = events.filter(
+    (e) => e.date.toDateString() === selected.toDateString(),
+  );
+  const typeName = (t: string) =>
+    t === "training" ? "تدريب" : t === "competition" ? "منافسة" : "اجتماع";
+  const selectedLabel = selected.toLocaleDateString("ar-EG", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 
   return (
-    <Card className={cn("bg-white shadow-sm max-w-[300px] mx-auto", className)}>
-      <CardHeader className="space-y-1 pb-2">
-        <CardTitle className="text-lg font-semibold text-center">
-          التقويم الرياضي
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-2">
-        <div className="space-y-3">
-          <CalendarComponent
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            className="mx-auto rounded-md"
-            classNames={{
-              day_selected:
-                "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-              day_today: "bg-accent/20 text-accent-foreground",
-              day: "h-7 w-7 p-0 font-normal text-sm text-center hover:bg-accent/20 rounded-full",
-              head_cell: "text-muted-foreground font-normal text-xs",
-              cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-              nav_button:
-                "h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100",
-              nav_button_previous: "absolute left-0.5",
-              nav_button_next: "absolute right-0.5",
-              caption: "relative py-0.5 text-sm font-medium",
-              table: "w-full border-collapse space-y-0.5",
-              root: "w-[260px]",
-            }}
-          />
-
-          {selectedDateEvents.length > 0 && (
-            <div className="space-y-2">
-              <h3 className="font-medium text-sm text-center">أحداث اليوم</h3>
-              <div className="space-y-1.5">
-                {selectedDateEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    className="flex items-center justify-between p-2 bg-white rounded-md border text-sm hover:border-primary/20 transition-colors"
-                  >
-                    <span className="font-medium truncate">{event.title}</span>
-                    <Badge
-                      className={cn(
-                        "ml-2 text-xs",
-                        getEventBadgeColor(event.type),
-                      )}
-                    >
-                      {getEventTypeName(event.type)}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+    <div
+      className={cn(
+        "w-full grid md:grid-cols-[1.3fr_1fr] gap-5 md:gap-6",
+        className,
+      )}
+      dir="rtl"
+    >
+      {/* ===== التقويم (اليمين) ===== */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-[0_8px_30px_rgba(20,20,20,0.05)]">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => setView(new Date(year, month - 1, 1))}
+            className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-gray-100 text-gray-500"
+            aria-label="السابق"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+          <h3 className="text-base font-bold" style={{ color: BRAND }}>
+            {monthLabel}
+          </h3>
+          <button
+            onClick={() => setView(new Date(year, month + 1, 1))}
+            className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-gray-100 text-gray-500"
+            aria-label="التالي"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
         </div>
-      </CardContent>
-    </Card>
+
+        <div className="grid grid-cols-7 gap-1 mb-1">
+          {DAY_LETTERS.map((d) => (
+            <div
+              key={d}
+              className="text-center text-[11px] font-semibold text-gray-400 py-1"
+            >
+              {d}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1">
+          {Array.from({ length: firstWeekday }).map((_, i) => (
+            <div key={`e${i}`} />
+          ))}
+          {Array.from({ length: daysInMonth }).map((_, i) => {
+            const day = i + 1;
+            const todayCell = isToday(day);
+            const selCell = isSelected(day);
+            const hasEvent = eventDays.has(day);
+            return (
+              <button
+                key={day}
+                onClick={() => setSelected(new Date(year, month, day))}
+                className="relative aspect-square flex items-center justify-center text-sm rounded-xl transition-all duration-150 hover:bg-gray-100"
+                style={
+                  selCell
+                    ? {
+                        backgroundColor: BRAND,
+                        color: "#fff",
+                        fontWeight: 700,
+                        boxShadow: `0 6px 16px ${BRAND}55`,
+                      }
+                    : todayCell
+                      ? {
+                          backgroundColor: `${BRAND}12`,
+                          color: BRAND,
+                          fontWeight: 700,
+                        }
+                      : { color: "#374151" }
+                }
+              >
+                {day}
+                {hasEvent && !selCell && (
+                  <span
+                    className="absolute bottom-1 w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: GOLD }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* مفتاح الألوان */}
+        <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t text-[11px] text-gray-500">
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: BRAND }} />
+            اليوم المحدّد
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: GOLD }} />
+            يوجد حدث
+          </span>
+        </div>
+      </div>
+
+      {/* ===== الأحداث (الشمال) ===== */}
+      <div className="bg-[#FAF7F2] rounded-2xl border border-gray-100 p-4 flex flex-col">
+        <div className="flex items-center gap-2 mb-1">
+          <CalendarDays className="w-4 h-4" style={{ color: BRAND }} />
+          <h4 className="font-bold text-gray-800">أحداث اليوم</h4>
+        </div>
+        <p className="text-xs text-gray-500 mb-4">{selectedLabel}</p>
+
+        {selectedEvents.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-8 text-gray-400">
+            <Dot className="w-10 h-10 opacity-40" />
+            <p className="text-sm">لا توجد أحداث في هذا اليوم</p>
+          </div>
+        ) : (
+          <div className="space-y-2.5 overflow-y-auto max-h-[260px] pr-1">
+            {selectedEvents.map((e) => (
+              <div
+                key={e.id}
+                className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-bold text-gray-900 truncate">
+                    {e.title}
+                  </span>
+                  <span
+                    className="text-[11px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: `${BRAND}12`, color: BRAND }}
+                  >
+                    {typeName(e.type)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

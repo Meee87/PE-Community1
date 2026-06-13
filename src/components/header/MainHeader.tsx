@@ -114,9 +114,11 @@ const MainHeader = () => {
                 التقويم
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md bg-white">
+            <DialogContent className="max-w-2xl bg-white">
               <DialogHeader>
-                <DialogTitle>التقويم الرياضي</DialogTitle>
+                <DialogTitle className="text-[#8A1538]">
+                  التقويم الرياضي
+                </DialogTitle>
               </DialogHeader>
               <Calendar className="border-none shadow-none" />
             </DialogContent>
