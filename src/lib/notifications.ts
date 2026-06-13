@@ -43,7 +43,7 @@ export const sendPushNotification = async (
   data?: any,
 ) => {
   try {
-    await PushNotifications.schedule({
+    await (PushNotifications as any).schedule({
       notifications: [
         {
           title,

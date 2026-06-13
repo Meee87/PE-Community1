@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Eye, Download, Play, FileText, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -14,18 +12,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface Resource {
   id: string;
@@ -43,6 +29,18 @@ interface ResourceGridProps {
   onDelete?: (resource: Resource) => void;
 }
 
+const BRAND = "#8A1538";
+
+const download = (r: Resource) => {
+  const link = document.createElement("a");
+  link.href = r.downloadUrl;
+  link.download = r.title;
+  link.target = "_blank";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 const ResourceGrid = ({
   resources = [],
   onPreview = () => {},
@@ -52,278 +50,175 @@ const ResourceGrid = ({
 }: ResourceGridProps) => {
   const { toast } = useToast();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [resourceToDelete, setResourceToDelete] = useState<Resource | null>(
-    null,
-  );
-  const [selectedResource, setSelectedResource] = useState<Resource | null>(
-    null,
-  );
+  const [resourceToDelete, setResourceToDelete] = useState<Resource | null>(null);
+  const [selected, setSelected] = useState<Resource | null>(null);
 
   const handleDelete = async (resource: Resource) => {
     try {
-      // Check if this is an example resource (has example- prefix)
-      if (resource.id && resource.id.startsWith("example-")) {
-        console.log("Deleting example resource:", resource.id);
-        // For example resources, just call the onDelete callback without database operations
-        toast({
-          title: "تم الحذف!",
-          description: "تم حذف المحتوى بنجاح",
-          variant: "success",
-        });
-
-        // Call onDelete callback if provided
-        if (onDelete) {
-          onDelete(resource);
-        }
-
-        // Close the dialog
-        setDeleteDialogOpen(false);
-        return;
+      if (resource.downloadUrl.includes("/content/")) {
+        const marker = "/content/";
+        const path = resource.downloadUrl.slice(
+          resource.downloadUrl.indexOf(marker) + marker.length,
+        );
+        if (path) await supabase.storage.from("content").remove([path]);
       }
-
-      // Delete from storage if URL is from Supabase storage
-      if (resource.downloadUrl.includes("content")) {
-        const path = resource.downloadUrl.split("/").pop();
-        if (path) {
-          await supabase.storage.from("content").remove([path]);
-        }
-      }
-
-      // Delete from database
-      const { error } = await supabase
-        .from("content")
-        .delete()
-        .eq("id", resource.id);
-
+      const { error } = await supabase.from("content").delete().eq("id", resource.id);
       if (error) throw error;
-
-      toast({
-        title: "تم الحذف!",
-        description: "تم حذف المحتوى بنجاح",
-        variant: "success",
-      });
-
-      // Call onDelete callback if provided
+      toast({ title: "تم الحذف!", description: "تم حذف المحتوى بنجاح" });
       onDelete?.(resource);
-    } catch (error) {
-      console.error("Error deleting resource:", error);
-      toast({
-        variant: "destructive",
-        description: "حدث خطأ أثناء حذف المحتوى",
-      });
+    } catch (e) {
+      toast({ variant: "destructive", description: "حدث خطأ أثناء حذف المحتوى" });
     }
   };
 
-  const renderPreviewContent = (resource: Resource) => {
-    switch (resource.type) {
-      case "image":
-        return (
-          <div className="relative w-full h-full bg-white flex items-center justify-center">
-            <img
-              src={resource.downloadUrl}
-              alt={resource.title}
-              className="w-full h-full object-contain rounded-lg max-h-[70vh]"
-              onError={(e) => {
-                e.currentTarget.src =
-                  "https://placehold.co/600x400?text=Error+Loading+Image";
-              }}
-            />
-          </div>
-        );
-      case "video":
-        return (
-          <div className="aspect-video w-full bg-black">
-            <iframe
-              src={resource.downloadUrl}
-              title={resource.title}
-              className="w-full h-full rounded-lg"
-              allowFullScreen
-            />
-          </div>
-        );
-      case "file":
-        return (
-          <div className="w-full h-[70vh] bg-white rounded-lg p-4">
-            <object
-              data={resource.downloadUrl}
-              type="application/pdf"
-              className="w-full h-full rounded-lg"
-            >
-              <div className="text-center py-8 bg-white">
-                <p className="mb-4">لا يمكن عرض الملف مباشرة</p>
-                <Button
-                  onClick={() => {
-                    const link = document.createElement("a");
-                    link.href = resource.downloadUrl;
-                    link.download = resource.title;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  }}
-                  className="bg-[#8A1538] hover:bg-[#6E1029]"
-                >
-                  تحميل الملف
-                </Button>
-              </div>
-            </object>
-          </div>
-        );
-      default:
-        return <div className="text-center p-4 bg-white">غير متوفر</div>;
-    }
+  const open = (r: Resource) => {
+    setSelected(r);
+    onPreview(r);
   };
+
+  if (resources.length === 0) {
+    return (
+      <div className="text-center py-16 text-gray-400">
+        <FileText className="w-10 h-10 mx-auto mb-2 opacity-40" />
+        <p>لا يوجد محتوى في هذا القسم بعد</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-md">
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-        {resources.map((resource) => (
-          <Card
-            key={resource.id}
-            className="overflow-hidden hover:shadow-lg transition-all duration-300 bg-white backdrop-blur-sm"
+    <div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {resources.map((r) => (
+          <div
+            key={r.id}
+            className="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-[0_14px_36px_rgba(20,20,20,0.10)] hover:-translate-y-1 transition-all duration-300"
           >
             <div
-              className="relative aspect-video cursor-pointer bg-white h-24 sm:h-auto"
-              onClick={() => {
-                setSelectedResource(resource);
-                onPreview(resource);
-              }}
+              className="relative aspect-[4/3] bg-gray-50 cursor-pointer overflow-hidden"
+              onClick={() => open(r)}
             >
-              {resource.type === "image" ? (
-                <div className="w-full h-full bg-gray-50">
-                  <img
-                    src={resource.downloadUrl}
-                    alt={resource.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src =
-                        "https://placehold.co/600x400?text=Error+Loading+Image";
-                    }}
-                    loading="lazy"
-                  />
-                </div>
-              ) : resource.type === "video" ? (
-                <div className="w-full h-full bg-black flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center">
-                    <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1"></div>
-                  </div>
-                </div>
+              {r.type === "image" ? (
+                <img
+                  src={r.downloadUrl}
+                  alt={r.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://placehold.co/600x400?text=...";
+                  }}
+                />
               ) : (
-                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                  <div className="text-gray-500">معاينة غير متوفرة</div>
+                <div
+                  className="w-full h-full flex items-center justify-center"
+                  style={{ background: `${BRAND}0A` }}
+                >
+                  {r.type === "video" ? (
+                    <div
+                      className="w-14 h-14 rounded-full flex items-center justify-center"
+                      style={{ background: BRAND }}
+                    >
+                      <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
+                    </div>
+                  ) : (
+                    <FileText className="w-12 h-12" style={{ color: BRAND }} />
+                  )}
                 </div>
               )}
-              {resource.type === "file" && (
-                <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded text-sm font-medium">
+
+              {/* تراكب الإجراءات عند المرور */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    open(r);
+                  }}
+                  className="w-9 h-9 rounded-full bg-white/95 flex items-center justify-center text-gray-800 hover:scale-110 transition"
+                  aria-label="معاينة"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDownload(r);
+                    download(r);
+                  }}
+                  className="w-9 h-9 rounded-full bg-white/95 flex items-center justify-center text-gray-800 hover:scale-110 transition"
+                  aria-label="تحميل"
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+                {isAdmin && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setResourceToDelete(r);
+                      setDeleteDialogOpen(true);
+                    }}
+                    className="w-9 h-9 rounded-full bg-white/95 flex items-center justify-center text-red-600 hover:scale-110 transition"
+                    aria-label="حذف"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {r.type === "file" && (
+                <span className="absolute top-2 right-2 bg-white/95 text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ color: BRAND }}>
                   PDF
-                </div>
+                </span>
               )}
             </div>
-            <CardContent className="p-2 sm:p-3 text-right bg-white">
-              <h3 className="font-semibold mb-2 text-sm sm:text-base line-clamp-1">
-                {resource.title}
-              </h3>
-              <div className="flex justify-between items-center gap-2">
-                {isAdmin && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="text-red-600 hover:bg-red-100"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setResourceToDelete(resource);
-                            setDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>حذف</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => {
-                          setSelectedResource(resource);
-                          onPreview(resource);
-                        }}
-                      >
-                        <img
-                          src="https://api.iconify.design/fluent-emoji-flat/eyes.svg"
-                          alt="معاينة"
-                          className="h-5 w-5"
-                        />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>معاينة</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
 
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => {
-                          onDownload(resource);
-                          const link = document.createElement("a");
-                          link.href = resource.downloadUrl;
-                          link.download = resource.title;
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                        }}
-                      >
-                        <img
-                          src="https://api.iconify.design/fluent-emoji-flat/inbox-tray.svg"
-                          alt="تحميل"
-                          className="h-5 w-5"
-                        />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>تحميل</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </CardContent>
-          </Card>
+            <div className="p-3 text-right">
+              <h3 className="font-bold text-sm text-gray-900 line-clamp-1">{r.title}</h3>
+            </div>
+          </div>
         ))}
       </div>
 
-      <Dialog
-        open={!!selectedResource}
-        onOpenChange={() => setSelectedResource(null)}
-      >
-        <DialogContent className="max-w-4xl bg-white">
-          <DialogHeader>
-            <DialogTitle>{selectedResource?.title}</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4">
-            {selectedResource && renderPreviewContent(selectedResource)}
+      {/* المعاينة (Lightbox) */}
+      {selected && (
+        <div
+          className="fixed inset-0 z-[120] bg-black/75 flex items-center justify-center p-4"
+          onClick={() => setSelected(null)}
+        >
+          <button
+            className="absolute top-4 left-4 text-white/90 hover:text-white"
+            onClick={() => setSelected(null)}
+          >
+            <X className="w-7 h-7" />
+          </button>
+          <div
+            className="max-w-4xl w-full max-h-[85vh] flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {selected.type === "image" && (
+              <img src={selected.downloadUrl} alt={selected.title} className="max-h-[78vh] rounded-2xl object-contain" />
+            )}
+            {selected.type === "video" && (
+              <video src={selected.downloadUrl} controls autoPlay className="max-h-[78vh] rounded-2xl bg-black" />
+            )}
+            {(selected.type === "file" || selected.type === "talent") && (
+              <iframe src={selected.downloadUrl} title={selected.title} className="w-full h-[78vh] rounded-2xl bg-white" />
+            )}
+            <div className="flex items-center justify-between w-full mt-3 text-white">
+              <span className="font-bold">{selected.title}</span>
+              <button
+                onClick={() => download(selected)}
+                className="flex items-center gap-1.5 text-sm bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-lg"
+              >
+                <Download className="w-4 h-4" /> تحميل
+              </button>
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-white">
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              هل أنت متأكد من حذف هذا المحتوى؟
-            </AlertDialogTitle>
+            <AlertDialogTitle>هل أنت متأكد من حذف هذا المحتوى؟</AlertDialogTitle>
             <AlertDialogDescription>
               هذا الإجراء لا يمكن التراجع عنه. سيتم حذف المحتوى نهائياً.
             </AlertDialogDescription>
@@ -333,10 +228,8 @@ const ResourceGrid = ({
             <AlertDialogAction
               className="bg-red-600 hover:bg-red-700"
               onClick={() => {
-                if (resourceToDelete) {
-                  handleDelete(resourceToDelete);
-                  setDeleteDialogOpen(false);
-                }
+                if (resourceToDelete) handleDelete(resourceToDelete);
+                setDeleteDialogOpen(false);
               }}
             >
               حذف

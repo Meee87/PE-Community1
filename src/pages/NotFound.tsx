@@ -7,7 +7,7 @@ function NotFound() {
       <p className="text-lg mt-4">عذرًا، الصفحة التي تبحث عنها غير متوفرة.</p>
       <Link
         to="/login"
-        className="mt-6 px-4 py-2 bg-blue-500 text-white rounded"
+        className="mt-6 px-4 py-2 bg-[#8A1538] text-white rounded-xl"
       >
         العودة إلى تسجيل الدخول
       </Link>

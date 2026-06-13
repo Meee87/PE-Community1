@@ -55,7 +55,7 @@ export default function ContentViewDialog({
                 href={content.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
+                className="text-[#8A1538] hover:underline font-medium"
               >
                 فتح الملف
               </a>

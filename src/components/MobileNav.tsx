@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import AuthDialog from "./auth/AuthDialog";
 import {
   Home,
@@ -30,6 +30,11 @@ import { useToast } from "./ui/use-toast";
 const MobileNav = () => {
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const atHome = location.pathname === "/";
+  const atContent =
+    location.pathname.startsWith("/home") ||
+    location.pathname.startsWith("/stage");
   const [showCalendar, setShowCalendar] = React.useState(false);
   const [showContact, setShowContact] = React.useState(false);
   const [showChat, setShowChat] = React.useState(false);
@@ -282,24 +287,30 @@ const MobileNav = () => {
               setOpen(false);
               handleNavigation("/");
             }}
-            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#8A1538] hover:bg-[#8A1538]/10 transition-all duration-200 pointer-events-auto"
+            className={`group relative flex flex-col items-center justify-center h-full transition-all duration-200 pointer-events-auto ${
+              atHome ? "text-[#8A1538]" : "text-gray-600 hover:text-[#8A1538]"
+            }`}
           >
+            {atHome && (
+              <span className="absolute top-0 w-8 h-1 rounded-full bg-[#8A1538]" />
+            )}
             <Home className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-xs mt-1 group-hover:text-[#8A1538] transition-colors duration-200">
-              الرئيسية
-            </span>
+            <span className="text-xs mt-1">الرئيسية</span>
           </button>
           <button
             onClick={() => {
               setOpen(false);
               handleNavigation("/home");
             }}
-            className="group flex flex-col items-center justify-center h-full text-gray-600 hover:text-[#8A1538] hover:bg-[#8A1538]/10 transition-all duration-200 pointer-events-auto"
+            className={`group relative flex flex-col items-center justify-center h-full transition-all duration-200 pointer-events-auto ${
+              atContent ? "text-[#8A1538]" : "text-gray-600 hover:text-[#8A1538]"
+            }`}
           >
+            {atContent && (
+              <span className="absolute top-0 w-8 h-1 rounded-full bg-[#8A1538]" />
+            )}
             <BookOpen className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-xs mt-1 group-hover:text-[#8A1538] transition-colors duration-200">
-              المحتوى
-            </span>
+            <span className="text-xs mt-1">المحتوى</span>
           </button>
           <button
             onClick={() => {

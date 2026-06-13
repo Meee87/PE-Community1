@@ -1,15 +1,26 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import AuthForm from "./components/auth/AuthForm";
-import AdminDashboard from "./components/admin/AdminDashboard";
-import NotFound from "./pages/NotFound";
 import MainHeader from "./components/header/MainHeader";
 import MobileNav from "./components/MobileNav";
-import Home from "./components/home";
-import LandingPage from "./components/landing/LandingPage";
-import Profile from "./components/profile/Profile";
-import DeleteAccountConfirmation from "./components/DeleteAccountConfirmation";
-import ContentSection from "./components/content/ContentSection";
 import AIAssistant from "./components/ai/AIAssistant";
+
+// تحميل كسول للصفحات (تقسيم الـ bundle → تحميل أسرع)
+const LandingPage = lazy(() => import("./components/landing/LandingPage"));
+const AuthForm = lazy(() => import("./components/auth/AuthForm"));
+const Home = lazy(() => import("./components/home"));
+const AdminDashboard = lazy(() => import("./components/admin/AdminDashboard"));
+const Profile = lazy(() => import("./components/profile/Profile"));
+const ContentSection = lazy(() => import("./components/content/ContentSection"));
+const DeleteAccountConfirmation = lazy(
+  () => import("./components/DeleteAccountConfirmation"),
+);
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+const PageLoader = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="w-8 h-8 rounded-full border-2 border-[#8A1538]/20 border-t-[#8A1538] animate-spin" />
+  </div>
+);
 
 function App() {
   return (
@@ -18,19 +29,21 @@ function App() {
       <MobileNav />
       <AIAssistant />
       <main>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<AuthForm />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/stage/:stageId" element={<ContentSection />} />
-          <Route
-            path="/account-deleted"
-            element={<DeleteAccountConfirmation />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<AuthForm />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/stage/:stageId" element={<ContentSection />} />
+            <Route
+              path="/account-deleted"
+              element={<DeleteAccountConfirmation />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );
