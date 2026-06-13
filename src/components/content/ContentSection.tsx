@@ -217,17 +217,25 @@ const ContentSection = () => {
     }
 
     return (
-      <div className="mb-4 pt-2">
-        <Card className="p-3 sm:p-4 bg-[#C9A227]/10 text-center" dir="rtl">
-          <div className="flex flex-col items-center justify-center gap-4">
-            <h1 className="text-xl sm:text-2xl font-heading text-[#8A1538]">
-              {title}
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600 max-w-2xl line-clamp-2">
+      <div className="mb-8 pt-2">
+        <div
+          className="relative overflow-hidden rounded-[28px] px-6 py-7 text-center text-white shadow-[0_14px_40px_rgba(138,21,56,0.25)]"
+          dir="rtl"
+          style={{
+            background: "linear-gradient(120deg, #6E1029 0%, #8A1538 55%, #A91D45 100%)",
+          }}
+        >
+          {/* زخرفة دوائر ناعمة */}
+          <div className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 rounded-full bg-white/5" />
+          <div className="pointer-events-none absolute -bottom-12 -right-8 w-44 h-44 rounded-full bg-[#C9A227]/15 blur-xl" />
+          <div className="relative">
+            <div className="inline-block w-12 h-1 rounded-full bg-[#C9A227] mb-3" />
+            <h1 className="text-2xl sm:text-3xl font-extrabold mb-2">{title}</h1>
+            <p className="text-sm sm:text-base text-white/85 max-w-2xl mx-auto line-clamp-2">
               {description}
             </p>
           </div>
-        </Card>
+        </div>
       </div>
     );
   };
@@ -250,7 +258,7 @@ const ContentSection = () => {
 
     if (selectedSubcategory) {
       return (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-5xl mx-auto">
           {selectedSubcategory.contentTypes?.map((contentType) => (
             <ContentCard
               key={contentType.id}

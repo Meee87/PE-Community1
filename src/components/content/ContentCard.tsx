@@ -1,6 +1,4 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Star, FileText, Video, Image } from "lucide-react";
+import { Star, FileText, Video, Image, ArrowLeft } from "lucide-react";
 
 interface ContentCardProps {
   type: "images" | "videos" | "files" | "talented";
@@ -9,59 +7,79 @@ interface ContentCardProps {
   onClick?: () => void;
 }
 
-const ContentCard = ({
-  type,
-  title,
-  description,
-  onClick,
-}: ContentCardProps) => {
-  const getIcon = () => {
-    switch (type) {
-      case "images":
-        return <Image className="w-8 h-8 text-[#8A1538]" />;
-      case "videos":
-        return <Video className="w-8 h-8 text-[#8A1538]" />;
-      case "files":
-        return <FileText className="w-8 h-8 text-[#8A1538]" />;
-      case "talented":
-        return <Star className="w-8 h-8 text-[#8A1538]" />;
-      default:
-        return null;
-    }
-  };
+// لكل نوع هوية لونية مميّزة ضمن الباليتة القطرية
+const STYLES: Record<
+  ContentCardProps["type"],
+  { from: string; to: string; soft: string; label: string }
+> = {
+  images: { from: "#8A1538", to: "#A91D45", soft: "#8A1538", label: "صور" },
+  videos: { from: "#C9A227", to: "#E0B73A", soft: "#C9A227", label: "فيديو" },
+  files: { from: "#6E1029", to: "#8A1538", soft: "#6E1029", label: "ملف" },
+  talented: { from: "#A91D45", to: "#C9426B", soft: "#A91D45", label: "موهبة" },
+};
+
+const ContentCard = ({ type, title, description, onClick }: ContentCardProps) => {
+  const s = STYLES[type];
+  const Icon =
+    type === "images"
+      ? Image
+      : type === "videos"
+        ? Video
+        : type === "files"
+          ? FileText
+          : Star;
 
   return (
-    <Card
-      className="group p-4 sm:p-6 flex flex-col items-center text-center bg-white rounded-2xl border-0 ring-1 ring-black/5 shadow-[0_6px_24px_rgb(0,0,0,0.06)] hover:shadow-[0_16px_36px_rgb(0,0,0,0.14)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-      onClick={() => onClick?.()}
+    <div
       role="button"
       tabIndex={0}
+      onClick={() => onClick?.()}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onClick?.();
         }
       }}
+      className="group relative flex flex-col items-center text-center bg-white rounded-[26px] p-6 cursor-pointer overflow-hidden ring-1 ring-black/5 shadow-[0_10px_30px_rgba(20,20,20,0.06)] hover:shadow-[0_22px_48px_rgba(20,20,20,0.14)] hover:-translate-y-2 transition-all duration-300"
     >
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#8A1538]/15 to-[#8A1538]/5 ring-1 ring-[#8A1538]/10 flex items-center justify-center mb-3 sm:mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-        {getIcon()}
-      </div>
-      <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2 text-gray-900">
-        {title}
-      </h3>
-      <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 line-clamp-2">
-        {description}
-      </p>
-      <Button
-        className="w-full bg-[#8A1538] hover:bg-[#8A1538] hover:brightness-110 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 font-semibold"
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick?.();
+      {/* توهّج علوي خفيف باللون المميّز */}
+      <div
+        className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-44 h-44 rounded-full blur-3xl opacity-0 group-hover:opacity-25 transition-opacity duration-500"
+        style={{ background: s.from }}
+      />
+      {/* وسم النوع أعلى الزاوية */}
+      <span
+        className="absolute top-3.5 right-3.5 text-[11px] font-bold px-2.5 py-1 rounded-full"
+        style={{ backgroundColor: `${s.soft}14`, color: s.soft }}
+      >
+        {s.label}
+      </span>
+
+      {/* أيقونة بادج متدرّجة */}
+      <div
+        className="relative w-[72px] h-[72px] rounded-2xl flex items-center justify-center mb-5 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
+        style={{
+          background: `linear-gradient(135deg, ${s.from}, ${s.to})`,
+          boxShadow: `0 10px 24px ${s.soft}55`,
         }}
       >
-        عرض المحتوى
-      </Button>
-    </Card>
+        <Icon className="w-9 h-9 text-white" strokeWidth={2.2} />
+      </div>
+
+      <h3 className="text-lg font-extrabold text-gray-900 mb-2">{title}</h3>
+      <p className="text-sm text-gray-500 leading-relaxed mb-6 min-h-[40px] line-clamp-2">
+        {description}
+      </p>
+
+      {/* زر عرض المحتوى — حبة أنيقة بسهم متحرّك */}
+      <div
+        className="mt-auto w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl font-bold text-white transition-all duration-300"
+        style={{ background: `linear-gradient(135deg, ${s.from}, ${s.to})` }}
+      >
+        <span>عرض المحتوى</span>
+        <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
+      </div>
+    </div>
   );
 };
 
