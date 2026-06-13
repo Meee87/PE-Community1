@@ -33,19 +33,26 @@ export default function AIAssistant() {
     setInput("");
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("ai-assistant", {
-        body: { messages: next },
+      // آخر 12 رسالة فقط (توفير التكلفة)
+      const payload = next.slice(-12).map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
+      const { data, error } = await supabase.rpc("ask_ai", {
+        messages: payload,
       });
       if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      setMessages([...next, { role: "assistant", content: data.reply }]);
+      const reply =
+        data === "__LOGIN__"
+          ? "📌 سجّل الدخول أولاً لاستخدام المساعد الذكي."
+          : (data as string);
+      setMessages([...next, { role: "assistant", content: reply }]);
     } catch (e: any) {
       setMessages([
         ...next,
         {
           role: "assistant",
-          content:
-            "تعذّر الوصول للمساعد حاليًا. تأكد من تفعيله، أو حاول لاحقًا. ⚠️",
+          content: "تعذّر الوصول للمساعد حاليًا، حاول لاحقًا. ⚠️",
         },
       ]);
     } finally {
