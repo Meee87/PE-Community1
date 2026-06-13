@@ -128,21 +128,35 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">الملف الشخصي</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-center mb-8">
-            <img
-              src={profile.avatar_url}
-              alt={profile.full_name}
-              className="w-32 h-32 rounded-full"
-            />
+    <div className="min-h-screen bg-[#FAF7F2] py-10 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* بانر */}
+        <div className="h-28 rounded-t-3xl bg-gradient-to-l from-[#6E1029] to-[#8A1538]" />
+        <div className="bg-white rounded-b-3xl border border-gray-100 shadow-sm px-6 sm:px-8 pb-8">
+          {/* أفاتار + الاسم */}
+          <div className="flex flex-col items-center -mt-14 mb-8">
+            <div className="w-28 h-28 rounded-full bg-white p-1.5 shadow-lg ring-1 ring-black/5">
+              {profile.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.full_name}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full rounded-full bg-[#8A1538]/10 flex items-center justify-center text-3xl font-bold text-[#8A1538]">
+                  {(profile.full_name || profile.email || "؟").trim().charAt(0)}
+                </div>
+              )}
+            </div>
+            <h1 className="text-xl font-bold text-gray-900 mt-3">
+              {profile.full_name || "مستخدم"}
+            </h1>
+            <span className="mt-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-[#8A1538]/10 text-[#8A1538]">
+              {isAdmin ? "مسؤول النظام" : "معلّم"}
+            </span>
           </div>
 
-          <form onSubmit={updateProfile} className="space-y-6">
+          <form onSubmit={updateProfile} className="space-y-5">
             <div className="space-y-2">
               <Label>البريد الإلكتروني</Label>
               <Input value={profile.email} disabled className="bg-gray-50" />
@@ -209,7 +223,11 @@ const Profile = () => {
               >
                 رجوع
               </Button>
-              <Button type="submit" disabled={updating}>
+              <Button
+                type="submit"
+                disabled={updating}
+                className="bg-[#8A1538] hover:bg-[#6E1029] text-white"
+              >
                 {updating ? "جاري الحفظ..." : "حفظ التغييرات"}
               </Button>
             </div>
@@ -320,8 +338,8 @@ const Profile = () => {
               </Button>
             </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

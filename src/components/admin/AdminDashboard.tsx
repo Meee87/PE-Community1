@@ -11,7 +11,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { Loader2, UserPlus, MessageSquare, BarChart, Home } from "lucide-react";
 import { STAGES } from "@/lib/constants";
 import ContentUploadDialog from "../content/ContentUploadDialog";
-import { AdminHeader } from "./AdminHeader";
 import { StatsCards } from "./StatsCards";
 import { ContentManagementSection } from "./ContentManagementSection";
 
@@ -247,18 +246,24 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#8A1538]" />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] pb-16 md:pb-0 pt-16" dir="rtl">
-      {/* Admin Header */}
-      <AdminHeader />
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-6 px-4 space-y-6 mt-2">
+      <div className="max-w-7xl mx-auto py-8 px-4 space-y-6">
+        {/* عنوان الصفحة */}
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-1.5 h-8 rounded-full bg-[#8A1538]" />
+          <div>
+            <h1 className="text-2xl font-extrabold text-gray-900">لوحة التحكم</h1>
+            <p className="text-sm text-gray-500">إدارة المحتوى والمستخدمين والطلبات</p>
+          </div>
+        </div>
+
         {/* Stats Cards */}
         <StatsCards
           totalUsers={stats.totalUsers}
