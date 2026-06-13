@@ -83,20 +83,24 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
   };
 
   const setupRealtimeSubscription = () => {
-    const subscription = supabase
-      .channel("chat_messages")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "chat_messages" },
-        (payload) => {
-          const newMessage = payload.new as Message;
-          setMessages((current) => [...current, newMessage]);
-        },
-      )
-      .subscribe();
-
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(`chat_messages-${Math.random().toString(36).slice(2)}`)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "chat_messages" },
+          (payload) => {
+            const newMessage = payload.new as Message;
+            setMessages((current) => [...current, newMessage]);
+          },
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn("Realtime unavailable:", e);
+    }
     return () => {
-      subscription.unsubscribe();
+      if (channel) supabase.removeChannel(channel);
     };
   };
 

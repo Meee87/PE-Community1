@@ -17,7 +17,8 @@ export function useNotifications() {
 
   useEffect(() => {
     fetchNotifications();
-    setupSubscription();
+    const cleanup = setupSubscription();
+    return cleanup;
   }, []);
 
   const fetchNotifications = async () => {
@@ -119,23 +120,31 @@ export function useNotifications() {
   };
 
   const setupSubscription = () => {
-    const subscription = supabase
-      .channel("notifications")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications" },
-        (payload) => {
-          const newNotification = payload.new as Notification;
-          setNotifications((prev) => [newNotification, ...prev]);
-          if (!newNotification.is_read) {
-            setUnreadCount((prev) => prev + 1);
-          }
-        },
-      )
-      .subscribe();
+    // اسم قناة فريد لتجنّب تعارض إعادة الاستخدام (خاصة مع StrictMode)
+    const channelName = `notifications-${Math.random().toString(36).slice(2)}`;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(channelName)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "notifications" },
+          (payload) => {
+            const newNotification = payload.new as Notification;
+            setNotifications((prev) => [newNotification, ...prev]);
+            if (!newNotification.is_read) {
+              setUnreadCount((prev) => prev + 1);
+            }
+          },
+        )
+        .subscribe();
+    } catch (e) {
+      // لا تُسقط التطبيق لو فشل الاشتراك اللحظي
+      console.warn("Realtime subscription unavailable:", e);
+    }
 
     return () => {
-      subscription.unsubscribe();
+      if (channel) supabase.removeChannel(channel);
     };
   };
 

@@ -66,23 +66,27 @@ const Calendar = ({ className }: { className?: string }) => {
   };
 
   const setupRealtimeSubscription = () => {
-    const subscription = supabase
-      .channel("events")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "events" },
-        (payload) => {
-          const newEvent = {
-            ...payload.new,
-            date: new Date(payload.new.date),
-          };
-          setEvents((current) => [...current, newEvent]);
-        },
-      )
-      .subscribe();
-
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(`events-${Math.random().toString(36).slice(2)}`)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "events" },
+          (payload) => {
+            const newEvent = {
+              ...payload.new,
+              date: new Date(payload.new.date),
+            };
+            setEvents((current) => [...current, newEvent]);
+          },
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn("Realtime unavailable:", e);
+    }
     return () => {
-      subscription.unsubscribe();
+      if (channel) supabase.removeChannel(channel);
     };
   };
 
