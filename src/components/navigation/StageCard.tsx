@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { Check, ArrowLeft } from "lucide-react";
 
 interface StageCardProps {
   title?: string;
@@ -21,123 +16,127 @@ interface StageCardProps {
   features?: string[];
 }
 
+const fallbackImage = (title?: string) => {
+  if (title?.includes("المرحلة الابتدائية")) return "https://i.imgur.com/sJbg6xJ.png";
+  if (title?.includes("اللعب النشط"))
+    return "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&auto=format&fit=crop";
+  if (title?.includes("إدارة الجسم"))
+    return "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&auto=format&fit=crop";
+  if (title?.includes("الحركة التعبيرية"))
+    return "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&auto=format&fit=crop";
+  if (title?.includes("مرحلة الطفولة")) return "https://i.imgur.com/ddVwLrc.png";
+  if (title?.includes("الصفوف العليا")) return "https://i.imgur.com/yv5Ny0t.png";
+  return "https://i.imgur.com/yv5Ny0t.png";
+};
+
+// رمز 3D (fluent-emoji)
+const emojiFor = (title?: string) => {
+  const n = title?.includes("اللعب النشط")
+    ? "person-bouncing-ball"
+    : title?.includes("إدارة الجسم")
+      ? "person-in-lotus-position"
+      : title?.includes("الحركة التعبيرية")
+        ? "person-dancing"
+        : title?.includes("مرحلة الطفولة")
+          ? "child"
+          : title?.includes("الصفوف العليا")
+            ? "student"
+            : title?.includes("الألعاب الجماعية")
+              ? "people-wrestling"
+              : title?.includes("الفردية")
+                ? "person-cartwheeling"
+                : "person-running";
+  return `https://api.iconify.design/fluent-emoji/${n}.svg`;
+};
+
 const StageCard = ({
   title = "المرحلة التعليمية",
   description = "انقر لاستكشاف الموارد والأنشطة لهذا المستوى التعليمي",
   imageSrc,
-  icon = "book",
   onClick = () => {},
   className = "",
   color,
   buttonColor,
   features,
 }: StageCardProps) => {
+  const accent = buttonColor?.match(/#[0-9a-fA-F]{6}/)?.[0] ?? "#8A1538";
+  const isStage = title?.includes("المرحلة");
+
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -4 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      whileHover={{ y: -6 }}
+      whileTap={{ scale: 0.985 }}
+      transition={{ type: "spring", stiffness: 300, damping: 22 }}
       className={cn("w-full max-w-[420px] mx-auto cursor-pointer", className)}
       onClick={onClick}
     >
       <Card
-        className={`h-full overflow-hidden rounded-3xl border-0 ring-1 ring-black/5 shadow-[0_8px_30px_rgb(0,0,0,0.08)] group transition-all duration-300 hover:shadow-[0_18px_40px_rgb(0,0,0,0.16)] static ${color || "bg-white"}`}
+        className={cn(
+          "group h-full overflow-hidden rounded-[28px] border-0 ring-1 ring-black/[0.06] shadow-[0_12px_34px_rgba(20,20,20,0.09)] hover:shadow-[0_26px_55px_rgba(20,20,20,0.16)] transition-all duration-300 static",
+          color || "bg-white",
+        )}
       >
-        <div className="relative h-24 sm:h-32 md:h-48 overflow-hidden">
+        {/* الصورة */}
+        <div className="relative h-44 md:h-48 overflow-hidden">
           <img
-            src={
-              imageSrc ||
-              (() => {
-                if (title?.includes("المرحلة الابتدائية")) {
-                  return "https://i.imgur.com/sJbg6xJ.png";
-                } else if (title?.includes("اللعب النشط")) {
-                  return "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&auto=format&fit=crop";
-                } else if (title?.includes("إدارة الجسم")) {
-                  return "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&auto=format&fit=crop";
-                } else if (title?.includes("الحركة التعبيرية")) {
-                  return "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&auto=format&fit=crop";
-                } else if (title?.includes("مرحلة الطفولة")) {
-                  return "https://i.imgur.com/ddVwLrc.png";
-                } else if (title?.includes("الصفوف العليا")) {
-                  return "https://i.imgur.com/yv5Ny0t.png";
-                } else {
-                  return "https://i.imgur.com/yv5Ny0t.png";
-                }
-              })()
-            }
+            src={imageSrc || fallbackImage(title)}
             alt={title}
-            className="w-full h-full object-cover transform transition-all duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+          {/* تدرّج خفيف من اللون أسفل الصورة (نظيف، مش طامس) */}
           <div
-            className={`absolute inset-0 transition-opacity duration-300 ${buttonColor || "bg-[#8A1538]"} opacity-45 group-hover:opacity-30`}
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to top, ${accent}59 0%, ${accent}10 35%, transparent 70%)`,
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 p-2 sm:p-3 transform-gpu transition-all duration-300 hover:scale-110 hover:rotate-6">
+        </div>
+
+        {/* بادج الرمز 3D الطايف */}
+        <div className="relative">
+          <div className="absolute -top-9 right-6 z-10 w-[68px] h-[68px] rounded-[20px] bg-white shadow-[0_8px_20px_rgba(0,0,0,0.15)] ring-1 ring-black/5 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
             <img
-              src={(() => {
-                if (title?.includes("اللعب النشط")) {
-                  return "https://api.iconify.design/fluent-emoji-flat/person-bouncing-ball.svg";
-                } else if (title?.includes("إدارة الجسم")) {
-                  return "https://api.iconify.design/fluent-emoji-flat/person-in-lotus-position.svg";
-                } else if (title?.includes("الحركة التعبيرية")) {
-                  return "https://api.iconify.design/fluent-emoji-flat/person-dancing.svg";
-                } else if (title?.includes("مرحلة الطفولة")) {
-                  return "https://api.iconify.design/fluent-emoji-flat/child.svg";
-                } else if (title?.includes("الصفوف العليا")) {
-                  return "https://api.iconify.design/fluent-emoji-flat/student.svg";
-                } else {
-                  return "https://api.iconify.design/fluent-emoji-flat/person-running.svg";
-                }
-              })()}
-              alt={title}
-              className="w-8 h-8 sm:w-12 sm:h-12 transform transition-transform group-hover:scale-110 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
+              src={emojiFor(title)}
+              alt=""
+              className="w-10 h-10 object-contain drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)]"
+              loading="lazy"
             />
           </div>
         </div>
-        <div className="p-3 sm:p-4 md:p-6">
-          <div className="space-y-4 sm:space-y-6">
-            <div className="text-center space-y-2">
-              <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2 text-center">
-                {title}
-              </h3>
-              <p className="text-xs sm:text-sm md:text-base text-gray-600 line-clamp-2 text-center">
-                {description}
-              </p>
-            </div>
-            {features && features.length > 0 && (
-              <div className="space-y-2">
-                {features.map((feature, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-end gap-2 text-gray-600"
+
+        {/* المحتوى */}
+        <div className="p-6 pt-5 text-right">
+          <h3 className="text-xl font-extrabold text-gray-900 mb-1.5">{title}</h3>
+          <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-5">
+            {description}
+          </p>
+
+          {features && features.length > 0 && (
+            <ul className="space-y-2.5 mb-6">
+              {features.map((feature, i) => (
+                <li
+                  key={i}
+                  className="flex items-center justify-end gap-2.5 text-gray-700 text-sm"
+                >
+                  <span>{feature}</span>
+                  <span
+                    className="flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: `${accent}1A`, color: accent }}
                   >
-                    <span className="text-sm">{feature}</span>
-                    <div
-                      className={`flex items-center justify-center w-5 h-5 rounded-full ${buttonColor?.replace("bg-", "bg-opacity-20 bg-")}`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className={`h-3 w-3 ${buttonColor?.replace("bg-", "text-")}`}
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <button
-              className={`mt-3 sm:mt-4 md:mt-6 w-full ${buttonColor || "bg-[#8A1538]"} text-white py-2 sm:py-2.5 px-2 sm:px-4 rounded-xl shadow-md transition-all duration-200 hover:shadow-lg hover:brightness-110 active:scale-[0.98] text-xs sm:text-sm md:text-base font-semibold`}
-            >
-              {title?.includes("المرحلة") ? "استكشف المرحلة" : "عرض المحتوى"}
-            </button>
-          </div>
+                    <Check className="w-3 h-3" strokeWidth={3} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <button
+            className="w-full flex items-center justify-center gap-2 text-white font-bold py-3 rounded-2xl shadow-md hover:shadow-lg active:scale-[0.98] transition-all duration-200"
+            style={{ background: `linear-gradient(135deg, ${accent}, ${accent}cc)` }}
+          >
+            <span>{isStage ? "استكشف المرحلة" : "عرض المحتوى"}</span>
+            <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
+          </button>
         </div>
       </Card>
     </motion.div>
