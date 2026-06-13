@@ -9,12 +9,14 @@ import LandingPage from "./components/landing/LandingPage";
 import Profile from "./components/profile/Profile";
 import DeleteAccountConfirmation from "./components/DeleteAccountConfirmation";
 import ContentSection from "./components/content/ContentSection";
+import AIAssistant from "./components/ai/AIAssistant";
 
 function App() {
   return (
     <div className="min-h-screen bg-[#FAF7F2] pt-0 md:pt-16 pb-16 md:pb-0">
       <MainHeader />
       <MobileNav />
+      <AIAssistant />
       <main>
         <Routes>
           <Route path="/" element={<LandingPage />} />
