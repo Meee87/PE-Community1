@@ -1,4 +1,4 @@
-import { Star, FileText, Video, Image, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 interface ContentCardProps {
   type: "images" | "videos" | "files" | "talented";
@@ -7,27 +7,40 @@ interface ContentCardProps {
   onClick?: () => void;
 }
 
-// لكل نوع هوية لونية مميّزة ضمن الباليتة القطرية
+// رمز 3D + هوية لونية لكل نوع
 const STYLES: Record<
   ContentCardProps["type"],
-  { from: string; to: string; soft: string; label: string }
+  { emoji: string; accent: string; accent2: string; label: string }
 > = {
-  images: { from: "#8A1538", to: "#A91D45", soft: "#8A1538", label: "صور" },
-  videos: { from: "#C9A227", to: "#E0B73A", soft: "#C9A227", label: "فيديو" },
-  files: { from: "#6E1029", to: "#8A1538", soft: "#6E1029", label: "ملف" },
-  talented: { from: "#A91D45", to: "#C9426B", soft: "#A91D45", label: "موهبة" },
+  images: {
+    emoji: "framed-picture",
+    accent: "#8A1538",
+    accent2: "#A91D45",
+    label: "صور",
+  },
+  videos: {
+    emoji: "clapper-board",
+    accent: "#C9A227",
+    accent2: "#E0B73A",
+    label: "فيديو",
+  },
+  files: {
+    emoji: "open-book",
+    accent: "#6E1029",
+    accent2: "#8A1538",
+    label: "ملف",
+  },
+  talented: {
+    emoji: "sports-medal",
+    accent: "#A91D45",
+    accent2: "#C9426B",
+    label: "موهبة",
+  },
 };
 
 const ContentCard = ({ type, title, description, onClick }: ContentCardProps) => {
   const s = STYLES[type];
-  const Icon =
-    type === "images"
-      ? Image
-      : type === "videos"
-        ? Video
-        : type === "files"
-          ? FileText
-          : Star;
+  const iconUrl = `https://api.iconify.design/fluent-emoji/${s.emoji}.svg`;
 
   return (
     <div
@@ -40,30 +53,41 @@ const ContentCard = ({ type, title, description, onClick }: ContentCardProps) =>
           onClick?.();
         }
       }}
-      className="group relative flex flex-col items-center text-center bg-white rounded-[26px] p-6 cursor-pointer overflow-hidden ring-1 ring-black/5 shadow-[0_10px_30px_rgba(20,20,20,0.06)] hover:shadow-[0_22px_48px_rgba(20,20,20,0.14)] hover:-translate-y-2 transition-all duration-300"
+      className="group relative flex flex-col items-center text-center bg-white rounded-[28px] p-6 pt-7 cursor-pointer overflow-hidden ring-1 ring-black/[0.06] shadow-[0_10px_30px_rgba(20,20,20,0.06)] hover:shadow-[0_24px_50px_rgba(20,20,20,0.15)] hover:-translate-y-2 transition-all duration-300"
     >
-      {/* توهّج علوي خفيف باللون المميّز */}
+      {/* شريط لون علوي رفيع */}
       <div
-        className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-44 h-44 rounded-full blur-3xl opacity-0 group-hover:opacity-25 transition-opacity duration-500"
-        style={{ background: s.from }}
+        className="absolute top-0 inset-x-0 h-1.5"
+        style={{ background: `linear-gradient(90deg, ${s.accent}, ${s.accent2})` }}
       />
-      {/* وسم النوع أعلى الزاوية */}
+      {/* وسم النوع */}
       <span
-        className="absolute top-3.5 right-3.5 text-[11px] font-bold px-2.5 py-1 rounded-full"
-        style={{ backgroundColor: `${s.soft}14`, color: s.soft }}
+        className="absolute top-4 right-4 text-[11px] font-bold px-2.5 py-1 rounded-full"
+        style={{ backgroundColor: `${s.accent}12`, color: s.accent }}
       >
         {s.label}
       </span>
 
-      {/* أيقونة بادج متدرّجة */}
-      <div
-        className="relative w-[72px] h-[72px] rounded-2xl flex items-center justify-center mb-5 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
-        style={{
-          background: `linear-gradient(135deg, ${s.from}, ${s.to})`,
-          boxShadow: `0 10px 24px ${s.soft}55`,
-        }}
-      >
-        <Icon className="w-9 h-9 text-white" strokeWidth={2.2} />
+      {/* هالة + رمز 3D */}
+      <div className="relative mb-5 mt-2">
+        <div
+          className="absolute inset-0 -m-2 rounded-full blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-500"
+          style={{ background: `radial-gradient(circle, ${s.accent}55, transparent 70%)` }}
+        />
+        <div
+          className="relative w-[92px] h-[92px] rounded-[28px] flex items-center justify-center ring-1"
+          style={{
+            background: `linear-gradient(160deg, ${s.accent}14, ${s.accent}05)`,
+            borderColor: `${s.accent}20`,
+          }}
+        >
+          <img
+            src={iconUrl}
+            alt={title}
+            className="w-14 h-14 object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.18)] transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1"
+            loading="lazy"
+          />
+        </div>
       </div>
 
       <h3 className="text-lg font-extrabold text-gray-900 mb-2">{title}</h3>
@@ -71,10 +95,12 @@ const ContentCard = ({ type, title, description, onClick }: ContentCardProps) =>
         {description}
       </p>
 
-      {/* زر عرض المحتوى — حبة أنيقة بسهم متحرّك */}
+      {/* زر عرض المحتوى */}
       <div
-        className="mt-auto w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl font-bold text-white transition-all duration-300"
-        style={{ background: `linear-gradient(135deg, ${s.from}, ${s.to})` }}
+        className="mt-auto w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl font-bold text-white shadow-md transition-all duration-300 group-hover:shadow-lg"
+        style={{
+          background: `linear-gradient(135deg, ${s.accent}, ${s.accent2})`,
+        }}
       >
         <span>عرض المحتوى</span>
         <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
