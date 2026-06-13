@@ -253,7 +253,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16 md:pb-0 pt-16" dir="rtl">
+    <div className="min-h-screen bg-[#FAF7F2] pb-16 md:pb-0 pt-16" dir="rtl">
       {/* Admin Header */}
       <AdminHeader />
 
@@ -268,61 +268,73 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="requests" className="space-y-6">
-          <TabsList className="w-full flex overflow-x-auto bg-white p-1 rounded-lg">
-            <TabsTrigger value="requests" className="flex-1">
+          <TabsList className="w-full flex overflow-x-auto bg-white p-1.5 rounded-2xl border border-gray-100 shadow-sm gap-1 h-auto">
+            <TabsTrigger
+              value="requests"
+              className="flex-1 rounded-xl py-2.5 font-semibold data-[state=active]:bg-[#8A1538] data-[state=active]:text-white data-[state=active]:shadow"
+            >
               طلبات المحتوى
             </TabsTrigger>
-            <TabsTrigger value="content" className="flex-1">
+            <TabsTrigger
+              value="content"
+              className="flex-1 rounded-xl py-2.5 font-semibold data-[state=active]:bg-[#8A1538] data-[state=active]:text-white data-[state=active]:shadow"
+            >
               إدارة المحتوى
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex-1">
+            <TabsTrigger
+              value="users"
+              className="flex-1 rounded-xl py-2.5 font-semibold data-[state=active]:bg-[#8A1538] data-[state=active]:text-white data-[state=active]:shadow"
+            >
               المستخدمين
             </TabsTrigger>
-            <TabsTrigger value="messages" className="flex-1">
+            <TabsTrigger
+              value="messages"
+              className="flex-1 rounded-xl py-2.5 font-semibold data-[state=active]:bg-[#8A1538] data-[state=active]:text-white data-[state=active]:shadow"
+            >
               الرسائل
             </TabsTrigger>
           </TabsList>
 
           {/* Content Requests Tab */}
           <TabsContent value="requests">
-            <Card>
+            <Card className="rounded-2xl border-gray-100 shadow-sm">
               <CardHeader>
-                <CardTitle>طلبات المحتوى</CardTitle>
+                <CardTitle className="text-[#8A1538] text-xl">طلبات المحتوى</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <div className="inline-block min-w-full align-middle">
-                    <div className="overflow-hidden border rounded-lg">
+                    <div className="overflow-hidden border border-gray-100 rounded-2xl">
                       <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-[#8A1538]/5">
                           <tr>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               العنوان
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               النوع
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               الحالة
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               تاريخ الطلب
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               الإجراءات
                             </th>
@@ -330,7 +342,7 @@ const AdminDashboard = () => {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                           {contentRequests?.map((request) => (
-                            <tr key={request.id} className="hover:bg-gray-50">
+                            <tr key={request.id} className="hover:bg-[#8A1538]/[0.04]">
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {request.title}
                               </td>
@@ -420,9 +432,9 @@ const AdminDashboard = () => {
 
           {/* Users Tab */}
           <TabsContent value="users">
-            <Card>
+            <Card className="rounded-2xl border-gray-100 shadow-sm">
               <CardHeader>
-                <CardTitle>إدارة المستخدمين</CardTitle>
+                <CardTitle className="text-[#8A1538] text-xl">إدارة المستخدمين</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
@@ -507,31 +519,31 @@ const AdminDashboard = () => {
 
                   <div className="overflow-x-auto">
                     <div className="inline-block min-w-full align-middle">
-                      <div className="overflow-hidden border rounded-lg">
+                      <div className="overflow-hidden border border-gray-100 rounded-2xl">
                         <table className="min-w-full divide-y divide-gray-200">
-                          <thead className="bg-gray-50">
+                          <thead className="bg-[#8A1538]/5">
                             <tr>
                               <th
                                 scope="col"
-                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                               >
                                 البريد الإلكتروني
                               </th>
                               <th
                                 scope="col"
-                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                               >
                                 الاسم
                               </th>
                               <th
                                 scope="col"
-                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                               >
                                 تاريخ التسجيل
                               </th>
                               <th
                                 scope="col"
-                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                               >
                                 الإجراءات
                               </th>
@@ -541,7 +553,7 @@ const AdminDashboard = () => {
                             {admins.map((admin) => (
                               <tr
                                 key={admin.email}
-                                className="hover:bg-gray-50"
+                                className="hover:bg-[#8A1538]/[0.04]"
                               >
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                   {admin.email}
@@ -601,50 +613,50 @@ const AdminDashboard = () => {
 
           {/* Messages Tab */}
           <TabsContent value="messages">
-            <Card>
+            <Card className="rounded-2xl border-gray-100 shadow-sm">
               <CardHeader>
-                <CardTitle>الرسائل الواردة</CardTitle>
+                <CardTitle className="text-[#8A1538] text-xl">الرسائل الواردة</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <div className="inline-block min-w-full align-middle">
-                    <div className="overflow-hidden border rounded-lg">
+                    <div className="overflow-hidden border border-gray-100 rounded-2xl">
                       <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-[#8A1538]/5">
                           <tr>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               المرسل
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               البريد الإلكتروني
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               الرسالة
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               التاريخ
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               الحالة
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-6 py-3 text-right text-xs font-bold text-[#8A1538]"
                             >
                               الإجراءات
                             </th>
@@ -652,7 +664,7 @@ const AdminDashboard = () => {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                           {messages?.map((message) => (
-                            <tr key={message.id} className="hover:bg-gray-50">
+                            <tr key={message.id} className="hover:bg-[#8A1538]/[0.04]">
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {message.sender_name}
                               </td>
