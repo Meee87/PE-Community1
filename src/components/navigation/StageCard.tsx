@@ -41,16 +41,18 @@ const iconFor = (title?: string): LucideIcon => {
 };
 
 const fallbackImage = (title?: string) => {
-  if (title?.includes("المرحلة الابتدائية")) return "https://i.imgur.com/sJbg6xJ.png";
+  if (title?.includes("المرحلة الابتدائية")) return "/primary_stage.png";
+  if (title?.includes("المرحلة الإعدادية")) return "/preparatory_stage.png";
+  if (title?.includes("المرحلة الثانوية")) return "/secondary_stage.png";
   if (title?.includes("اللعب النشط"))
-    return "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&auto=format&fit=crop";
+    return "/active_play.png";
   if (title?.includes("إدارة الجسم"))
-    return "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&auto=format&fit=crop";
+    return "/body_management.png";
   if (title?.includes("الحركة التعبيرية"))
-    return "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=800&auto=format&fit=crop";
-  if (title?.includes("مرحلة الطفولة")) return "https://i.imgur.com/ddVwLrc.png";
-  if (title?.includes("الصفوف العليا")) return "https://i.imgur.com/yv5Ny0t.png";
-  return "https://i.imgur.com/yv5Ny0t.png";
+    return "/expressive_movement.png";
+  if (title?.includes("مرحلة الطفولة")) return "/early_childhood.png";
+  if (title?.includes("الصفوف العليا")) return "/upper_grades.png";
+  return "/upper_grades.png";
 };
 
 const StageCard = ({

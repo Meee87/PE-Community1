@@ -19,7 +19,20 @@
     <title>PE Community — مجتمع التربية البدنية</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="app-splash" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:linear-gradient(135deg,#6E1029 0%,#8A1538 55%,#A91D45 100%);font-family:'Cairo','Tajawal',sans-serif;z-index:9999;">
+        <div style="width:96px;height:96px;border-radius:28px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+          <span style="font-size:34px;font-weight:800;color:#fff;letter-spacing:1px;">PE</span>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:24px;font-weight:800;color:#fff;">PE Community</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.8);margin-top:4px;">مجتمع معلّمي التربية البدنية — قطر</div>
+        </div>
+        <div style="width:46px;height:46px;border:4px solid rgba(255,255,255,0.25);border-top-color:#C9A227;border-radius:50%;animation:peSpin .8s linear infinite;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:12px;background:#C9A227;-webkit-mask:repeating-linear-gradient(45deg,#000 0,#000 9px,transparent 9px,transparent 18px);mask:repeating-linear-gradient(45deg,#000 0,#000 9px,transparent 9px,transparent 18px);"></div>
+      </div>
+      <style>@keyframes peSpin{to{transform:rotate(360deg)}}</style>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
     <script src="https://api.tempolabs.ai/proxy-asset?url=https://storage.googleapis.com/tempo-public-assets/error-handling.js"></script>
   </body>

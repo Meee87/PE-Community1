@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
+import { getPrimaryAdminId } from "@/lib/admin";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,26 @@ interface ContentUploadDialogProps {
 
 type ContentType = "image" | "video" | "file" | "talent";
 
+// تطبيع النوع للمفرد المطابق لـ enum في القاعدة (images→image ...)
+const normalizeType = (t?: string): ContentType => {
+  switch (t) {
+    case "images":
+    case "image":
+      return "image";
+    case "videos":
+    case "video":
+      return "video";
+    case "files":
+    case "file":
+      return "file";
+    case "talented":
+    case "talent":
+      return "talent";
+    default:
+      return "image";
+  }
+};
+
 export default function ContentUploadDialog({
   stageId,
   categoryId,
@@ -46,7 +67,7 @@ export default function ContentUploadDialog({
     title: "",
     description: "",
     url: "",
-    type: (contentType as ContentType) || "image",
+    type: normalizeType(contentType),
     file: null as File | null,
   });
 
@@ -134,21 +155,10 @@ export default function ContentUploadDialog({
           variant: "success",
         });
       } else {
-        console.log("Creating content request...");
-        // Get admin user
-        const { data: adminData, error: adminError } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("email", "eng.mohamed87@live.com")
-          .single();
+        // Get an admin to route the request to
+        const adminId = await getPrimaryAdminId();
 
-        if (adminError) {
-          console.error("Error getting admin:", adminError);
-          throw adminError;
-        }
-
-        if (!adminData?.id) {
-          console.error("Admin not found");
+        if (!adminId) {
           throw new Error("حدث خطأ في إرسال الطلب");
         }
 
@@ -162,7 +172,7 @@ export default function ContentUploadDialog({
             category_id: categoryId,
             status: "pending",
             user_id: user.id,
-            admin_id: adminData.id,
+            admin_id: adminId,
           },
         ]);
 

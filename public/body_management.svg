@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A020E"/>
+      <stop offset="100%" stop-color="#7A1030"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+
+  <!-- Qatari flag serrated pattern -->
+  <polygon points="760,0 780,25 760,50 780,75 760,100 780,125 760,150 780,175 760,200 780,225 760,250 780,275 760,300 780,325 760,350 780,375 760,400 780,425 760,450 800,450 800,0" fill="#FFFFFF" opacity="0.07"/>
+
+  <!-- Gym Mat -->
+  <rect x="80" y="370" width="640" height="18" rx="9" fill="#C9A227" opacity="0.85"/>
+  <rect x="90" y="370" width="620" height="4" rx="2" fill="#FFFFFF" opacity="0.3"/>
+
+  <!-- Balance beam (center) -->
+  <rect x="280" y="295" width="240" height="14" rx="7" fill="#C9A227"/>
+  <rect x="270" y="305" width="14" height="70" rx="5" fill="#A08020"/>
+  <rect x="516" y="305" width="14" height="70" rx="5" fill="#A08020"/>
+
+  <!-- Decorative circles in BG -->
+  <circle cx="680" cy="180" r="110" stroke="#C9A227" stroke-width="1.5" fill="none" opacity="0.12"/>
+  <circle cx="680" cy="180" r="75" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.08"/>
+
+  <!-- BOY 1 - Stretching/Flexibility on mat (Left) -->
+  <g transform="translate(100, 195)">
+    <!-- Sitting Boy doing forward bend -->
+    <!-- Shadow -->
+    <ellipse cx="55" cy="175" rx="60" ry="10" fill="#000" opacity="0.3"/>
+    <!-- Legs stretched out -->
+    <path d="M20,130 Q30,155 110,170" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="110" cy="170" rx="12" ry="6" fill="#C9A227"/>
+    <path d="M55,130 Q65,155 145,170" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="145" cy="170" rx="12" ry="6" fill="#C9A227"/>
+    <!-- Body leaning forward -->
+    <path d="M15,60 Q35,90 70,125 Q75,130 80,125 Q55,90 55,60Z" fill="#FFFFFF"/>
+    <!-- Maroon stripe -->
+    <path d="M15,60 Q25,90 55,120 Q45,90 35,60Z" fill="#8A1538"/>
+    <!-- Arms reaching forward -->
+    <path d="M70,100 Q110,125 140,150" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="140" cy="150" r="8" fill="#FAD1B0"/>
+    <path d="M55,100 Q95,130 120,158" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="120" cy="158" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="28" y="45" width="11" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head tilted forward -->
+    <ellipse cx="33" cy="28" rx="28" ry="32" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M6,22 Q10,-4 33,-6 Q56,-4 60,22 Q65,8 58,-2 Q47,-12 33,-10 Q19,-12 8,-2 Q1,8 6,22Z" fill="#1A1A1A"/>
+    <!-- Focused eyes (looking down) -->
+    <path d="M18,32 Q26,28 32,32 Q26,38 18,32Z" fill="#1A0A0F"/>
+    <path d="M34,32 Q42,28 48,32 Q42,38 34,32Z" fill="#1A0A0F"/>
+    <!-- Effort expression -->
+    <path d="M22,46 Q33,52 44,46" stroke="#1A0A0F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Sweat drop -->
+    <path d="M58,20 Q60,14 58,10 Q55,14 58,20Z" fill="#7EC8E3" opacity="0.8"/>
+  </g>
+
+  <!-- BOY 2 - Balancing on beam (Center) -->
+  <g transform="translate(340, 130)">
+    <!-- Shadow -->
+    <ellipse cx="60" cy="170" rx="40" ry="8" fill="#000" opacity="0.3"/>
+    <!-- Legs on beam -->
+    <path d="M40,140 Q38,160 36,168" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="36" cy="169" rx="10" ry="5" fill="#C9A227"/>
+    <path d="M72,140 Q74,160 76,168" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="76" cy="169" rx="10" ry="5" fill="#C9A227"/>
+    <!-- Body upright -->
+    <rect x="24" y="75" width="60" height="72" rx="12" fill="#FFFFFF"/>
+    <rect x="24" y="75" width="14" height="72" rx="6" fill="#8A1538"/>
+    <rect x="70" y="75" width="14" height="72" rx="6" fill="#8A1538"/>
+    <!-- Shorts -->
+    <rect x="26" y="135" width="56" height="25" rx="8" fill="#8A1538"/>
+    <!-- Arms wide for balance -->
+    <path d="M26,85 Q-8,78 -28,75" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-28" cy="75" r="8" fill="#FAD1B0"/>
+    <path d="M82,85 Q116,78 136,75" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="136" cy="75" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="50" y="60" width="11" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="55" cy="40" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M26,32 Q30,2 55,0 Q80,2 84,32 Q90,15 82,4 Q68,-8 55,-5 Q42,-8 28,4 Q20,15 26,32Z" fill="#3D1A00"/>
+    <!-- Concentrated eyes -->
+    <ellipse cx="43" cy="43" rx="8" ry="10" fill="#1A0A0F"/>
+    <circle cx="40" cy="38" r="3" fill="#FFFFFF"/>
+    <ellipse cx="67" cy="43" rx="8" ry="10" fill="#1A0A0F"/>
+    <circle cx="64" cy="38" r="3" fill="#FFFFFF"/>
+    <!-- Eyebrows - concentrating -->
+    <path d="M34,28 Q43,24 52,28" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M58,28 Q67,24 76,28" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Mouth focused -->
+    <path d="M44,57 Q55,62 66,57" stroke="#1A0A0F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Star Sparkles for balance -->
+    <path d="M145,50 L147,57 L154,59 L147,61 L145,68 L143,61 L136,59 L143,57Z" fill="#C9A227" opacity="0.9"/>
+    <path d="M-38,50 L-36,57 L-29,59 L-36,61 L-38,68 L-40,61 L-47,59 L-40,57Z" fill="#C9A227" opacity="0.9"/>
+  </g>
+
+  <!-- BOY 3 - Jumping/Landing with arms up (Right) -->
+  <g transform="translate(570, 160)">
+    <!-- Shadow -->
+    <ellipse cx="50" cy="205" rx="38" ry="8" fill="#000" opacity="0.3"/>
+    <!-- Legs bent for jump landing -->
+    <path d="M25,145 Q15,175 5,205" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="5" cy="206" rx="11" ry="6" fill="#C9A227"/>
+    <path d="M68,145 Q78,175 88,205" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="88" cy="206" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body -->
+    <rect x="12" y="80" width="62" height="72" rx="12" fill="#FFFFFF"/>
+    <rect x="12" y="80" width="14" height="72" rx="6" fill="#8A1538"/>
+    <rect x="60" y="80" width="14" height="72" rx="6" fill="#8A1538"/>
+    <!-- Shorts -->
+    <rect x="14" y="140" width="58" height="26" rx="8" fill="#8A1538"/>
+    <!-- Arms raised in victory -->
+    <path d="M14,90 Q-8,60 -18,35" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-18" cy="35" r="8" fill="#FAD1B0"/>
+    <path d="M72,90 Q94,60 104,35" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="104" cy="35" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="37" y="65" width="12" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="43" cy="44" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair dark -->
+    <path d="M14,37 Q18,4 43,2 Q68,4 72,37 Q78,20 70,8 Q56,-5 43,-2 Q30,-5 16,8 Q8,20 14,37Z" fill="#1A1A1A"/>
+    <!-- Happy eyes  -->
+    <path d="M22,46 Q31,38 38,46" stroke="#1A0A0F" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M48,46 Q57,38 64,46" stroke="#1A0A0F" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Big smile -->
+    <path d="M28,62 Q43,74 58,62" stroke="#1A0A0F" stroke-width="3.5" fill="#FF6B6B" stroke-linecap="round"/>
+    <!-- Blush -->
+    <ellipse cx="18" cy="58" rx="8" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <ellipse cx="68" cy="58" rx="8" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <!-- Big sparkle victory -->
+    <path d="M-25,28 L-22,18 L-12,15 L-22,12 L-25,2 L-28,12 L-38,15 L-28,18Z" fill="#C9A227"/>
+    <path d="M115,28 L118,18 L128,15 L118,12 L115,2 L112,12 L102,15 L112,18Z" fill="#C9A227"/>
+  </g>
+
+  <!-- Qatari Flag Badge -->
+  <g transform="translate(705, 18)">
+    <rect width="62" height="36" fill="#8A1538" rx="5"/>
+    <polygon points="0,0 18,0 13,6 18,12 13,18 18,24 13,30 18,36 0,36" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Title Text -->
+  <text x="40" y="55" fill="#FFFFFF" font-family="'Segoe UI', Tahoma, sans-serif" font-weight="900" font-size="32">إدارة الجسم</text>
+  <text x="40" y="88" fill="#C9A227" font-family="'Segoe UI', Tahoma, sans-serif" font-weight="600" font-size="17">توازن • مرونة • تحكم</text>
+</svg>

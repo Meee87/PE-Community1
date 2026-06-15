@@ -1,7 +1,13 @@
-import React, { useState } from "react";
-import { Trash2, Eye, Download, Play, FileText, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Trash2, Eye, Download, Play, FileText, X, Heart, Share2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  getFavorites,
+  toggleFavorite,
+  onFavoritesChange,
+} from "@/lib/favorites";
+import PdfThumb from "./PdfThumb";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,6 +58,26 @@ const ResourceGrid = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [resourceToDelete, setResourceToDelete] = useState<Resource | null>(null);
   const [selected, setSelected] = useState<Resource | null>(null);
+  const [favs, setFavs] = useState<string[]>([]);
+
+  useEffect(() => {
+    setFavs(getFavorites());
+    return onFavoritesChange(() => setFavs(getFavorites()));
+  }, []);
+
+  const share = async (r: Resource) => {
+    const url = r.downloadUrl;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: r.title, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast({ title: "تم النسخ", description: "تم نسخ رابط المحتوى" });
+      }
+    } catch {
+      /* المستخدم ألغى المشاركة */
+    }
+  };
 
   const handleDelete = async (resource: Resource) => {
     try {
@@ -107,21 +133,26 @@ const ResourceGrid = ({
                     e.currentTarget.src = "https://placehold.co/600x400?text=...";
                   }}
                 />
+              ) : r.type === "video" ? (
+                <div
+                  className="w-full h-full flex items-center justify-center"
+                  style={{ background: `${BRAND}0A` }}
+                >
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    style={{ background: BRAND }}
+                  >
+                    <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
+                  </div>
+                </div>
+              ) : /\.pdf($|\?)/i.test(r.downloadUrl) ? (
+                <PdfThumb url={r.downloadUrl} brand={BRAND} />
               ) : (
                 <div
                   className="w-full h-full flex items-center justify-center"
                   style={{ background: `${BRAND}0A` }}
                 >
-                  {r.type === "video" ? (
-                    <div
-                      className="w-14 h-14 rounded-full flex items-center justify-center"
-                      style={{ background: BRAND }}
-                    >
-                      <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
-                    </div>
-                  ) : (
-                    <FileText className="w-12 h-12" style={{ color: BRAND }} />
-                  )}
+                  <FileText className="w-12 h-12" style={{ color: BRAND }} />
                 </div>
               )}
 
@@ -148,6 +179,16 @@ const ResourceGrid = ({
                 >
                   <Download className="w-4 h-4" />
                 </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    share(r);
+                  }}
+                  className="w-9 h-9 rounded-full bg-white/95 flex items-center justify-center text-gray-800 hover:scale-110 transition"
+                  aria-label="مشاركة"
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
                 {isAdmin && (
                   <button
                     onClick={(e) => {
@@ -168,6 +209,24 @@ const ResourceGrid = ({
                   PDF
                 </span>
               )}
+
+              {/* زر المفضلة */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(r.id);
+                }}
+                className="absolute top-2 left-2 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-sm hover:scale-110 transition"
+                aria-label="إضافة للمفضلة"
+              >
+                <Heart
+                  className="w-4 h-4 transition-colors"
+                  style={{
+                    color: favs.includes(String(r.id)) ? BRAND : "#9ca3af",
+                    fill: favs.includes(String(r.id)) ? BRAND : "transparent",
+                  }}
+                />
+              </button>
             </div>
 
             <div className="p-3 text-right">
@@ -197,7 +256,13 @@ const ResourceGrid = ({
               <img src={selected.downloadUrl} alt={selected.title} className="max-h-[78vh] rounded-2xl object-contain" />
             )}
             {selected.type === "video" && (
-              <video src={selected.downloadUrl} controls autoPlay className="max-h-[78vh] rounded-2xl bg-black" />
+              <video
+                src={selected.downloadUrl}
+                controls
+                autoPlay
+                playsInline
+                className="max-h-[78vh] max-w-full w-auto mx-auto rounded-2xl bg-black"
+              />
             )}
             {(selected.type === "file" || selected.type === "talent") && (
               <iframe src={selected.downloadUrl} title={selected.title} className="w-full h-[78vh] rounded-2xl bg-white" />

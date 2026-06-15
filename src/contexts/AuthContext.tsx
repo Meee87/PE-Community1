@@ -114,31 +114,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  async function checkAdmin(userId: string | undefined) {
-    if (!userId) return;
-    try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, email")
-        .eq("id", userId)
-        .single();
-
-      const adminEmails = [
-        "eng.mohamed87@live.com",
-        "wadhaalmeqareh@hotmail.com",
-        "Sarahalmarri1908@outlook.com",
-        "Fatmah_alahbabi@hotmail.com",
-        "thamertub@gmail.com",
-        "liyan2612@hotmail.com",
-        "anood99.mhad@hotmail.com",
-      ];
-      setIsAdmin(adminEmails.includes(profile?.email || ""));
-    } catch (error) {
-      console.error("Error checking admin status:", error);
-      setIsAdmin(false);
-    }
-  }
-
   async function signOut() {
     try {
       // Check if there's an active session first

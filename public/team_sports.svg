@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#380210"/>
+      <stop offset="100%" stop-color="#7A1535"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+
+  <!-- Qatari flag serrated pattern -->
+  <polygon points="760,0 780,25 760,50 780,75 760,100 780,125 760,150 780,175 760,200 780,225 760,250 780,275 760,300 780,325 760,350 780,375 760,400 780,425 760,450 800,450 800,0" fill="#FFFFFF" opacity="0.07"/>
+
+  <!-- Football field lines -->
+  <rect x="0" y="380" width="800" height="70" fill="#2A0008" opacity="0.8"/>
+  <line x1="0" y1="390" x2="800" y2="390" stroke="#C9A227" stroke-width="2.5" opacity="0.4"/>
+  <!-- Center circle -->
+  <circle cx="400" cy="410" r="40" stroke="#C9A227" stroke-width="2" fill="none" opacity="0.35"/>
+  <!-- Left goal area line -->
+  <path d="M80,390 L80,350 L200,350 L200,390" stroke="#C9A227" stroke-width="2" fill="none" opacity="0.3"/>
+  <!-- Right goal area line -->
+  <path d="M600,390 L600,350 L720,350 L720,390" stroke="#C9A227" stroke-width="2" fill="none" opacity="0.3"/>
+
+  <!-- TEAM BOYS (3 boys passing/receiving) -->
+
+  <!-- BOY 1 - Kicking (Left) -->
+  <g transform="translate(95, 145)">
+    <!-- Shadow -->
+    <ellipse cx="50" cy="235" rx="42" ry="8" fill="#000" opacity="0.3"/>
+    <!-- Standing Leg -->
+    <path d="M35,155 Q30,185 25,232" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="25" cy="233" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Kicking Leg forward -->
+    <path d="M72,155 Q100,165 130,158" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="130" cy="158" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body -->
+    <rect x="18" y="80" width="65" height="82" rx="12" fill="#FFFFFF"/>
+    <rect x="18" y="80" width="14" height="82" rx="6" fill="#8A1538"/>
+    <rect x="69" y="80" width="14" height="82" rx="6" fill="#8A1538"/>
+    <rect x="20" y="150" width="61" height="26" rx="8" fill="#8A1538"/>
+    <!-- Arms for kick balance -->
+    <path d="M20,92 Q-10,110 -22,130" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-22" cy="130" r="8" fill="#FAD1B0"/>
+    <path d="M81,92 Q108,78 120,64" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="120" cy="64" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="43" y="65" width="12" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="48" cy="44" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M19,37 Q23,3 48,1 Q73,3 77,37 Q83,19 75,8 Q62,-5 48,-2 Q34,-5 21,8 Q13,19 19,37Z" fill="#1A1A1A"/>
+    <!-- Determined eyes -->
+    <path d="M30,46 Q38,40 46,46" stroke="#1A0A0F" stroke-width="3.5" fill="#1A0A0F" stroke-linecap="round"/>
+    <path d="M50,46 Q58,40 66,46" stroke="#1A0A0F" stroke-width="3.5" fill="#1A0A0F" stroke-linecap="round"/>
+    <!-- Eyebrows angled -->
+    <path d="M28,32 Q38,27 47,32" stroke="#1A1A1A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M49,32 Q58,27 67,32" stroke="#1A1A1A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Set mouth -->
+    <path d="M36,61 Q48,66 60,61" stroke="#1A0A0F" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Ball being kicked -->
+    <circle cx="148" cy="160" r="20" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/>
+    <!-- Ball pattern -->
+    <path d="M148,142 L158,152 L155,165 L141,168 L131,158 L135,146Z" fill="#1A1A1A" opacity="0.7"/>
+    <circle cx="148" cy="160" r="2" fill="#1A1A1A"/>
+    <!-- Motion lines from ball -->
+    <line x1="170" y1="150" x2="200" y2="140" stroke="#C9A227" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
+    <line x1="172" y1="162" x2="205" y2="158" stroke="#C9A227" stroke-width="2" opacity="0.5" stroke-linecap="round"/>
+    <line x1="168" y1="174" x2="198" y2="174" stroke="#C9A227" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+  </g>
+
+  <!-- BOY 2 - Ready to receive (Center) -->
+  <g transform="translate(355, 150)">
+    <!-- Shadow -->
+    <ellipse cx="50" cy="228" rx="40" ry="8" fill="#000" opacity="0.3"/>
+    <!-- Legs -->
+    <path d="M22,148 Q8,180 2,226" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="2" cy="227" rx="11" ry="6" fill="#C9A227"/>
+    <path d="M72,148 Q88,178 98,224" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="98" cy="225" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body -->
+    <rect x="10" y="80" width="70" height="75" rx="12" fill="#FFFFFF"/>
+    <rect x="10" y="80" width="15" height="75" rx="6" fill="#8A1538"/>
+    <rect x="65" y="80" width="15" height="75" rx="6" fill="#8A1538"/>
+    <rect x="12" y="142" width="66" height="26" rx="8" fill="#8A1538"/>
+    <!-- Arms open for receive -->
+    <path d="M12,90 Q-18,85 -36,80" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-36" cy="80" r="8" fill="#FAD1B0"/>
+    <path d="M78,90 Q108,85 126,80" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="126" cy="80" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="40" y="65" width="12" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="46" cy="43" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M17,35 Q21,2 46,0 Q71,2 75,35 Q81,17 73,6 Q60,-6 46,-3 Q32,-6 19,6 Q11,17 17,35Z" fill="#3A1A00"/>
+    <!-- Alert eyes -->
+    <ellipse cx="34" cy="46" rx="9" ry="11" fill="#1A0A0F"/>
+    <circle cx="30" cy="40" r="3.5" fill="#FFFFFF"/>
+    <ellipse cx="58" cy="46" rx="9" ry="11" fill="#1A0A0F"/>
+    <circle cx="54" cy="40" r="3.5" fill="#FFFFFF"/>
+    <!-- Focused brows -->
+    <path d="M25,30 Q34,26 43,30" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M49,30 Q58,26 67,30" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Determined mouth -->
+    <path d="M33,62 Q46,70 59,62" stroke="#1A0A0F" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- BOY 3 - Cheering/Supporting (Right) -->
+  <g transform="translate(590, 160)">
+    <!-- Shadow -->
+    <ellipse cx="50" cy="215" rx="38" ry="8" fill="#000" opacity="0.3"/>
+    <!-- Legs -->
+    <path d="M28,142 Q18,170 14,212" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="14" cy="213" rx="11" ry="6" fill="#C9A227"/>
+    <path d="M68,142 Q78,170 86,212" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="86" cy="213" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body -->
+    <rect x="14" y="78" width="64" height="70" rx="12" fill="#FFFFFF"/>
+    <rect x="14" y="78" width="14" height="70" rx="6" fill="#8A1538"/>
+    <rect x="64" y="78" width="14" height="70" rx="6" fill="#8A1538"/>
+    <rect x="16" y="136" width="60" height="26" rx="8" fill="#8A1538"/>
+    <!-- Arms both raised in cheer -->
+    <path d="M16,88 Q-2,58 -12,35" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-12" cy="35" r="8" fill="#FAD1B0"/>
+    <path d="M76,88 Q94,58 104,35" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="104" cy="35" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="39" y="62" width="12" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="44" cy="42" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M15,35 Q19,1 44,-1 Q69,1 73,35 Q79,17 71,6 Q58,-6 44,-3 Q30,-6 17,6 Q9,17 15,35Z" fill="#1A1A1A"/>
+    <!-- Happy eyes curved -->
+    <path d="M24,46 Q34,38 42,46" stroke="#1A0A0F" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M46,46 Q56,38 64,46" stroke="#1A0A0F" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Big smile -->
+    <path d="M28,62 Q44,76 60,62" stroke="#1A0A0F" stroke-width="3.5" fill="#FF8888" stroke-linecap="round"/>
+    <!-- Blush -->
+    <ellipse cx="18" cy="58" rx="9" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <ellipse cx="70" cy="58" rx="9" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <!-- Cheer stars -->
+    <path d="M-20,22 L-18,12 L-8,9 L-18,6 L-20,-4 L-22,6 L-32,9 L-22,12Z" fill="#C9A227"/>
+    <path d="M116,22 L118,12 L128,9 L118,6 L116,-4 L114,6 L104,9 L114,12Z" fill="#C9A227"/>
+  </g>
+
+  <!-- Qatari Flag Badge -->
+  <g transform="translate(705, 18)">
+    <rect width="62" height="36" fill="#8A1538" rx="5"/>
+    <polygon points="0,0 18,0 13,6 18,12 13,18 18,24 13,30 18,36 0,36" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Title Text -->
+  <text x="40" y="55" fill="#FFFFFF" font-family="'Segoe UI', Tahoma, sans-serif" font-weight="900" font-size="32">الألعاب الجماعية</text>
+  <text x="40" y="88" fill="#C9A227" font-family="'Segoe UI', Tahoma, sans-serif" font-weight="600" font-size="17">تعاون • روح الفريق • المنافسة</text>
+</svg>

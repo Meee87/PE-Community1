@@ -16,6 +16,13 @@ export default defineConfig({
     process.env.NODE_ENV === "development"
       ? "/"
       : process.env.VITE_BASE_PATH || "/",
+  // إزالة console.log من بناء الإنتاج (مع إبقاء console.error/warn)
+  esbuild: {
+    pure:
+      process.env.NODE_ENV === "development"
+        ? []
+        : ["console.log", "console.debug"],
+  },
   optimizeDeps: {
     entries: ["src/main.tsx", "src/tempobook/**/*"],
   },
@@ -34,7 +41,8 @@ export default defineConfig({
   server: {
     // @ts-ignore
     allowedHosts: process.env.TEMPO === "true" ? true : undefined,
-    port: 3000,
+    port: 5180,
+    strictPort: true,
     host: true,
   },
 });

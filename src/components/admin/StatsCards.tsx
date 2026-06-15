@@ -28,7 +28,7 @@ const Stat = ({
       <div>
         <p className="text-sm text-gray-500 mb-1">{label}</p>
         <p className="text-4xl font-extrabold text-gray-900">
-          {value.toLocaleString("ar-EG")}
+          {value.toLocaleString("en-US")}
         </p>
       </div>
       <div
@@ -52,7 +52,7 @@ export function StatsCards({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
       <Stat label="المستخدمين" value={totalUsers} Icon={Users} from="#8A1538" to="#A91D45" />
-      <Stat label="المحتوى" value={totalContent} Icon={FileStack} from="#C9A227" to="#E0B73A" />
+      <Stat label="المحتوى" value={totalContent} Icon={FileStack} from="#A91D45" to="#C13A5E" />
       <Stat label="الطلبات" value={totalRequests} Icon={Inbox} from="#6E1029" to="#8A1538" />
     </div>
   );

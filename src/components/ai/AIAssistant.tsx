@@ -67,21 +67,21 @@ export default function AIAssistant() {
         <button
           onClick={() => setOpen(true)}
           aria-label="المساعد الذكي"
-          className="fixed z-[90] bottom-20 md:bottom-6 left-4 md:left-6 w-14 h-14 rounded-full bg-gradient-to-br from-[#8A1538] to-[#6E1029] text-white shadow-[0_8px_24px_rgba(138,21,56,0.45)] flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+          className="fixed z-[90] bottom-20 md:bottom-6 right-4 md:right-6 w-14 h-14 rounded-full bg-gradient-to-br from-[#8A1538] to-[#6E1029] text-white ring-2 ring-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
         >
           <Sparkles className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#C9A227] border-2 border-white" />
+          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-white border-2 border-[#8A1538]" />
         </button>
       )}
 
       {/* نافذة المحادثة */}
       {open && (
-        <div className="fixed z-[95] bottom-20 md:bottom-6 left-2 md:left-6 right-2 md:right-auto md:w-[400px] h-[70vh] md:h-[560px] bg-white rounded-3xl shadow-2xl ring-1 ring-black/10 flex flex-col overflow-hidden">
+        <div className="fixed z-[95] bottom-20 md:bottom-6 right-2 md:right-6 left-2 md:left-auto md:w-[400px] h-[70vh] md:h-[560px] bg-white rounded-3xl shadow-2xl ring-1 ring-black/10 flex flex-col overflow-hidden">
           {/* الهيدر */}
           <div className="bg-gradient-to-l from-[#8A1538] to-[#6E1029] text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-[#C9A227]" />
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
                 <p className="font-bold leading-tight">مساعد المعلم</p>

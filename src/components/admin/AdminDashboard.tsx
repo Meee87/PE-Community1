@@ -8,11 +8,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, UserPlus, MessageSquare, BarChart, Home } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Loader2, UserPlus, MessageSquare, BarChart, Home, Trash2, Check, KeyRound } from "lucide-react";
 import { STAGES } from "@/lib/constants";
 import ContentUploadDialog from "../content/ContentUploadDialog";
 import { StatsCards } from "./StatsCards";
 import { ContentManagementSection } from "./ContentManagementSection";
+import { ContactSettings } from "./ContactSettings";
+import { Pagination } from "./Pagination";
+
+const PAGE_SIZE = 10;
 
 interface Stats {
   totalUsers: number;
@@ -21,6 +31,7 @@ interface Stats {
 }
 
 interface Admin {
+  id: string;
   email: string;
   username: string;
   created_at: string;
@@ -65,6 +76,46 @@ const AdminDashboard = () => {
     totalRequests: 0,
   });
   const [messages, setMessages] = useState<Message[]>([]);
+  const [reqPage, setReqPage] = useState(1);
+  const [msgPage, setMsgPage] = useState(1);
+  const [pwUser, setPwUser] = useState<Admin | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [pwLoading, setPwLoading] = useState(false);
+
+  const handleSetPassword = async () => {
+    if (!pwUser) return;
+    if (newPassword.length < 6) {
+      toast({
+        variant: "destructive",
+        description: "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+      });
+      return;
+    }
+    setPwLoading(true);
+    try {
+      const { error } = await supabase.rpc("admin_set_password", {
+        target_user: pwUser.id,
+        new_password: newPassword,
+      });
+      if (error) throw error;
+      toast({
+        title: "تم بنجاح",
+        description: `تم تغيير كلمة المرور لـ ${pwUser.email}`,
+        variant: "success",
+      });
+      setPwUser(null);
+      setNewPassword("");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        description:
+          "تعذّر تغيير كلمة المرور: " +
+          (error.message || "تأكد من تفعيل الدالة في القاعدة"),
+      });
+    } finally {
+      setPwLoading(false);
+    }
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -132,6 +183,17 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteMessage = async (id: string) => {
+    if (!window.confirm("هل أنت متأكد من حذف هذه الرسالة؟")) return;
+    const { error } = await supabase.from("messages").delete().eq("id", id);
+    if (error) {
+      toast({ variant: "destructive", description: "تعذّر حذف الرسالة" });
+      return;
+    }
+    toast({ description: "تم حذف الرسالة" });
+    fetchMessages();
+  };
+
   const fetchContentRequests = async () => {
     try {
       const {
@@ -152,16 +214,25 @@ const AdminDashboard = () => {
 
       if (error) throw error;
 
-      const requestsWithUserDetails = await Promise.all(
-        (data || []).map(async (request) => {
-          const { data: userData } = await supabase
-            .from("profiles")
-            .select("username, email")
-            .eq("id", request.user_id)
-            .single();
-          return { ...request, user: userData };
-        }),
-      );
+      // جلب كل ملفات المستخدمين دفعة واحدة بدل استعلام لكل طلب (N+1)
+      const userIds = [
+        ...new Set((data || []).map((r) => r.user_id).filter(Boolean)),
+      ];
+      let profileMap: Record<string, any> = {};
+      if (userIds.length) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, username, email")
+          .in("id", userIds);
+        profileMap = Object.fromEntries(
+          (profiles || []).map((p) => [p.id, p]),
+        );
+      }
+
+      const requestsWithUserDetails = (data || []).map((request) => ({
+        ...request,
+        user: profileMap[request.user_id] ?? null,
+      }));
 
       setContentRequests(requestsWithUserDetails);
     } catch (error) {
@@ -194,12 +265,21 @@ const AdminDashboard = () => {
       if (updateError) throw updateError;
 
       if (status === "approved" && request) {
+        // تطبيع النوع للمفرد المطابق لـ enum (images→image ...)
+        const normType = (t: string) =>
+          t === "images" || t === "image"
+            ? "image"
+            : t === "videos" || t === "video"
+              ? "video"
+              : t === "files" || t === "file"
+                ? "file"
+                : "talent";
         const { error: contentError } = await supabase.from("content").insert([
           {
             title: request.title,
             description: request.description,
             url: request.url,
-            type: request.type,
+            type: normType(request.type),
             stage_id: request.stage_id,
             category_id: request.category_id,
             created_by: request.user_id,
@@ -272,7 +352,7 @@ const AdminDashboard = () => {
         />
 
         {/* Tabs */}
-        <Tabs defaultValue="requests" className="space-y-6">
+        <Tabs defaultValue="requests" dir="rtl" className="space-y-6">
           <TabsList className="w-full flex overflow-x-auto bg-white p-1.5 rounded-2xl border border-gray-100 shadow-sm gap-1 h-auto">
             <TabsTrigger
               value="requests"
@@ -297,6 +377,12 @@ const AdminDashboard = () => {
               className="flex-1 rounded-xl py-2.5 font-semibold data-[state=active]:bg-[#8A1538] data-[state=active]:text-white data-[state=active]:shadow"
             >
               الرسائل
+            </TabsTrigger>
+            <TabsTrigger
+              value="contact"
+              className="flex-1 rounded-xl py-2.5 font-semibold data-[state=active]:bg-[#8A1538] data-[state=active]:text-white data-[state=active]:shadow"
+            >
+              اتصل بنا
             </TabsTrigger>
           </TabsList>
 
@@ -346,7 +432,12 @@ const AdminDashboard = () => {
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                          {contentRequests?.map((request) => (
+                          {contentRequests
+                            ?.slice(
+                              (reqPage - 1) * PAGE_SIZE,
+                              reqPage * PAGE_SIZE,
+                            )
+                            .map((request) => (
                             <tr key={request.id} className="hover:bg-[#8A1538]/[0.04]">
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {request.title}
@@ -377,7 +468,7 @@ const AdminDashboard = () => {
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {new Date(
                                   request.created_at,
-                                ).toLocaleDateString("ar-SA")}
+                                ).toLocaleDateString("en-GB")}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <div className="flex items-center gap-2">
@@ -424,6 +515,12 @@ const AdminDashboard = () => {
                         </tbody>
                       </table>
                     </div>
+                    <Pagination
+                      page={reqPage}
+                      total={contentRequests?.length ?? 0}
+                      pageSize={PAGE_SIZE}
+                      onPageChange={setReqPage}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -569,40 +666,54 @@ const AdminDashboard = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                   {new Date(
                                     admin.created_at,
-                                  ).toLocaleDateString("ar-SA")}
+                                  ).toLocaleDateString("en-GB")}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                  <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={async () => {
-                                      try {
-                                        const { error } = await supabase
-                                          .from("profiles")
-                                          .update({ role: "user" })
-                                          .eq("email", admin.email);
+                                  <div className="flex items-center gap-2 no-reverse">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="gap-1"
+                                      onClick={() => {
+                                        setPwUser(admin);
+                                        setNewPassword("");
+                                      }}
+                                    >
+                                      <KeyRound className="h-3.5 w-3.5" />
+                                      كلمة المرور
+                                    </Button>
+                                    <Button
+                                      variant="destructive"
+                                      size="sm"
+                                      onClick={async () => {
+                                        try {
+                                          const { error } = await supabase
+                                            .from("profiles")
+                                            .update({ role: "user" })
+                                            .eq("email", admin.email);
 
-                                        if (error) throw error;
+                                          if (error) throw error;
 
-                                        toast({
-                                          description: "تم إزالة المشرف بنجاح",
-                                        });
-                                        fetchAdmins();
-                                      } catch (error) {
-                                        console.error(
-                                          "Error removing admin:",
-                                          error,
-                                        );
-                                        toast({
-                                          variant: "destructive",
-                                          description:
-                                            "حدث خطأ أثناء إزالة المشرف",
-                                        });
-                                      }
-                                    }}
-                                  >
-                                    حذف
-                                  </Button>
+                                          toast({
+                                            description: "تم إزالة المشرف بنجاح",
+                                          });
+                                          fetchAdmins();
+                                        } catch (error) {
+                                          console.error(
+                                            "Error removing admin:",
+                                            error,
+                                          );
+                                          toast({
+                                            variant: "destructive",
+                                            description:
+                                              "حدث خطأ أثناء إزالة المشرف",
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      حذف
+                                    </Button>
+                                  </div>
                                 </td>
                               </tr>
                             ))}
@@ -668,7 +779,12 @@ const AdminDashboard = () => {
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                          {messages?.map((message) => (
+                          {messages
+                            ?.slice(
+                              (msgPage - 1) * PAGE_SIZE,
+                              msgPage * PAGE_SIZE,
+                            )
+                            .map((message) => (
                             <tr key={message.id} className="hover:bg-[#8A1538]/[0.04]">
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {message.sender_name}
@@ -684,7 +800,7 @@ const AdminDashboard = () => {
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {new Date(
                                   message.created_at,
-                                ).toLocaleDateString("ar-SA")}
+                                ).toLocaleDateString("en-GB")}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span
@@ -698,44 +814,90 @@ const AdminDashboard = () => {
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <Button
-                                  size="sm"
-                                  className="bg-[#8A1538] hover:bg-[#8A1538]/90 flex items-center gap-2"
-                                  onClick={async () => {
-                                    if (!message.is_read) {
-                                      const { error } = await supabase
-                                        .from("messages")
-                                        .update({ is_read: true })
-                                        .eq("id", message.id);
-
-                                      if (error) {
-                                        console.error(
-                                          "Error marking message as read:",
-                                          error,
-                                        );
-                                        return;
-                                      }
-
-                                      fetchMessages();
-                                    }
-                                  }}
-                                >
-                                  <Send className="h-4 w-4" />
-                                  رد
-                                </Button>
+                                <div className="flex items-center gap-2">
+                                  {!message.is_read && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="text-[#8A1538] border-[#8A1538]/30 hover:bg-[#8A1538]/5 flex items-center gap-1.5"
+                                      onClick={async () => {
+                                        const { error } = await supabase
+                                          .from("messages")
+                                          .update({ is_read: true })
+                                          .eq("id", message.id);
+                                        if (!error) fetchMessages();
+                                      }}
+                                    >
+                                      <Check className="h-4 w-4" />
+                                      تعليم كمقروءة
+                                    </Button>
+                                  )}
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-600 border-red-200 hover:bg-red-50 flex items-center gap-1.5"
+                                    onClick={() => handleDeleteMessage(message.id)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    حذف
+                                  </Button>
+                                </div>
                               </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
+                    <Pagination
+                      page={msgPage}
+                      total={messages?.length ?? 0}
+                      pageSize={PAGE_SIZE}
+                      onPageChange={setMsgPage}
+                    />
                   </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Contact Settings Tab */}
+          <TabsContent value="contact">
+            <ContactSettings />
+          </TabsContent>
         </Tabs>
       </div>
+
+      {/* تغيير كلمة مرور مستخدم */}
+      <Dialog open={!!pwUser} onOpenChange={(o) => !o && setPwUser(null)}>
+        <DialogContent className="bg-white max-w-md" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-[#8A1538]">
+              تغيير كلمة المرور
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-500 -mt-2 mb-2">
+            للمستخدم: <span className="font-bold">{pwUser?.email}</span>
+          </p>
+          <Input
+            type="text"
+            placeholder="كلمة المرور الجديدة (6 أحرف على الأقل)"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <div className="flex items-center gap-2 justify-end mt-4 no-reverse">
+            <Button variant="outline" onClick={() => setPwUser(null)}>
+              إلغاء
+            </Button>
+            <Button
+              className="bg-[#8A1538] hover:bg-[#6E1029]"
+              disabled={pwLoading}
+              onClick={handleSetPassword}
+            >
+              {pwLoading ? "جاري الحفظ..." : "تغيير كلمة المرور"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

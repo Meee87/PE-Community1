@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Search, X, Video, FileText, Star, Image as ImageIcon, Download, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import PdfThumb from "./PdfThumb";
 
 interface ContentItem {
   id: string;
@@ -25,6 +26,7 @@ export default function ContentDiscovery() {
   const [results, setResults] = useState<ContentItem[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [preview, setPreview] = useState<ContentItem | null>(null);
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const debounce = useRef<any>(null);
 
   useEffect(() => {
@@ -56,10 +58,14 @@ export default function ContentDiscovery() {
   }, [query]);
 
   const shown = results !== null;
-  const list = shown ? results : latest;
+  const baseList = shown ? results : latest;
+  const list =
+    typeFilter && baseList
+      ? baseList.filter((i) => i.type === typeFilter)
+      : baseList;
 
   return (
-    <section className="max-w-6xl mx-auto px-4 pt-8">
+    <section className="max-w-6xl mx-auto px-4 pt-8" dir="rtl">
       {/* شريط البحث */}
       <div className="relative max-w-2xl mx-auto mb-10">
         <Search
@@ -83,6 +89,32 @@ export default function ContentDiscovery() {
         )}
       </div>
 
+      {/* فلاتر النوع */}
+      <div className="flex items-center justify-start flex-wrap gap-2 mb-7 no-reverse">
+        {[
+          { id: null, label: "الكل" },
+          { id: "image", label: "صور" },
+          { id: "video", label: "فيديو" },
+          { id: "file", label: "ملفات" },
+          { id: "talent", label: "مواهب" },
+        ].map((f) => {
+          const active = typeFilter === f.id;
+          return (
+            <button
+              key={f.label}
+              onClick={() => setTypeFilter(f.id)}
+              className={`text-sm font-bold px-4 py-1.5 rounded-full border transition ${
+                active
+                  ? "bg-[#8A1538] text-white border-[#8A1538]"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-[#8A1538]/40"
+              }`}
+            >
+              {f.label}
+            </button>
+          );
+        })}
+      </div>
+
       {/* العنوان */}
       <div className="flex items-center gap-2 mb-5">
         {shown ? (
@@ -101,7 +133,7 @@ export default function ContentDiscovery() {
       {searching ? (
         <SkeletonGrid />
       ) : list && list.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" dir="rtl">
           {list.map((item) => (
             <Tile key={item.id} item={item} onOpen={() => setPreview(item)} />
           ))}
@@ -133,6 +165,8 @@ function Tile({ item, onOpen }: { item: ContentItem; onOpen: () => void }) {
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+        ) : item.type === "file" && /\.pdf($|\?)/i.test(item.url) ? (
+          <PdfThumb url={item.url} brand={BRAND} />
         ) : (
           <div
             className="w-full h-full flex items-center justify-center"
@@ -191,7 +225,13 @@ function Preview({ item, onClose }: { item: ContentItem; onClose: () => void }) 
           <img src={item.url} alt={item.title} className="max-h-[78vh] rounded-2xl object-contain" />
         )}
         {item.type === "video" && (
-          <video src={item.url} controls autoPlay className="max-h-[78vh] rounded-2xl bg-black" />
+          <video
+            src={item.url}
+            controls
+            autoPlay
+            playsInline
+            className="max-h-[78vh] max-w-full w-auto mx-auto rounded-2xl bg-black"
+          />
         )}
         {(item.type === "file" || item.type === "talent") && (
           <iframe src={item.url} title={item.title} className="w-full h-[78vh] rounded-2xl bg-white" />

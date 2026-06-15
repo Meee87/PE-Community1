@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D0210"/>
+      <stop offset="100%" stop-color="#6E1028"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+
+  <!-- Qatari flag serrated pattern -->
+  <polygon points="760,0 780,25 760,50 780,75 760,100 780,125 760,150 780,175 760,200 780,225 760,250 780,275 760,300 780,325 760,350 780,375 760,400 780,425 760,450 800,450 800,0" fill="#FFFFFF" opacity="0.07"/>
+
+  <!-- Athletics track curved lines -->
+  <path d="M0,380 Q400,340 800,380 L800,450 L0,450Z" fill="#1E0008"/>
+  <path d="M-20,395 Q350,345 820,405" stroke="#C9A227" stroke-width="3" fill="none" opacity="0.35"/>
+  <path d="M-20,415 Q350,365 820,425" stroke="#C9A227" stroke-width="2" fill="none" opacity="0.2"/>
+
+  <!-- Decorative athletics lane -->
+  <line x1="0" y1="378" x2="800" y2="378" stroke="#FFFFFF" stroke-width="1.5" opacity="0.15"/>
+
+  <!-- BOY 1 - Sprinter/Runner (Left - ألعاب القوى) -->
+  <g transform="translate(80, 135)">
+    <!-- Shadow -->
+    <ellipse cx="55" cy="250" rx="48" ry="9" fill="#000" opacity="0.3"/>
+    <!-- Running Legs -->
+    <path d="M28,160 Q5,190 -8,240" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="-8" cy="241" rx="11" ry="6" fill="#C9A227"/>
+    <path d="M72,160 Q95,185 112,220" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="112" cy="221" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body leaning forward (sprint) -->
+    <path d="M12,80 L90,80 L80,165 L22,165Z" fill="#FFFFFF"/>
+    <path d="M12,80 L24,80 L28,165 L22,165Z" fill="#8A1538"/>
+    <path d="M78,80 L90,80 L80,165 L74,165Z" fill="#8A1538"/>
+    <rect x="14" y="155" width="70" height="26" rx="8" fill="#8A1538"/>
+    <!-- Arms pumping -->
+    <path d="M14,90 Q-12,115 -22,140" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-22" cy="140" r="8" fill="#FAD1B0"/>
+    <path d="M85,90 Q112,68 128,50" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="128" cy="50" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="44" y="64" width="12" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head tilted forward (sprint posture) -->
+    <ellipse cx="49" cy="44" rx="30" ry="33" fill="#FAD1B0"/>
+    <!-- Hair spiky back (wind) -->
+    <path d="M20,38 Q24,4 49,2 Q74,4 78,38 Q85,20 76,8 Q62,-5 49,-2 Q36,-5 22,8 Q14,20 20,38Z" fill="#1A1A1A"/>
+    <!-- Hair flowing back like wind -->
+    <path d="M78,38 Q90,20 100,5" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M75,28 Q88,12 96,-2" stroke="#1A1A1A" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- Intense eyes -->
+    <path d="M30,46 Q40,40 48,46" stroke="#1A0A0F" stroke-width="3.5" fill="#1A0A0F" stroke-linecap="round"/>
+    <path d="M50,46 Q60,40 68,46" stroke="#1A0A0F" stroke-width="3.5" fill="#1A0A0F" stroke-linecap="round"/>
+    <path d="M28,34 Q39,29 49,34" stroke="#1A1A1A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M51,34 Q62,29 70,34" stroke="#1A1A1A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Determined mouth -->
+    <line x1="38" y1="60" x2="60" y2="60" stroke="#1A0A0F" stroke-width="3" stroke-linecap="round"/>
+    <!-- Speed lines -->
+    <line x1="-40" y1="100" x2="-75" y2="100" stroke="#FFFFFF" stroke-width="3" opacity="0.4" stroke-linecap="round"/>
+    <line x1="-38" y1="118" x2="-68" y2="118" stroke="#FFFFFF" stroke-width="2" opacity="0.3" stroke-linecap="round"/>
+    <line x1="-36" y1="135" x2="-62" y2="135" stroke="#FFFFFF" stroke-width="2" opacity="0.25" stroke-linecap="round"/>
+    <!-- Finish line ribbon -->
+    <rect x="145" y="60" width="6" height="200" fill="#C9A227" opacity="0.6"/>
+    <rect x="145" y="58" width="30" height="8" fill="#C9A227" opacity="0.8"/>
+    <rect x="145" y="58" width="30" height="4" fill="#FFFFFF" opacity="0.5"/>
+  </g>
+
+  <!-- BOY 2 - Gymnastics pose on pedestal (Center - الجمباز) -->
+  <g transform="translate(340, 110)">
+    <!-- Pedestal -->
+    <rect x="15" y="265" width="80" height="35" rx="5" fill="#C9A227"/>
+    <rect x="10" y="260" width="90" height="10" rx="5" fill="#FFD84A"/>
+    <text x="55" y="285" fill="#8A1538" font-family="sans-serif" font-weight="900" font-size="14" text-anchor="middle">🥇</text>
+    <!-- Shadow -->
+    <ellipse cx="55" cy="270" rx="40" ry="7" fill="#000" opacity="0.3"/>
+    <!-- Legs together -->
+    <path d="M40,175 Q38,215 37,258" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="37" cy="260" rx="10" ry="5" fill="#C9A227"/>
+    <path d="M68,175 Q70,215 71,258" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="71" cy="260" rx="10" ry="5" fill="#C9A227"/>
+    <!-- Body straight gymnastics -->
+    <rect x="24" y="88" width="60" height="95" rx="12" fill="#FFFFFF"/>
+    <rect x="24" y="88" width="13" height="95" rx="6" fill="#8A1538"/>
+    <rect x="71" y="88" width="13" height="95" rx="6" fill="#8A1538"/>
+    <rect x="26" y="170" width="56" height="26" rx="8" fill="#8A1538"/>
+    <!-- Arms raised in victory -->
+    <path d="M26,98 Q5,65 -8,40" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-8" cy="40" r="8" fill="#FAD1B0"/>
+    <path d="M82,98 Q103,65 116,40" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="116" cy="40" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="49" y="73" width="12" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="55" cy="52" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair neat -->
+    <path d="M26,45 Q30,10 55,8 Q80,10 84,45 Q90,27 82,15 Q68,1 55,4 Q42,1 28,15 Q20,27 26,45Z" fill="#1A1A1A"/>
+    <!-- Proud joyful eyes -->
+    <path d="M36,55 Q45,47 52,55" stroke="#1A0A0F" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M58,55 Q67,47 74,55" stroke="#1A0A0F" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Big smile -->
+    <path d="M38,70 Q55,82 72,70" stroke="#1A0A0F" stroke-width="3.5" fill="#FF8888" stroke-linecap="round"/>
+    <!-- Blush -->
+    <ellipse cx="26" cy="66" rx="9" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <ellipse cx="84" cy="66" rx="9" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <!-- Victory sparkles -->
+    <path d="M-16,28 L-13,17 L-2,14 L-13,11 L-16,0 L-19,11 L-30,14 L-19,17Z" fill="#C9A227"/>
+    <path d="M126,28 L129,17 L140,14 L129,11 L126,0 L123,11 L112,14 L123,17Z" fill="#C9A227"/>
+    <circle cx="-22" cy="50" r="4" fill="#C9A227" opacity="0.7"/>
+    <circle cx="132" cy="50" r="4" fill="#C9A227" opacity="0.7"/>
+  </g>
+
+  <!-- BOY 3 - Shot put / Athletics throw pose (Right - رمي) -->
+  <g transform="translate(575, 148)">
+    <!-- Shadow -->
+    <ellipse cx="55" cy="228" rx="45" ry="9" fill="#000" opacity="0.3"/>
+    <!-- Legs planted wide -->
+    <path d="M22,148 Q8,178 4,225" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="4" cy="226" rx="11" ry="6" fill="#C9A227"/>
+    <path d="M78,148 Q95,175 105,222" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="105" cy="223" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body rotated for throw -->
+    <path d="M10,78 L96,78 L84,152 L22,152Z" fill="#FFFFFF"/>
+    <path d="M10,78 L22,78 L26,152 L22,152Z" fill="#8A1538"/>
+    <path d="M84,78 L96,78 L84,152 L78,152Z" fill="#8A1538"/>
+    <rect x="12" y="140" width="70" height="26" rx="8" fill="#8A1538"/>
+    <!-- Throwing arm extended -->
+    <path d="M92,88 Q118,62 140,35" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="140" cy="35" r="8" fill="#FAD1B0"/>
+    <!-- Shot-put ball in hand -->
+    <circle cx="155" cy="25" r="18" fill="#C9A227"/>
+    <circle cx="155" cy="25" r="14" fill="#A88318"/>
+    <circle cx="148" cy="18" r="5" fill="#C9A227" opacity="0.6"/>
+    <!-- Other arm for balance -->
+    <path d="M12,92 Q-12,108 -22,124" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-22" cy="124" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="50" y="62" width="12" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="55" cy="42" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M26,35 Q30,1 55,-1 Q80,1 84,35 Q90,17 82,5 Q68,-7 55,-4 Q42,-7 28,5 Q20,17 26,35Z" fill="#2A1200"/>
+    <!-- Exerting eyes -->
+    <path d="M32,44 Q42,37 50,44" stroke="#1A0A0F" stroke-width="3.5" fill="#1A0A0F" stroke-linecap="round"/>
+    <path d="M60,44 Q70,37 78,44" stroke="#1A0A0F" stroke-width="3.5" fill="#1A0A0F" stroke-linecap="round"/>
+    <!-- Brows effort -->
+    <path d="M30,30 Q41,25 51,30" stroke="#1A1A1A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M59,30 Q70,25 80,30" stroke="#1A1A1A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Effort mouth -->
+    <path d="M40,58 Q55,65 70,58" stroke="#1A0A0F" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Throw arc -->
+    <path d="M155,22 Q180,-10 220,-20" stroke="#C9A227" stroke-width="2.5" fill="none" opacity="0.7" stroke-dasharray="6,5"/>
+    <!-- Effort sweat drop -->
+    <path d="M85,30 Q88,22 85,17 Q82,22 85,30Z" fill="#7EC8E3" opacity="0.8"/>
+  </g>
+
+  <!-- Qatari Flag Badge -->
+  <g transform="translate(705, 18)">
+    <rect width="62" height="36" fill="#8A1538" rx="5"/>
+    <polygon points="0,0 18,0 13,6 18,12 13,18 18,24 13,30 18,36 0,36" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Title Text -->
+  <text x="40" y="55" fill="#FFFFFF" font-family="'Segoe UI', Tahoma, sans-serif" font-weight="900" font-size="32">الألعاب الفردية</text>
+  <text x="40" y="88" fill="#C9A227" font-family="'Segoe UI', Tahoma, sans-serif" font-weight="600" font-size="17">الجمباز • ألعاب القوى • التميز الفردي</text>
+</svg>

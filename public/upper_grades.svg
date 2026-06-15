@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D010A" />
+      <stop offset="50%" stop-color="#5E0D22" />
+      <stop offset="100%" stop-color="#8A1538" />
+    </linearGradient>
+    <filter id="glow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+
+  <!-- Qatari Flag serrated pattern (identity) -->
+  <g fill="#FFFFFF" opacity="0.08">
+    <polygon points="740,0 765,30 740,60 765,90 740,120 765,150 740,180 765,210 740,240 765,270 740,300 765,330 740,360 765,390 740,420 765,450 800,450 800,0" />
+  </g>
+
+  <!-- Ground and Athletic Track curves -->
+  <path d="M0,370 Q400,330 800,370 L800,450 L0,450 Z" fill="#400614" />
+  <path d="M0,390 Q400,355 800,390 L800,450 L0,450 Z" fill="#200006" />
+  <path d="M-20,405 Q350,320 820,420" stroke="#C9A227" stroke-width="4" fill="none" opacity="0.3" />
+
+  <!-- Athletic Ring & Sparks -->
+  <circle cx="150" cy="280" r="130" stroke="#C9A227" stroke-width="1.5" fill="none" opacity="0.1" />
+  <path d="M680,100 L683,110 L693,113 L683,116 L680,126 L677,116 L667,113 L677,110 Z" fill="#C9A227" opacity="0.6" />
+
+  <!-- COOL ATHLETIC ANIME BOY (Upper Grades - 9-12 years) -->
+  <g transform="translate(300, 70)" filter="url(#glow)">
+    <!-- Shadow -->
+    <ellipse cx="100" cy="330" rx="70" ry="14" fill="#000000" opacity="0.45" />
+
+    <!-- Left Leg (Sprinting posture) -->
+    <path d="M65,260 L45,315 L15,325 L20,335 L55,325 L80,260 Z" fill="#FFFFFF" />
+    <ellipse cx="16" cy="330" rx="12" ry="7" fill="#C9A227" /> <!-- Shoe -->
+
+    <!-- Right Leg (Pushing off the ground) -->
+    <path d="M120,260 L145,310 L155,320 L162,312 L152,300 L132,260 Z" fill="#FFFFFF" />
+    <ellipse cx="158" cy="318" rx="10" ry="6" fill="#C9A227" /> <!-- Shoe -->
+
+    <!-- Body (PE Uniform Maroon/White with vertical stripe) -->
+    <path d="M45,170 L145,170 L130,265 L60,265 Z" fill="#FFFFFF" /> <!-- White jersey -->
+    <!-- Maroon side stripes on jersey -->
+    <path d="M45,170 L60,170 L70,265 L60,265 Z" fill="#8A1538" />
+    <path d="M130,170 L145,170 L130,265 L120,265 Z" fill="#8A1538" />
+    <!-- V-collar -->
+    <path d="M78,170 L95,195 L112,170 L105,170 L95,188 L85,170 Z" fill="#8A1538" />
+    <!-- Shorts (Maroon with white trim) -->
+    <path d="M60,260 L130,260 L135,285 L110,285 L108,272 L106,285 L55,285 Z" fill="#8A1538" />
+
+    <!-- Arms -->
+    <!-- Left Arm (Pumping back) -->
+    <path d="M45,175 Q20,210 10,230 Q5,238 15,245 Q25,238 52,195 Z" fill="#FFFFFF" />
+    <circle cx="10" cy="238" r="8" fill="#FAD1B0" />
+    <!-- Right Arm (Bending forward dynamically) -->
+    <path d="M140,175 Q165,200 180,225 Q185,232 175,240 Q165,232 132,195 Z" fill="#FFFFFF" />
+    <circle cx="180" cy="232" r="8" fill="#FAD1B0" />
+
+    <!-- Neck -->
+    <rect x="91" y="150" width="8" height="22" fill="#FAD1B0" />
+
+    <!-- Head (Anime Style) -->
+    <path d="M55,100 Q55,60 100,55 Q145,60 145,100 Q145,140 100,142 Q55,140 55,100 Z" fill="#FAD1B0" />
+    <!-- Blush -->
+    <ellipse cx="78" cy="118" rx="8" ry="3" fill="#FF8D8D" opacity="0.5" />
+    <ellipse cx="122" cy="118" rx="8" ry="3" fill="#FF8D8D" opacity="0.5" />
+
+    <!-- Confident Anime Eyes -->
+    <path d="M72,95 L90,92 L88,105 L72,102 Z" fill="#1A0A0F" />
+    <circle cx="83" cy="98" r="3" fill="#FFFFFF" />
+    <path d="M128,95 L110,92 L112,105 L128,102 Z" fill="#1A0A0F" />
+    <circle cx="117" cy="98" r="3" fill="#FFFFFF" />
+    
+    <!-- Cool Eye Brows -->
+    <path d="M68,85 Q82,80 92,86" stroke="#1A1A1A" stroke-width="3.5" fill="none" stroke-linecap="round" />
+    <path d="M132,85 Q118,80 108,86" stroke="#1A1A1A" stroke-width="3.5" fill="none" stroke-linecap="round" />
+
+    <!-- Determined Smile / Mouth -->
+    <path d="M90,124 Q100,132 110,124" stroke="#1A0A0F" stroke-width="3.5" fill="none" stroke-linecap="round" />
+
+    <!-- Spiky Cool Anime Hair (Black/Dark grey highlights) -->
+    <path d="M52,90 Q40,55 70,40 Q80,55 90,30 Q100,55 110,25 Q120,55 130,35 Q145,55 148,85 Q160,95 150,115 L144,98 Q130,75 100,90 Q70,75 56,98 Z" fill="#1A1A1A" />
+    <path d="M72,40 Q85,55 88,48 Q98,58 105,42 Q115,55 122,45" stroke="#333333" stroke-width="2" fill="none" />
+  </g>
+
+  <!-- Typography -->
+  <text x="40" y="60" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="30" letter-spacing="1">مرحلة الصفوف العليا</text>
+  <text x="40" y="95" fill="#C9A227" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="16">الصفوف العليا (٤ - ٦) | ألعاب ومنافسات</text>
+
+  <!-- Qatari Flag Icon -->
+  <g transform="translate(710, 25)">
+    <rect width="55" height="32" fill="#8A1538" rx="4" />
+    <polygon points="0,0 16,0 11,5 16,10 11,15 16,20 11,25 16,32 0,32" fill="#FFFFFF" />
+  </g>
+</svg>

@@ -9,23 +9,35 @@ const LandingPage = () => {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero — هوية قطرية عنّابية */}
-      <section className="relative w-full min-h-[100vh] md:min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#6E1029] via-[#8A1538] to-[#6E1029]">
+      {/* Hero — صورة تملا الهيرو والمحتوى فوقها (overlay) */}
+      <section className="relative w-full flex flex-col items-center justify-center overflow-hidden bg-[#6E1029] min-h-[68vh] lg:min-h-screen">
+        {/* الصورة تملا الهيرو بالكامل (بدون حواف) */}
+        <img
+          src="/hero.jpg?v=2"
+          alt="مجتمع التربية البدنية - قطر"
+          className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+        />
+        {/* تدرّج عنّابي فوق الصورة للوضوح */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(110,16,41,0.55) 0%, rgba(138,21,56,0.48) 45%, rgba(110,16,41,0.85) 100%)",
+          }}
+        />
         {/* توهّج ناعم خلف الشعار */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#C9A227]/10 blur-3xl" />
-          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/5 blur-2xl" />
-          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-white/5 blur-2xl" />
         </div>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.92, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative z-10 flex flex-col items-center text-center px-4"
+          className="relative z-10 flex flex-col items-center text-center px-4 py-7 lg:py-0"
         >
           <span
-            className="text-6xl sm:text-7xl font-bold text-white/95 tracking-wide"
+            className="text-3xl sm:text-6xl lg:text-7xl font-bold text-white/95 tracking-wide leading-none"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
             PE
@@ -33,19 +45,19 @@ const LandingPage = () => {
           <motion.img
             src="https://i.imgur.com/fcLmxsY.png"
             alt="PE Community Logo"
-            className="h-24 w-24 sm:h-28 sm:w-28 object-contain my-2 drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+            className="h-14 w-14 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain my-1.5 sm:my-2 drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
             initial={{ rotate: -8 }}
             animate={{ rotate: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           />
           <span
-            className="text-5xl sm:text-7xl font-bold text-white/95 tracking-wide"
+            className="text-3xl sm:text-5xl lg:text-7xl font-bold text-white/95 tracking-wide leading-none"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
             Community
           </span>
 
-          <p className="mt-6 text-white/80 text-base sm:text-lg max-w-xl leading-relaxed">
+          <p className="mt-3 sm:mt-6 text-white/85 text-sm sm:text-lg max-w-xl leading-relaxed">
             منصة تعليمية متكاملة لمعلمي ومعلمات التربية البدنية — محتوى، تواصل،
             وتطوير مهني في مكان واحد
           </p>
@@ -56,7 +68,7 @@ const LandingPage = () => {
             transition={{ duration: 0.6, delay: 0.5 }}
           >
             <Button
-              className="mt-10 bg-[#C9A227] hover:bg-[#b8931f] text-[#3a2a06] font-bold text-base sm:text-lg px-10 py-6 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:shadow-[0_14px_36px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-300 flex items-center gap-2"
+              className="mt-5 sm:mt-10 bg-[#C9A227] hover:bg-[#b8931f] text-[#3a2a06] font-bold text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:shadow-[0_14px_36px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-300 flex items-center gap-2"
               size="lg"
               onClick={() => navigate("/home")}
             >

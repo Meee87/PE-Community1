@@ -23,41 +23,15 @@ export function useNotifications() {
 
   const fetchNotifications = async () => {
     try {
-      console.log("Fetching notifications...");
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        console.log("No user found");
+        setLoading(false);
         return;
       }
 
-      // استخدام RPC للتحقق من صلاحيات المشرف
-      const { data: isAdmin, error: rpcError } = await supabase.rpc("is_admin");
-
-      if (rpcError) {
-        console.error("RPC error:", rpcError);
-        // استخدام الطريقة التقليدية كخطة بديلة
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
-
-        if (profileError) {
-          console.error("Profile fetch error:", profileError);
-          return;
-        }
-
-        if (profile?.role !== "admin") {
-          console.log("User is not admin");
-          return;
-        }
-      } else if (!isAdmin) {
-        console.log("User is not admin (via RPC)");
-        return;
-      }
-
+      // كل مستخدم يرى إشعاراته الخاصة (RLS يقيّد حسب user_id)
       const { data, error } = await supabase
         .from("notifications")
         .select("*")
@@ -69,7 +43,6 @@ export function useNotifications() {
         throw error;
       }
 
-      console.log("Fetched notifications:", data);
       setNotifications(data || []);
       setUnreadCount(data?.filter((n) => !n.is_read).length || 0);
     } catch (error) {
@@ -123,25 +96,37 @@ export function useNotifications() {
     // اسم قناة فريد لتجنّب تعارض إعادة الاستخدام (خاصة مع StrictMode)
     const channelName = `notifications-${Math.random().toString(36).slice(2)}`;
     let channel: ReturnType<typeof supabase.channel> | null = null;
-    try {
-      channel = supabase
-        .channel(channelName)
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "notifications" },
-          (payload) => {
-            const newNotification = payload.new as Notification;
-            setNotifications((prev) => [newNotification, ...prev]);
-            if (!newNotification.is_read) {
-              setUnreadCount((prev) => prev + 1);
-            }
-          },
-        )
-        .subscribe();
-    } catch (e) {
-      // لا تُسقط التطبيق لو فشل الاشتراك اللحظي
-      console.warn("Realtime subscription unavailable:", e);
-    }
+
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      try {
+        channel = supabase
+          .channel(channelName)
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "notifications",
+              filter: `user_id=eq.${user.id}`,
+            },
+            (payload) => {
+              const newNotification = payload.new as Notification;
+              setNotifications((prev) => [newNotification, ...prev]);
+              if (!newNotification.is_read) {
+                setUnreadCount((prev) => prev + 1);
+              }
+            },
+          )
+          .subscribe();
+      } catch (e) {
+        // لا تُسقط التطبيق لو فشل الاشتراك اللحظي
+        console.warn("Realtime subscription unavailable:", e);
+      }
+    })();
 
     return () => {
       if (channel) supabase.removeChannel(channel);

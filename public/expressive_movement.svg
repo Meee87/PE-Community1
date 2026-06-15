@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2A010A"/>
+      <stop offset="100%" stop-color="#700F2A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+
+  <!-- Qatari flag serrated pattern -->
+  <polygon points="760,0 780,25 760,50 780,75 760,100 780,125 760,150 780,175 760,200 780,225 760,250 780,275 760,300 780,325 760,350 780,375 760,400 780,425 760,450 800,450 800,0" fill="#FFFFFF" opacity="0.07"/>
+
+  <!-- Music-like wave lines (expressive movement) -->
+  <path d="M0,200 Q100,150 200,200 Q300,250 400,200 Q500,150 600,200 Q700,250 800,200" stroke="#C9A227" stroke-width="2.5" fill="none" opacity="0.3"/>
+  <path d="M0,230 Q100,180 200,230 Q300,280 400,230 Q500,180 600,230 Q700,280 800,230" stroke="#C9A227" stroke-width="1.5" fill="none" opacity="0.2"/>
+  <path d="M0,260 Q100,210 200,260 Q300,310 400,260 Q500,210 600,260 Q700,310 800,260" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.12"/>
+
+  <!-- Ground -->
+  <rect x="0" y="390" width="800" height="60" fill="#2A0008" opacity="0.7"/>
+
+  <!-- Star sparkles throughout -->
+  <circle cx="100" cy="120" r="3" fill="#C9A227" opacity="0.7"/>
+  <circle cx="700" cy="100" r="4" fill="#C9A227" opacity="0.6"/>
+  <circle cx="400" cy="80" r="3" fill="#FFFFFF" opacity="0.5"/>
+  <circle cx="250" cy="350" r="2" fill="#C9A227" opacity="0.8"/>
+  <circle cx="650" cy="320" r="3" fill="#C9A227" opacity="0.6"/>
+
+  <!-- BOY 1 - Expressive stretch left arm up (Left) -->
+  <g transform="translate(100, 140)">
+    <!-- Shadow -->
+    <ellipse cx="55" cy="250" rx="42" ry="9" fill="#000" opacity="0.3"/>
+    <!-- Legs -->
+    <path d="M30,165 Q20,195 15,245" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="15" cy="246" rx="11" ry="6" fill="#C9A227"/>
+    <path d="M68,165 Q78,195 85,245" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="85" cy="246" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body -->
+    <rect x="18" y="85" width="62" height="88" rx="12" fill="#FFFFFF"/>
+    <rect x="18" y="85" width="14" height="88" rx="6" fill="#8A1538"/>
+    <rect x="66" y="85" width="14" height="88" rx="6" fill="#8A1538"/>
+    <rect x="20" y="163" width="58" height="28" rx="8" fill="#8A1538"/>
+    <!-- Arms - one up, one to side (expressive) -->
+    <path d="M20,95 Q-5,65 -15,30" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-15" cy="30" r="8" fill="#FAD1B0"/>
+    <path d="M78,95 Q105,100 120,108" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="120" cy="108" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="43" y="70" width="12" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head tilted up -->
+    <ellipse cx="48" cy="48" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M19,40 Q23,6 48,4 Q73,6 77,40 Q82,22 74,10 Q61,-4 48,-1 Q35,-4 22,10 Q14,22 19,40Z" fill="#1A1A1A"/>
+    <!-- Dreamy eyes half-closed -->
+    <path d="M30,50 Q38,44 46,50" stroke="#1A0A0F" stroke-width="3.5" fill="#1A0A0F" stroke-linecap="round"/>
+    <path d="M50,50 Q58,44 66,50" stroke="#1A0A0F" stroke-width="3.5" fill="#1A0A0F" stroke-linecap="round"/>
+    <!-- Gentle smile -->
+    <path d="M34,64 Q48,73 62,64" stroke="#1A0A0F" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Blush -->
+    <ellipse cx="24" cy="62" rx="8" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <ellipse cx="72" cy="62" rx="8" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <!-- Trail/motion streaks from raised arm -->
+    <path d="-15,30 Q-5,20 5,10" stroke="#C9A227" stroke-width="2" fill="none" opacity="0.6" stroke-dasharray="4,4"/>
+    <path d="-22,20 Q-12,10 -2,0" stroke="#C9A227" stroke-width="1.5" fill="none" opacity="0.4" stroke-dasharray="3,5"/>
+  </g>
+
+  <!-- BOY 2 - Center pose, arms open both sides (synchronised) -->
+  <g transform="translate(340, 125)">
+    <!-- Shadow -->
+    <ellipse cx="55" cy="265" rx="45" ry="9" fill="#000" opacity="0.3"/>
+    <!-- Legs spread stance -->
+    <path d="M28,175 Q10,210 -5,258" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="-5" cy="259" rx="11" ry="6" fill="#C9A227"/>
+    <path d="M75,175 Q93,210 108,258" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="108" cy="259" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body -->
+    <rect x="16" y="90" width="72" height="92" rx="12" fill="#FFFFFF"/>
+    <rect x="16" y="90" width="15" height="92" rx="6" fill="#8A1538"/>
+    <rect x="73" y="90" width="15" height="92" rx="6" fill="#8A1538"/>
+    <rect x="18" y="170" width="68" height="28" rx="8" fill="#8A1538"/>
+    <!-- Both arms wide -->
+    <path d="M18,100 Q-18,92 -42,88" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-42" cy="88" r="8" fill="#FAD1B0"/>
+    <path d="M86,100 Q122,92 146,88" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="146" cy="88" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="48" y="74" width="12" height="19" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="53" cy="50" rx="32" ry="36" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M22,43 Q26,6 53,4 Q80,6 84,43 Q90,24 82,12 Q68,-3 53,0 Q38,-3 24,12 Q16,24 22,43Z" fill="#2A1000"/>
+    <!-- Joyful eyes wide open -->
+    <ellipse cx="40" cy="54" rx="9" ry="12" fill="#1A0A0F"/>
+    <circle cx="36" cy="48" r="3.5" fill="#FFFFFF"/>
+    <circle cx="40" cy="60" r="2" fill="#FFFFFF"/>
+    <ellipse cx="66" cy="54" rx="9" ry="12" fill="#1A0A0F"/>
+    <circle cx="62" cy="48" r="3.5" fill="#FFFFFF"/>
+    <circle cx="66" cy="60" r="2" fill="#FFFFFF"/>
+    <!-- Big happy smile -->
+    <path d="M36,72 Q53,85 70,72" stroke="#1A0A0F" stroke-width="3.5" fill="#FF8888" stroke-linecap="round"/>
+    <!-- Blush big -->
+    <ellipse cx="26" cy="68" rx="10" ry="5" fill="#FF8D8D" opacity="0.6"/>
+    <ellipse cx="80" cy="68" rx="10" ry="5" fill="#FF8D8D" opacity="0.6"/>
+    <!-- Sparkle explosions both sides -->
+    <path d="M-50,75 L-47,65 L-37,62 L-47,59 L-50,49 L-53,59 L-63,62 L-53,65Z" fill="#C9A227"/>
+    <path d="M155,75 L158,65 L168,62 L158,59 L155,49 L152,59 L142,62 L152,65Z" fill="#C9A227"/>
+  </g>
+
+  <!-- BOY 3 - Spinning/Dancing pose (Right) -->
+  <g transform="translate(575, 155)">
+    <!-- Shadow -->
+    <ellipse cx="50" cy="230" rx="38" ry="8" fill="#000" opacity="0.3"/>
+    <!-- Legs - one foot raised (dance/spin) -->
+    <path d="M32,155 Q22,185 18,228" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="18" cy="229" rx="11" ry="6" fill="#C9A227"/>
+    <path d="M68,155 Q90,170 110,155" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <ellipse cx="110" cy="155" rx="11" ry="6" fill="#C9A227"/>
+    <!-- Body angled -->
+    <path d="M18,80 L90,80 L80,158 L28,158Z" fill="#FFFFFF"/>
+    <path d="M18,80 L30,80 L35,158 L28,158Z" fill="#8A1538"/>
+    <path d="M78,80 L90,80 L80,158 L72,158Z" fill="#8A1538"/>
+    <rect x="20" y="150" width="66" height="25" rx="8" fill="#8A1538"/>
+    <!-- Arms - spin motion one up, one curved -->
+    <path d="M20,90 Q2,60 -8,38" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="-8" cy="38" r="8" fill="#FAD1B0"/>
+    <path d="M88,90 Q108,112 122,130" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <circle cx="122" cy="130" r="8" fill="#FAD1B0"/>
+    <!-- Neck -->
+    <rect x="48" y="64" width="11" height="18" rx="4" fill="#FAD1B0"/>
+    <!-- Head -->
+    <ellipse cx="53" cy="43" rx="30" ry="34" fill="#FAD1B0"/>
+    <!-- Hair -->
+    <path d="M24,36 Q28,2 53,0 Q78,2 82,36 Q88,18 80,6 Q67,-6 53,-3 Q39,-6 26,6 Q18,18 24,36Z" fill="#1A1A1A"/>
+    <!-- Expressive eyes sparkle -->
+    <ellipse cx="41" cy="46" rx="9" ry="11" fill="#1A0A0F"/>
+    <circle cx="37" cy="40" r="3.5" fill="#FFFFFF"/>
+    <path d="M40,50 Q42,54 44,50" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+    <ellipse cx="65" cy="46" rx="9" ry="11" fill="#1A0A0F"/>
+    <circle cx="61" cy="40" r="3.5" fill="#FFFFFF"/>
+    <!-- Smile open -->
+    <path d="M38,62 Q53,73 68,62" stroke="#1A0A0F" stroke-width="3" fill="#FF8888" stroke-linecap="round"/>
+    <!-- Blush -->
+    <ellipse cx="27" cy="59" rx="9" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <ellipse cx="79" cy="59" rx="9" ry="4" fill="#FF8D8D" opacity="0.5"/>
+    <!-- spin arc lines -->
+    <path d="M65,30 Q80,15 78,0" stroke="#C9A227" stroke-width="2" fill="none" opacity="0.7" stroke-dasharray="4,4"/>
+    <path d="M70,45 Q88,35 90,18" stroke="#C9A227" stroke-width="1.5" fill="none" opacity="0.5" stroke-dasharray="3,5"/>
+  </g>
+
+  <!-- Qatari Flag Badge -->
+  <g transform="translate(705, 18)">
+    <rect width="62" height="36" fill="#8A1538" rx="5"/>
+    <polygon points="0,0 18,0 13,6 18,12 13,18 18,24 13,30 18,36 0,36" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Title Text -->
+  <text x="40" y="55" fill="#FFFFFF" font-family="'Segoe UI', Tahoma, sans-serif" font-weight="900" font-size="32">الحركة التعبيرية</text>
+  <text x="40" y="88" fill="#C9A227" font-family="'Segoe UI', Tahoma, sans-serif" font-weight="600" font-size="17">إبداع • تعبير • تناسق حركي</text>
+</svg>

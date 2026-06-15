@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { NotificationItem } from "@/components/notifications/NotificationItem";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Popover,
   PopoverContent,
@@ -18,6 +18,7 @@ import {
   Home,
   Calendar as CalendarIcon,
   MessageCircle,
+  UploadCloud,
 } from "lucide-react";
 import AuthDialog from "@/components/auth/AuthDialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -41,7 +42,19 @@ const MainHeader = () => {
   const { user, isAdmin, isLoading, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  const navActive =
+    "bg-white/15 ring-1 ring-white/25 text-white gap-2 px-3.5 rounded-lg font-bold transition-colors";
+  const navIdle =
+    "text-white hover:bg-white/10 hover:text-white gap-2 px-3.5 rounded-lg font-medium transition-colors";
+  const isActive = (m: "home" | "content" | "guide") => {
+    const p = location.pathname;
+    if (m === "home") return p === "/";
+    if (m === "content") return p.startsWith("/home") || p.startsWith("/stage");
+    return p.startsWith("/upload-guide");
+  };
 
   const handleSignOut = async () => {
     try {
@@ -63,6 +76,8 @@ const MainHeader = () => {
   return (
     <header className="bg-[#8A1538] text-white py-2 px-4 shadow-md fixed top-0 left-0 right-0 z-[100] h-16 hidden md:block">
       <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
+        {/* مجموعة اليمين: اللوغو + الروابط */}
+        <div className="flex items-center gap-8">
         {/* Logo and Menu */}
         <div className="flex items-center gap-4">
           <Button
@@ -88,20 +103,29 @@ const MainHeader = () => {
         <div className="hidden md:flex items-center gap-6">
           <Button
             variant="ghost"
-            className="text-white hover:bg-[#A91D45]"
+            className={isActive("home") ? navActive : navIdle}
             onClick={() => navigate("/")}
           >
-            <Home className="mr-2 h-4 w-4" />
+            <Home className="h-4 w-4" />
             الرئيسية
           </Button>
 
           <Button
             variant="ghost"
-            className="text-white hover:bg-[#A91D45]"
+            className={isActive("content") ? navActive : navIdle}
             onClick={() => navigate("/home")}
           >
-            <BookOpen className="mr-2 h-4 w-4" />
+            <BookOpen className="h-4 w-4" />
             المحتوى
+          </Button>
+
+          <Button
+            variant="ghost"
+            className={isActive("guide") ? navActive : navIdle}
+            onClick={() => navigate("/upload-guide")}
+          >
+            <UploadCloud className="h-4 w-4" />
+            آلية الرفع
           </Button>
 
           <Dialog
@@ -109,8 +133,8 @@ const MainHeader = () => {
             onOpenChange={setShowCalendarDialog}
           >
             <DialogTrigger asChild>
-              <Button variant="ghost" className="text-white hover:bg-[#A91D45]">
-                <CalendarIcon className="mr-2 h-4 w-4" />
+              <Button variant="ghost" className="text-white hover:bg-white/10 hover:text-white gap-2 px-3.5 rounded-lg font-medium transition-colors">
+                <CalendarIcon className="h-4 w-4" />
                 التقويم
               </Button>
             </DialogTrigger>
@@ -126,8 +150,8 @@ const MainHeader = () => {
 
           <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
             <DialogTrigger asChild>
-              <Button variant="ghost" className="text-white hover:bg-[#A91D45]">
-                <MessageCircle className="mr-2 h-4 w-4" />
+              <Button variant="ghost" className="text-white hover:bg-white/10 hover:text-white gap-2 px-3.5 rounded-lg font-medium transition-colors">
+                <MessageCircle className="h-4 w-4" />
                 اتصل بنا
               </Button>
             </DialogTrigger>
@@ -139,6 +163,7 @@ const MainHeader = () => {
             </DialogContent>
           </Dialog>
         </div>
+        </div>
 
         {/* Actions */}
         <div className="flex items-center gap-2 md:gap-4">
@@ -147,7 +172,7 @@ const MainHeader = () => {
               {isAdmin && (
                 <Button
                   onClick={() => navigate("/admin")}
-                  className="bg-[#C9A227] hover:bg-[#C9A227]/90 text-[#1A1A1A] font-bold"
+                  className="bg-white hover:bg-white/90 text-[#8A1538] font-bold"
                 >
                   لوحة التحكم
                 </Button>
@@ -161,7 +186,7 @@ const MainHeader = () => {
                   >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-[#C9A227] text-[#1A1A1A] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#8A1538]">
+                      <span className="absolute -top-1 -right-1 bg-white text-[#8A1538] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-[#8A1538]">
                         {unreadCount}
                       </span>
                     )}
@@ -274,7 +299,7 @@ const MainHeader = () => {
           ) : (
             <Button
               variant="ghost"
-              className="text-white hover:bg-[#A91D45]"
+              className="text-white hover:bg-white/10 hover:text-white gap-2 px-3.5 rounded-lg font-medium transition-colors"
               onClick={() => setShowAuthDialog(true)}
             >
               تسجيل الدخول

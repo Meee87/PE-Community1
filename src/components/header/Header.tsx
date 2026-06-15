@@ -65,10 +65,7 @@ const Header = ({ onMenuClick, userName }: HeaderProps) => {
         .select("role, email")
         .eq("id", session.user.id)
         .single();
-      setIsAdmin(
-        profile?.email === "eng.mohamed87@live.com" &&
-          profile?.role === "admin",
-      );
+      setIsAdmin(profile?.role === "admin");
     }
   }
 

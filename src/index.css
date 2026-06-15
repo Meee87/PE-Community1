@@ -38,13 +38,49 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* لمسة قطرية: شريط تسنين (مستوحى من علم قطر) */
+/* لمسة قطرية: شريط تسنين (مستوحى من علم قطر — 9 أسنان مثلثة) */
 .qatar-serration {
-  background-image: linear-gradient(135deg, #8a1538 25%, transparent 25%),
-    linear-gradient(225deg, #8a1538 25%, transparent 25%);
-  background-size: 18px 100%;
-  background-repeat: repeat-x;
-  height: 10px;
+  height: 12px;
+  background: #8a1538;
+  -webkit-mask: repeating-linear-gradient(
+    -45deg,
+    #000 0,
+    #000 9px,
+    transparent 9px,
+    transparent 18px
+  );
+  mask: repeating-linear-gradient(
+    -45deg,
+    #000 0,
+    #000 9px,
+    transparent 9px,
+    transparent 18px
+  );
+}
+
+/* نسخة سفلية (الأسنان لأسفل) */
+.qatar-serration-bottom {
+  height: 12px;
+  background: #8a1538;
+  -webkit-mask: repeating-linear-gradient(
+    45deg,
+    #000 0,
+    #000 9px,
+    transparent 9px,
+    transparent 18px
+  );
+  mask: repeating-linear-gradient(
+    45deg,
+    #000 0,
+    #000 9px,
+    transparent 9px,
+    transparent 18px
+  );
+}
+
+/* نسخة ذهبية للتأكيد */
+.qatar-serration-gold {
+  background: #c9a227;
 }
 
 /* انتقالات ناعمة افتراضية */
@@ -156,12 +192,19 @@ form,
 }
 
 /* Animations */
-.fade-in {
-  @apply animate-fade-in;
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-
+@keyframes slide-up {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.fade-in {
+  animation: fade-in 0.3s ease-in;
+}
 .slide-up {
-  @apply animate-slide-up;
+  animation: slide-up 0.3s ease-out;
 }
 
 /* Custom Scrollbar */
@@ -171,17 +214,17 @@ form,
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1ece6;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #95b846;
+  background: #8a1538;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #8A1538;
+  background: #6e1029;
 }
 
 /* Fix for mobile navigation */

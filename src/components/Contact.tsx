@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Mail, Phone, MessageCircle } from "lucide-react";
+import { Mail, Phone, MessageCircle, MapPin } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -14,6 +14,7 @@ import { Textarea } from "./ui/textarea";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/lib/supabase";
 import { sendPushNotification } from "@/lib/notifications";
+import { getAdminIds } from "@/lib/admin";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -24,6 +25,18 @@ const Contact = () => {
     email: "",
     message: "",
   });
+  const [info, setInfo] = React.useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    supabase
+      .from("site_settings")
+      .select("key,value")
+      .then(({ data }) => {
+        const map: Record<string, string> = {};
+        (data || []).forEach((r: any) => (map[r.key] = r.value));
+        setInfo(map);
+      });
+  }, []);
 
   const validateForm = () => {
     // Validate name
@@ -78,23 +91,17 @@ const Contact = () => {
         },
       ]);
 
-      // Get admin user
-      const { data: adminData } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", "eng.mohamed87@live.com")
-        .single();
-
-      if (adminData?.id) {
-        // Send notification to admin
-        await supabase.from("notifications").insert([
-          {
-            user_id: adminData.id,
+      // Notify all admins
+      const adminIds = await getAdminIds();
+      if (adminIds.length) {
+        await supabase.from("notifications").insert(
+          adminIds.map((id) => ({
+            user_id: id,
             title: "رسالة جديدة",
             message: `رسالة جديدة من ${formData.name}`,
             type: "message",
-          },
-        ]);
+          })),
+        );
 
         // Send push notification
         await sendPushNotification(
@@ -150,22 +157,62 @@ const Contact = () => {
   return (
     <div className="w-full">
       <CardContent className="grid gap-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
-            <Mail className="h-6 w-6 text-[#A91D45]" />
+        {info.contact_intro && (
+          <p className="text-center text-gray-600">{info.contact_intro}</p>
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a
+            href={`mailto:${info.contact_email || "contact@pecommunity.com"}`}
+            className="flex items-center gap-3 p-4 rounded-xl bg-[#8A1538]/5 hover:bg-[#8A1538]/10 transition-colors"
+          >
+            <Mail className="h-6 w-6 text-[#8A1538]" />
             <div>
               <h3 className="font-semibold">البريد الإلكتروني</h3>
-              <p className="text-sm text-gray-600">contact@pecommunity.com</p>
+              <p className="text-sm text-gray-600" dir="ltr">
+                {info.contact_email || "contact@pecommunity.com"}
+              </p>
             </div>
-          </div>
+          </a>
 
-          <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
-            <Phone className="h-6 w-6 text-[#A91D45]" />
+          <a
+            href={`tel:${(info.contact_phone || "").replace(/\s/g, "")}`}
+            className="flex items-center gap-3 p-4 rounded-xl bg-[#8A1538]/5 hover:bg-[#8A1538]/10 transition-colors"
+          >
+            <Phone className="h-6 w-6 text-[#8A1538]" />
             <div>
               <h3 className="font-semibold">رقم الهاتف</h3>
-              <p className="text-sm text-gray-600">+966 12 345 6789</p>
+              <p className="text-sm text-gray-600" dir="ltr">
+                {info.contact_phone || "—"}
+              </p>
             </div>
-          </div>
+          </a>
+
+          {info.contact_whatsapp && (
+            <a
+              href={`https://wa.me/${info.contact_whatsapp.replace(/[^0-9]/g, "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-4 rounded-xl bg-[#8A1538]/5 hover:bg-[#8A1538]/10 transition-colors"
+            >
+              <MessageCircle className="h-6 w-6 text-[#8A1538]" />
+              <div>
+                <h3 className="font-semibold">واتساب</h3>
+                <p className="text-sm text-gray-600" dir="ltr">
+                  {info.contact_whatsapp}
+                </p>
+              </div>
+            </a>
+          )}
+
+          {info.contact_address && (
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-[#8A1538]/5">
+              <MapPin className="h-6 w-6 text-[#8A1538]" />
+              <div>
+                <h3 className="font-semibold">العنوان</h3>
+                <p className="text-sm text-gray-600">{info.contact_address}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

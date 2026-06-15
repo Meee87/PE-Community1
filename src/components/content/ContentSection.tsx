@@ -6,17 +6,12 @@ import StageCard from "../navigation/StageCard";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { ArrowRight, Home } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import ContentUploadDialog from "./ContentUploadDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Stage, STAGES } from "@/lib/constants";
+import { getFavorites, onFavoritesChange } from "@/lib/favorites";
 
 const ContentSection = () => {
   const { stageId } = useParams();
@@ -24,12 +19,16 @@ const ContentSection = () => {
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<any>(null);
-  const [selectedResource, setSelectedResource] = useState<any>(null);
   const [showContentTypes, setShowContentTypes] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [contentItems, setContentItems] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  useEffect(() => {
+    setFavorites(getFavorites());
+    return onFavoritesChange(() => setFavorites(getFavorites()));
+  }, []);
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -138,7 +137,7 @@ const ContentSection = () => {
       activeTab === "recent"
         ? contentItems.slice(0, 5)
         : activeTab === "favorites"
-          ? contentItems.filter((item) => favorites.includes(item.id))
+          ? contentItems.filter((item) => favorites.includes(String(item.id)))
           : contentItems;
 
     const resources = filteredContent.map((item) => ({
@@ -169,13 +168,23 @@ const ContentSection = () => {
 
     return (
       <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-right">
-          {contentType.title}
-        </h2>
+        <div className="flex items-center justify-between gap-3 no-reverse" dir="rtl">
+          <h2 className="text-xl font-semibold text-right">
+            {contentType.title}
+          </h2>
+          {selectedSubcategory?.id && (
+            <ContentUploadDialog
+              stageId={selectedStage}
+              categoryId={selectedSubcategory.id}
+              isAdmin={isAdmin}
+              contentType={contentType.id}
+            />
+          )}
+        </div>
         <ResourceGrid
           resources={resources}
-          onPreview={(resource) => {
-            setSelectedResource(resource);
+          onPreview={() => {
+            /* المعاينة يتكفّل بها لايت بوكس ResourceGrid (يدعم العرض الطولي بشكل صحيح) */
           }}
           onDownload={(resource) => {
             const link = document.createElement("a");
@@ -195,6 +204,75 @@ const ContentSection = () => {
           isAdmin={isAdmin}
         />
       </div>
+    );
+  };
+
+  const renderBreadcrumb = () => {
+    const crumbs: { label: string; onClick?: () => void }[] = [
+      { label: "الرئيسية", onClick: () => navigate("/home") },
+      {
+        label: stage?.name,
+        onClick: () => {
+          setSelectedCategory(null);
+          setSelectedSubcategory(null);
+          setShowContentTypes(false);
+        },
+      },
+    ];
+
+    if (selectedCategory) {
+      crumbs.push({
+        label: selectedCategory.title,
+        onClick: () => {
+          setSelectedSubcategory(null);
+          setShowContentTypes(false);
+        },
+      });
+    }
+    if (selectedSubcategory) {
+      crumbs.push({
+        label: selectedSubcategory.title,
+        onClick: () => {
+          setSelectedSubcategory({
+            ...selectedSubcategory,
+            selectedContentType: null,
+          });
+          setShowContentTypes(false);
+        },
+      });
+    }
+    if (showContentTypes && selectedSubcategory?.selectedContentType) {
+      const ct = selectedSubcategory.contentTypes?.find(
+        (t) => t.id === selectedSubcategory.selectedContentType,
+      );
+      if (ct) crumbs.push({ label: ct.title });
+    }
+
+    return (
+      <nav
+        className="flex flex-wrap items-center gap-1 text-sm text-gray-500 mb-3"
+        dir="rtl"
+        aria-label="مسار التنقّل"
+      >
+        {crumbs.map((c, i) => {
+          const last = i === crumbs.length - 1;
+          return (
+            <span key={i} className="flex items-center gap-1">
+              {i > 0 && <span className="text-gray-300">/</span>}
+              {last || !c.onClick ? (
+                <span className="font-bold text-[#8A1538]">{c.label}</span>
+              ) : (
+                <button
+                  onClick={c.onClick}
+                  className="hover:text-[#8A1538] hover:underline transition-colors"
+                >
+                  {c.label}
+                </button>
+              )}
+            </span>
+          );
+        })}
+      </nav>
     );
   };
 
@@ -227,9 +305,9 @@ const ContentSection = () => {
         >
           {/* زخرفة دوائر ناعمة */}
           <div className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 rounded-full bg-white/5" />
-          <div className="pointer-events-none absolute -bottom-12 -right-8 w-44 h-44 rounded-full bg-[#C9A227]/15 blur-xl" />
+          <div className="pointer-events-none absolute -bottom-12 -right-8 w-44 h-44 rounded-full bg-white/10 blur-xl" />
           <div className="relative">
-            <div className="inline-block w-12 h-1 rounded-full bg-[#C9A227] mb-3" />
+            <div className="inline-block w-12 h-1 rounded-full bg-white/70 mb-3" />
             <h1 className="text-2xl sm:text-3xl font-extrabold mb-2">{title}</h1>
             <p className="text-sm sm:text-base text-white/85 max-w-2xl mx-auto line-clamp-2">
               {description}
@@ -334,16 +412,7 @@ const ContentSection = () => {
           <span className="inline-block">الرئيسية</span>
         </Button>
 
-        {/* طلب إضافة محتوى — الوسط */}
-        {selectedSubcategory && !showContentTypes && (
-          <div className="flex-1 flex justify-center">
-            <ContentUploadDialog
-              stageId={selectedStage}
-              categoryId={selectedSubcategory.id}
-              isAdmin={isAdmin}
-            />
-          </div>
-        )}
+        <div className="flex-1" />
 
         {/* رجوع — يسار */}
         <Button
@@ -357,24 +426,20 @@ const ContentSection = () => {
       </div>
 
       <div className="max-w-7xl mx-auto space-y-8 p-4">
+        {renderBreadcrumb()}
         {renderHeader()}
 
         {showContentTypes && selectedSubcategory?.selectedContentType ? (
           <Tabs
             defaultValue="all"
             className="w-full"
+            dir="rtl"
             onValueChange={setActiveTab}
           >
-            <TabsList className="w-full max-w-md mx-auto mb-8">
-              <TabsTrigger value="all" className="flex-1">
-                الكل
-              </TabsTrigger>
-              <TabsTrigger value="recent" className="flex-1">
-                الأحدث
-              </TabsTrigger>
-              <TabsTrigger value="favorites" className="flex-1">
-                المفضلة
-              </TabsTrigger>
+            <TabsList className="max-w-md mb-8 justify-start">
+              <TabsTrigger value="all">الكل</TabsTrigger>
+              <TabsTrigger value="recent">الأحدث</TabsTrigger>
+              <TabsTrigger value="favorites">المفضلة</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all">{renderContent()}</TabsContent>
@@ -386,60 +451,6 @@ const ContentSection = () => {
         )}
       </div>
 
-      {/* Preview Dialog */}
-      <Dialog
-        open={!!selectedResource}
-        onOpenChange={() => setSelectedResource(null)}
-      >
-        <DialogContent className="max-w-4xl bg-white">
-          <DialogHeader>
-            <DialogTitle>{selectedResource?.title}</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4">
-            {selectedResource?.type === "image" && (
-              <img
-                src={selectedResource.downloadUrl}
-                alt={selectedResource.title}
-                className="w-full h-full object-contain rounded-lg max-h-[70vh]"
-              />
-            )}
-            {selectedResource?.type === "video" && (
-              <div className="aspect-video w-full">
-                <iframe
-                  src={selectedResource.downloadUrl}
-                  title={selectedResource.title}
-                  className="w-full h-full rounded-lg"
-                  allowFullScreen
-                />
-              </div>
-            )}
-            {selectedResource?.type === "file" && (
-              <object
-                data={selectedResource.downloadUrl}
-                type="application/pdf"
-                className="w-full h-[70vh] rounded-lg"
-              >
-                <div className="text-center py-8">
-                  <p className="mb-4">لا يمكن عرض الملف مباشرة</p>
-                  <Button
-                    onClick={() => {
-                      const link = document.createElement("a");
-                      link.href = selectedResource.downloadUrl;
-                      link.download = selectedResource.title;
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                    }}
-                    className="bg-[#8A1538] hover:bg-[#6E1029]"
-                  >
-                    تحميل الملف
-                  </Button>
-                </div>
-              </object>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

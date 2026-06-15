@@ -11,6 +11,8 @@ const Home = lazy(() => import("./components/home"));
 const AdminDashboard = lazy(() => import("./components/admin/AdminDashboard"));
 const Profile = lazy(() => import("./components/profile/Profile"));
 const ContentSection = lazy(() => import("./components/content/ContentSection"));
+const UploadGuide = lazy(() => import("./components/UploadGuide"));
+const ResetPassword = lazy(() => import("./components/auth/ResetPassword"));
 const DeleteAccountConfirmation = lazy(
   () => import("./components/DeleteAccountConfirmation"),
 );
@@ -33,10 +35,12 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<AuthForm />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/home" element={<Home />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/stage/:stageId" element={<ContentSection />} />
+            <Route path="/upload-guide" element={<UploadGuide />} />
             <Route
               path="/account-deleted"
               element={<DeleteAccountConfirmation />}

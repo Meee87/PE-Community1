@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
+import { getPrimaryAdminId } from "@/lib/admin";
 import {
   Dialog,
   DialogContent,
@@ -92,14 +93,10 @@ export default function ContentRequestDialog({
         return;
       }
 
-      // Get admin user
-      const { data: adminData } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", "eng.mohamed87@live.com")
-        .single();
+      // Get an admin to route the request to
+      const adminId = await getPrimaryAdminId();
 
-      if (!adminData?.id) {
+      if (!adminId) {
         toast({
           variant: "destructive",
           description: "حدث خطأ في إرسال الطلب",
@@ -124,14 +121,14 @@ export default function ContentRequestDialog({
           category_id: categoryId,
           status: "pending",
           user_id: user.id,
-          admin_id: adminData.id,
+          admin_id: adminId,
         },
       ]);
 
       // Send notification to admin
       await supabase.from("notifications").insert([
         {
-          user_id: adminData.id,
+          user_id: adminId,
           title: "طلب محتوى جديد",
           message: `طلب إضافة ${formData.type === "image" ? "صورة" : formData.type === "video" ? "فيديو" : formData.type === "file" ? "ملف" : "موهوب"} جديد: ${formData.title}`,
           type: "content_request",

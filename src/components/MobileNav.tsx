@@ -14,6 +14,7 @@ import {
   Settings,
   Bell,
   LogOut,
+  UploadCloud,
 } from "lucide-react";
 import {
   Sheet,
@@ -132,7 +133,7 @@ const MobileNav = () => {
                   )}
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1" dir="rtl">
                   <Button
                     variant="ghost"
                     className="w-full justify-start text-right"
@@ -148,6 +149,14 @@ const MobileNav = () => {
                   >
                     <BookOpen className="ml-2 h-5 w-5" />
                     المحتوى
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-right"
+                    onClick={() => handleNavigation("/upload-guide")}
+                  >
+                    <UploadCloud className="ml-2 h-5 w-5" />
+                    آلية رفع المحتوى
                   </Button>
                   <Button
                     variant="ghost"
